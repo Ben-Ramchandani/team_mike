@@ -1,0 +1,123 @@
+#Proposed API for server/phone interaction, feel free to comment/change things.
+
+#Anything after a hash is a comment, otherwise it's JSON.
+#Basically my plan is just to send (UTF 8 encoded) JSON strings over a socket and hope.
+
+#phone-id could be the android ID: 'Secure.getString(getContext().getContentResolver(), Secure.ANDROID_ID);'
+#Any other data can just be added to all the phones requests, eg gps co-ordinates, battery info, bank account details etc.
+#The order of key:value pairs does not matter.
+
+### Phone request to server to fetch a new job ###
+
+{
+    "version": "0.0.1",
+    "request": "getJob",
+    "phone-id": "ANDROID_ID",
+}
+
+#Server response
+
+{
+    "version": "0.0.1",
+    "response_code": 200, #Just reuse HTTP codes - 200 OK
+    "request": "getJob",
+    "jobID": x,
+    "computationID": x
+}
+
+#If no jobs are available
+
+{
+    "version": "0.0.1",
+    "response_code": 404,
+    "error": "No jobs lol", #Optional
+    "request": "getJob"
+}
+
+#On an unexpected error return something like
+
+{
+    "version": "0.0.1",
+    "response_code": xxx, #xxx != 200
+    "error": "Error description" #Optional
+    "request_header": "The header the server recieved", #Optional
+    "request": "getJob",
+    "jobID": x,
+    "computationID": x
+}
+
+### Phone request for computation data ###
+#Request for job data is nearly identical, but replace "computationData" with "jobData".
+
+{
+    "version": "0.0.1",
+    "request": "getComputationData",
+    "jobID": x,
+    "computationID": x,
+    "phone-id": "ANDROID_ID"
+}
+
+#Server response
+
+{
+    "version": "0.0.1",
+    "response_code": 200,
+    "request": "getComputationData",
+    "jobID": x,
+    "computationID": x,
+    "computationData" "DATA"
+}
+
+
+
+
+
+
+### Phone request for code (a java object) ###
+
+{
+    "version": "0.0.1",
+    "request": "getComputationCode",
+    "computationID": x,
+    "phone-id": "ANDROID_ID"
+}
+
+#Server response
+{
+    "version": "0.0.1",
+    "response_code": 200,
+    "request": "getComputationCode",
+    "computationID": x,
+    "computationCode" "InsertBase64EncodedSerializedJavaObjectHere"
+}
+
+
+
+
+### Phone submiting completed job ###
+
+{
+    "version": "0.0.1",
+    "request": "submitJob",
+    "computationID": x,
+    "jobID": x,
+    "phone-id": "ANDROID_ID",
+    "jobResult": "DATA"
+}
+
+#No response expected (maybe we should acknowledge...)
+
+
+
+
+### Phone requesting the server log something ###
+#For debuging/error purposes
+
+{
+    "version": "0.0.1",
+    "request": "log",
+    "phone-id": "ANDROID_ID",
+    "logData": "string"
+}
+
+#No response expected
