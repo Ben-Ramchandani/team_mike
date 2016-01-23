@@ -1,7 +1,8 @@
 #Proposed API for server/phone interaction, feel free to comment/change things.
 
 #Anything after a hash is a comment, otherwise it's JSON.
-#Basically my plan is just to send (UTF 8 encoded) JSON strings over a socket and hope.
+#Basically my plan is just to send (UTF 8 encoded) JSON strings over a tcp socket.
+#We let the Java library and TCP worry about getting a reliable connection.
 
 #phone-id could be the android ID: 'Secure.getString(getContext().getContentResolver(), Secure.ANDROID_ID);'
 #Any other data can just be added to all the phones requests, eg gps co-ordinates, battery info, bank account details etc.
