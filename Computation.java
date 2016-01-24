@@ -42,4 +42,9 @@ public interface Computation {
     //If validation is not possible then JobValidationNotEnabledException should be thrown.
     //Computation MUST NOT be complete.
     public boolean validateJob(Job toValidate) throws JobValidationNotEnabledException;
+    
+    //Reset all active jobs.
+    //This can be used if a server restart looses the list of active jobs.
+    //If this is not possible the computation should reset.
+    public void reset();
 }
