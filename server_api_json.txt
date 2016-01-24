@@ -49,6 +49,7 @@
 
 ### Phone request for computation data ###
 #Request for job data is nearly identical, but replace "computationData" with "jobData".
+#This may be changed, we could use URLClassLoader to get the code off the server.
 
 {
     "version": "0.0.1",
