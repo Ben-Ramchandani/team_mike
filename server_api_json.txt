@@ -49,7 +49,7 @@
 
 ### Phone request for computation data ###
 #Request for job data is nearly identical, but replace "computationData" with "jobData".
-#This may be changed, we could use URLClassLoader to get the code off the server.
+
 
 {
     "version": "0.0.1",
@@ -67,6 +67,8 @@
     "request": "getComputationData",
     "jobID": x,
     "computationID": x,
+    "computationName": "Name",
+    "codeURL": "url.to/code",
     "computationData" "DATA"
 }
 
@@ -76,22 +78,11 @@
 
 
 ### Phone request for code (a java object) ###
-
-{
-    "version": "0.0.1",
-    "request": "getComputationCode",
-    "computationID": x,
-    "phone-id": "ANDROID_ID"
-}
-
-#Server response
-{
-    "version": "0.0.1",
-    "response_code": 200,
-    "request": "getComputationCode",
-    "computationID": x,
-    "computationCode" "InsertBase64EncodedSerializedJavaObjectHere"
-}
+#Instead of providing the code from this API we simply serve it of a HTTP server at "codeURL".
+#This has a few advantages:
+#It's less work for our job server
+#We can upgrade to HTTPS with a hardcoded certificate for just the code easily
+#The app can use URLClassLoader to hide the complexity of dynamically loading in classes over the interwebs.
 
 
 
