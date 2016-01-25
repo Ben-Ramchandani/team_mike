@@ -68,7 +68,6 @@
     "jobID": x,
     "computationID": x,
     "computationName": "Name",
-    "codeURL": "url.to/code",
     "computationData" "DATA"
 }
 
@@ -78,7 +77,7 @@
 
 
 ### Phone request for code (a java object) ###
-#Instead of providing the code from this API we simply serve it of a HTTP server at "codeURL".
+#Instead of providing the code from this API we simply serve it of a HTTP server at some URL.
 #This has a few advantages:
 #It's less work for our job server
 #We can upgrade to HTTPS with a hardcoded certificate for just the code easily
