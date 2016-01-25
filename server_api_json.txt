@@ -1,12 +1,13 @@
-#Proposed API for server/phone interaction, feel free to comment/change things.
+﻿#Proposed API for server/phone interaction, feel free to comment/change things.
 
 #Anything after a hash is a comment, otherwise it's JSON.
-#Basically my plan is just to send (UTF 8 encoded) JSON strings over a tcp socket.
+#Basically my plan is just to send (UTF 8 encoded) JSON strings over a TCP socket.
 #We let the Java library and TCP worry about getting a reliable connection.
 
 #phone-id could be the android ID: 'Secure.getString(getContext().getContentResolver(), Secure.ANDROID_ID);'
-#Any other data can just be added to all the phones requests, eg gps co-ordinates, battery info, bank account details etc.
+#Any other data can just be added to all the phones requests, eg gps co-ordinates, battery info etc.
 #The order of key:value pairs does not matter.
+
 
 ### Phone request to server to fetch a new job ###
 
@@ -47,6 +48,7 @@
     "computationID": x
 }
 
+
 ### Phone request for computation data ###
 #Request for job data is nearly identical, but replace "computationData" with "jobData".
 
@@ -76,18 +78,18 @@
 
 
 
-### Phone request for code (a java object) ###
-#Instead of providing the code from this API we simply serve it of a HTTP server at some URL,
-#currently http://groups.ds.cam.ac.uk/clteach/grpproj/mike/$computationName.
+### Phone request for code (a Java object) ###
+#Instead of providing the code from this API we simply serve it off an HTTP server at some URL,
+#(probably http://groups.ds.cam.ac.uk/clteach/grpproj/mike/$computationName).
 #This has a few advantages:
 #It's less work for our job server
-#We can upgrade to HTTPS with a hardcoded certificate for just the code easily
-#The app can use URLClassLoader to hide the complexity of dynamically loading in classes over the interwebs.
+#We can upgrade to HTTPS with a hard coded certificate for just the code easily
+#The app can use URLClassLoader to hide the complexity of dynamically loading classes over the internet.
 
 
 
 
-### Phone submiting completed job ###
+### Phone submitting completed job ###
 
 {
     "version": "0.0.1",
@@ -98,13 +100,13 @@
     "jobResult": "DATA"
 }
 
-#No response expected (maybe we should acknowledge...)
+#No response expected
 
 
 
 
 ### Phone requesting the server log something ###
-#For debuging/error purposes
+#For debugging/error purposes
 
 {
     "version": "0.0.1",

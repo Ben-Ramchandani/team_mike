@@ -1,14 +1,15 @@
-public interface Computation {
+﻿public interface Computation {
     //The interface for the computation Object given to us by the client.
     //All methods:
     //MUST be thread safe.
     //MUST not block.
     
     //A constant, unique identifier associated with the object.
+    //If there are multiple computations of the same type then they may share a name, but not an ID.
     public long getComputationID();
     
     //Request a job from this computation.
-    //If the Computation needs other jobs to complete first, or is exausted, then JobNotAvailableException should be throw.
+    //If the Computation needs other jobs to complete first, or is exhausted, then JobNotAvailableException should be throw.
     public Job getJob() throws JobNotAvailableException;
 
     //Have all jobs been given out (not necessarily been handed back in).
@@ -36,9 +37,8 @@ public interface Computation {
     //If a job has the correct format but the wrong result then return JobInvalidException.
     public void submitJob(Job toSubmit) throws FormatInvalidException, JobInvalidException;
     
-    //Is there code for validating the result of a job?
-    public boolean isJobValidationEnabled();
-    
+    //We may add information about whether each job should be run on multiple phones,
+    //which would give a better guarantee of accurate results.
     
     //Reset all active jobs.
     //This can be used if a server restart looses the list of active jobs.
