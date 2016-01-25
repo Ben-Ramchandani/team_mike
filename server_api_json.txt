@@ -77,7 +77,8 @@
 
 
 ### Phone request for code (a java object) ###
-#Instead of providing the code from this API we simply serve it of a HTTP server at some URL.
+#Instead of providing the code from this API we simply serve it of a HTTP server at some URL,
+#currently http://groups.ds.cam.ac.uk/clteach/grpproj/mike/$computationName.
 #This has a few advantages:
 #It's less work for our job server
 #We can upgrade to HTTPS with a hardcoded certificate for just the code easily
