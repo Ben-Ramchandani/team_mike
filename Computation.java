@@ -4,13 +4,15 @@ public interface Computation {
     //MUST be thread safe.
     //MUST not block.
     
-    //A unique identifier associated with the object.
+    //A constant, unique identifier associated with the object.
     public long getComputationID();
     
     //Request a job from this computation.
-    //Computation MUST NOT be complete.
-    //If the Computation needs other jobs to complete first then JobNotAvailableException should be throw.
+    //If the Computation needs other jobs to complete first, or is exausted, then JobNotAvailableException should be throw.
     public Job getJob() throws JobNotAvailableException;
+
+    //Have all jobs been given out (not necessarily been handed back in).
+    public boolean isExausted();
     
     //Check whether this computation is complete.
     public boolean isComplete();
@@ -19,16 +21,13 @@ public interface Computation {
     //Computation MUST be complete.
     public String getResult();
     
-    //Get the code for this computation.
-    public ComputationCode getCode();
+    //Get the unique name for this computation.
+    public String getName();
     
     //Get the data associated with this computation.
     //This should only be data common to all jobs this object gives.
     public String getComputationData();
     
-    //Get the identifier for this computation.
-    //Must be unique and unchanging.
-    public long getUID();
     
     //Submit a completed job.
     //If a job fails validation the server should retry on another phone.
