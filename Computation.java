@@ -26,21 +26,19 @@ public interface Computation {
     
     //Get the data associated with this computation.
     //This should only be data common to all jobs this object gives.
+    //Should be constant.
     public String getComputationData();
     
     
-    //Submit a completed job.
+    //Submit a completed job, validating if possible.
     //If a job fails validation the server should retry on another phone.
     //If a job fails repeatedly the whole computation should be suspended and this MUST be logged by the server.
-    public void submitJob(Job toSubmit) throws FormatInvalidException;
+    //If a job has the correct format but the wrong result then return JobInvalidException.
+    public void submitJob(Job toSubmit) throws FormatInvalidException, JobInvalidException;
     
     //Is there code for validating the result of a job?
     public boolean isJobValidationEnabled();
     
-    //Is a finshed job correct?
-    //If validation is not possible then JobValidationNotEnabledException should be thrown.
-    //Computation MUST NOT be complete.
-    public boolean validateJob(Job toValidate) throws JobValidationNotEnabledException;
     
     //Reset all active jobs.
     //This can be used if a server restart looses the list of active jobs.
