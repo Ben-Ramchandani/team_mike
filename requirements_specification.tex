@@ -74,15 +74,15 @@
 \section{Introduction}
 
 \subsection{Project Abstract}
-When people browse social media sites on their phones for hours every day, most of the CPU power goes unused. The old desktop equivalent of this problem was the screensaver, which did little of value until it was co-opted for distributed computing projects sunt as SETI@home. The purpose of the project is to create a platform that can perform useful computation in the background of a large number of mobile phones, while owners are on social media – or even while they are asleep. It will run cross-platform. It should give the appropriate incentives to users since it will drain batteries and probably incur network charges. 
+When people browse social media sites on their phones for hours every day, most of the CPU power goes unused. The old desktop equivalent of this problem was the screensaver, which did little of value until it was co-opted for distributed computing projects such as SETI@home. The purpose of the project is to create a platform that can perform useful computation in the background of a large number of mobile phones, while owners are on social media – or even while they are asleep. It will run cross-platform. It should give the appropriate incentives to users since it will drain batteries and probably incur network charges. 
 
 \subsection{Project Description}
-The aim of the project is to produce a system to which people can send large parallelizable computations, and which sends this work to be done on idle on-charge mobile devices.
+The aim of the project is to produce a system to which people can send large parallelizable computations, and which sends this work to be done on idle mobile devices.
 \subsection{Risk Analysis}
 There are some issues that this project will have to deal with, such as
 \begin{itemize}
- \item Difficulty of finding a computation activity that users will want to run, that can be distributed, results verified to be correct and that we can implement.
- \item Difficulty of managing the security of the phone while executing code from a remote source.
+ \item The difficulty of finding a computation activity that users will want to run, that can be distributed, results verified to be correct and that we can implement.
+ \item The difficulty of managing the security of the phone while executing code from a remote source.
  \item Keeping full CPU power while the screen is off.
 \end{itemize}
 
@@ -90,20 +90,20 @@ There are some issues that this project will have to deal with, such as
 \subsection{Background and Prior Work}
 There have been a few similar projects in the past, generally focussing on personal computers. A notable example is BOINC, which powers SETI@home, amongst other projects. Particularly, in its volunteer computing projects, it has to deal with the fact that volunteers (users, in our terminology) are unaccountable. It does this by two result validation strategies: syntax checking and replication checking. Syntax checking is used to check that the result of a job has the expected form, and uses a function specified by the project (computation, in our terminology) to do this. Replication checking sends each job to multiple volunteers, and accepts the results only if there is a strict majority result. This also allows for some project-specific function to decide whether results are equivalent.
 
-BOINC expressedly requires its volunteers to trust the code being run on their computers. This has the consequence of making projects opt-in on the part of volunteers, which limits the amount of projects there can be. In contrast, we will aim to have a system which is secure for users, so that each user can be sent arbitrary jobs without intervention.
+BOINC explicitly requires its volunteers to trust the code being run on their computers. This has the consequence of making projects opt-in on the part of volunteers, which limits the amount of projects there can be. In contrast, we will aim to have a system which is secure for users, so that each user can be sent arbitrary jobs without intervention.
 
 \subsection{Terminology}
 For clarity, we introduce the following terms:
 
 
 \begin{description}
-      \item [The server] is a computer managing customer-requested computations. This management includes the splitting of computations into jobs, the dispatchment of jobs to users, and the assembly of results.
+      \item [The server] is a computer managing customer-requested computations. This management includes the splitting of computations into jobs, the dispatching of jobs to users, and the assembly of results.
       \item [A computation] is a collection of code and data. The aim of the system is to run each computation it receives, and return each result to the relevant customer.
       \item [A customer] is an entity that sends in a computation, and expects its result.
       \item [A device] is any device on which customer code is executed. Initially, this refers only to Android devices, though we should build the system in such a way that any mobile device operating system can be supported.
-      \item [A job] is some part of a computation which is to be completed by a single phone.
-      \item [A user] is a person using a smartphone to do jobs. In practice, this also refers to the application running on the phone. We specifically avoid the word “client”, given that it could be interpreted as “customer”.
-      \item [The system.] The combination of server and phones is referred to as the system.
+      \item [A job] is some part of a computation which is to be completed by a single device.
+      \item [A user] is a person using a device to do jobs. In practice, this also refers to the application running on the device. We specifically avoid the word “client”, given that it could be interpreted as “customer”.
+      \item [The system.] The combination of server and devices is referred to as the system.
 \end{description}
 From the customer’s point of view, we provide a service to have large computations done quickly. For users, we plan to offer rewards for doing work, the details of which will be explored later in the document.
 \section{System Description}
@@ -126,7 +126,7 @@ The client will send requests that involve big data. This module will split the 
 
 \paragraph{Scheduler Module:}
 
-The server will keep a queue of available jobs and a queue of available devices. The scheduler will link the job and device. It will take into account whether the job is fitted for the device (e.g. send less data to a phone that is not on charge). It should also track whether the jobs are being finalized in the selected time. If not, the job is sent again. However, the first result to come is the one that will be taken into account. This part is also concerned with keeping internal state of the server consistent; make sure that jobs receive only one result etc.
+The server will keep a queue of available jobs and a queue of available devices. The scheduler will link the job and device. It will take into account whether the job is fitted for the device (e.g. send less data to a device that is not on charge). It should also track whether the jobs are being finalized in the selected time. If not, the job is sent again. However, the first result to come is the one that will be taken into account. This part is also concerned with keeping internal state of the server consistent; make sure that jobs receive only one result etc.
 
 Whenever a valid result is received, the job associated is marked as completed, and the result is registered in a result table. When all the jobs from a given Computation are done, the result table is either used as a seed for a further Computation, or sent back to the Customer. 
 
@@ -141,7 +141,7 @@ The app for the worker devices is split into two main functionalities: the Worke
 \paragraph{The Worker App}
 is the application through which we ensure that the device's owner has the incentives to let the app run. This will consist of a system of leaderboards, achievements and rewards, stats of the  computation performed, news about the project they are contributing to, sharing etc.
 \paragraph{The Background Service} 
-is the program that connects to the main server. Whenever the device is available it will notify the server, sending meta-information (battery life, location, position, charging state) that will aid in tailoring the job to not interfere with the owners' experience. It will receive Jobs from the server and send back the result. If the computation fails the phone will discard and resend the availability message.
+is the program that connects to the main server. Whenever the device is available it will notify the server, sending meta-information (battery life, location, position, charging state) that will aid in tailoring the job to not interfere with the owners' experience. It will receive Jobs from the server and send back the result. If the computation fails the device will discard and resend the availability message.
 
 \subsection{Customer Interface}
 The customer needs to specify to the server a series of data that will specify the computation, such as the input, a map function etc. He/She will choose the function that will be applied to the data either from a set of predefined one, or build one himself based on our templates.
@@ -159,7 +159,7 @@ The customer needs to specify to the server a series of data that will specify t
 
 \begin{itemize}
 	\item Response times vary on the type of job, but long running jobs shall be interrupted after a timeout period has ended.
-	\item The application should not drain battery, so the intensity of computation must be limited when the phone is not charging.
+	\item The application should not drain battery, so the intensity of computation must be limited when the device is not charging.
 	\item The computation should not impact the performance of other active applications heavily.
 	\item The computation should not cause any overheating or damage the hardware.
 	\item Data-heavy computation should not be performed over the mobile network.
@@ -187,7 +187,7 @@ The customer needs to specify to the server a series of data that will specify t
 \subsection{Availability}
 
 \begin{itemize}
-	\item Server should prioritise devices that are statistically more likely to be able to perform heavy computation, e.g. depending on timezones.
+	\item Server should prioritise devices that are statistically more likely to be able to perform heavy computation, e.g. depending on time zones.
 
 \end{itemize} 
 
@@ -239,15 +239,15 @@ Server to Device: JobMessage
 \subsection{Constraints, assumptions and dependencies}
 \paragraph{Constraints}
 \begin{itemize}
-	\item The jobs should have small to medium computation in order to make sure at least one job is solved when the phone is charging. This is due to the fact that we have no control on the amount of time the user lets his phone to charge.
+	\item The jobs should have small to medium computation in order to make sure at least one job is solved when the device is charging. This is due to the fact that we have no control on the amount of time the user lets his device charge.
 
-	\item The amount of data which is sent over the network. Since we are using WiFi, the data size shouldn’t be large in order to prevent data loss.
+	\item The amount of data which is sent over the network. Since we are using WiFi, the data size shouldn't be large in order to prevent data loss.
 \end{itemize} 
 
 \paragraph{Assumptions}
 \begin{itemize}
-	\item We assume at least one job will be executed each time the phone is charging. 
-	\item The given computation can be split into independent jobs which can be given to the phones.
+	\item We assume at least one job will be executed each time the device is charging. 
+	\item The given computation can be split into independent jobs which can be given to the devices.
 	\item The phones will not overload due to both the computation and the charging.
 	\item The user does not use the phone while charging.
 \end{itemize} 
