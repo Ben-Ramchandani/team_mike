@@ -1,2 +1,8 @@
 *.class
 *.jar
+*.aux
+*.log
+*.pdf
+*.idx
+*.gz
+*.toc
