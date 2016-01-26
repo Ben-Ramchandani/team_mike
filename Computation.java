@@ -6,7 +6,12 @@
     
     //A constant, unique identifier associated with the object.
     //If there are multiple computations of the same type then they may share a name, but not an ID.
+    //For example if we have a generic MapReduce, there will be many computations with the name "MapReduce",
+    //but each will have a unique ID.
     public long getComputationID();
+    
+    //Get the name for this computation.
+    public String getName();
     
     //Request a job from this computation.
     //If the Computation needs other jobs to complete first, or is exhausted, then JobNotAvailableException should be throw.
@@ -22,8 +27,7 @@
     //Computation MUST be complete.
     public String getResult();
     
-    //Get the unique name for this computation.
-    public String getName();
+
     
     //Get the data associated with this computation.
     //This should only be data common to all jobs this object gives.
