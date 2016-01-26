@@ -1,12 +1,12 @@
 ﻿public interface Computation {
-    //The interface for the computation Object given to us by the client.
+    //The interface for the computation Object, either a template that we make, or given to us directly by the customer.
     //All methods:
     //MUST be thread safe.
     //MUST not block.
     
     //A constant, unique identifier associated with the object.
     //If there are multiple computations of the same type then they may share a name, but not an ID.
-    //For example if we have a generic MapReduce, there will be many computations with the name "MapReduce",
+    //For example if we have a generic MapReduce template, there will be many computations with the name "MapReduce",
     //but each will have a unique ID.
     public long getComputationID();
     
@@ -14,7 +14,7 @@
     public String getName();
     
     //Request a job from this computation.
-    //If the Computation needs other jobs to complete first, or is exhausted, then JobNotAvailableException should be throw.
+    //If the Computation needs other jobs to complete first, or is exhausted, then JobNotAvailableException should be thrown.
     public Job getJob() throws JobNotAvailableException;
 
     //Have all jobs been given out (not necessarily been handed back in).
@@ -37,7 +37,7 @@
     
     //Submit a completed job, validating if possible.
     //If a job fails validation the server should retry on another phone.
-    //If a job fails repeatedly the whole computation should be suspended and this MUST be logged by the server.
+    //If a job fails repeatedly, the whole computation should be suspended and this MUST be logged by the server.
     //If a job has the correct format but the wrong result then return JobInvalidException.
     public void submitJob(Job toSubmit) throws FormatInvalidException, JobInvalidException;
     
