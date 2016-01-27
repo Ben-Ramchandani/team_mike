@@ -2,6 +2,7 @@
 %\documentclass[a4paper,10pt]{scrartcl}
 
 \usepackage{graphicx}
+\usepackage{multicol}
 \usepackage{float}
 \usepackage{listings}
 \usepackage{color}
@@ -383,33 +384,31 @@ The home screen will give a brief description of the currently running computati
     \item The Achievements screen lists general and computation-specific achievements to provide an incentive for users to use the application.
     \item The Settings screen lets the user tailor the computation process to their needs. Settings include: setting the mobile data usage limit (how much data can be accessed and sent through the mobile network when WiFi is not available – can be 0), battery usage limit (computation should stop when battery level reaches a lower limit), details about location (e.g. computation can be more intensive when phone is at home), scheduling (time periods when computation can become more intensive), notifications, etc.
 \end{itemize}
-The application also lets the user connect to Facebook and share statistics or achievements which also helps to advertise the application.\\
-The computation itself will run in a background service. The service will run all the time, and check if the phone is charging (using BatteryManager). In the case that a computation can take place, the service will start the computation. If the phone is not charging but the job has not finished, then all the data will be discarded and the service will send an availability signal to the server.
+The application also lets the user connect to Facebook and share statistics or achievements which also helps to advertise the application.\par
+The computation itself will run in a background service. It will run on the main thread in the background, performing computation while the app is in the background or the phone is sleeping. The computation process can be stopped by turning it off in the app, or closing the app.
 
-\subsubsection{Database service}
+\subsubsection{Local database}
 
-A database will be used in order to keep track of the number of jobs solved and how long it took to compute it. This will have an impact on the computation per time graphic and also for the social part of the app.
+A local, shared database will be used to store metadata about the running and completed jobs and computations. The background service adds entries to the database when it receives a new job or computation and after it has finished the process. The user activity (GUI) can then access this database for statistics and evaluating rewards. The underlying implementation will be a local SQLite database.
 
-A local, shared database will be used to store metadata about the running and completed jobs and computations. The background service adds entries to the database when it receives a new job or computation and after it has finished the process. The user activity (GUI) can then access this database for statistics and evaluating rewards.
-\vspace{1em}
-
-\textbf{Computation table:}
-
-Name\\
+\begin{multicols}{2}
+\paragraph{Computation table:} ~\\
+\noindent Name\\
 ID\\
 Parameters\\
 Status: waiting, active, complete, error\\
-Result
-\vspace{1em}
+Result\\
+Start time\\
+End time
 
-\textbf{Completed job table:}
-
-Computation ID\\
+\paragraph{Job table:} ~\\
+\noindent Computation ID\\
 Job ID\\
-Computation Name\\
-Phone ID\\
+Duration\\
+Number of bytes sent\\
+Number of bytes analysed\\
+\end{multicols}
 
-\noindent The database module will also contain a log, which will be a text file rather than a database table entry.
 
 \subsection{Constraints and assumptions}% and dependencies}
 \paragraph{Constraints}
