@@ -1,0 +1,160 @@
+\documentclass[
+  twoside,
+  10pt, a4paper
+]{article}
+
+
+\usepackage{acronym}
+
+
+
+\setlength{\parindent}{0pt}
+\setlength{\oddsidemargin}{-20pt}
+\setlength{\evensidemargin}{-20pt}
+\setlength{\topmargin}{-60pt}
+\setlength{\textwidth}{480pt}
+\setlength{\textheight}{700pt}
+\setlength{\marginparwidth}{0pt}
+
+\title{Project Plan}
+\author{Team Mike}
+
+\begin{document}
+
+\begin{titlepage}
+	\centering
+	
+	{\scshape\Large Team Mike\par}
+	\vspace{4cm}
+	{\huge\bfseries Put your Phone to Work\par}
+	\vspace{1.5cm}
+	{\Large\
+	Project plan
+	\par}
+	\vspace{2cm}
+	{\Large\itshape 
+	      Ben Ramchadani\\
+	      Dmitrij Szamozvancev\\
+	      Razvan Kusztos\\
+	      James Wood \\
+	      Laura Nechita \\
+	      Jack Needham
+	      \par}
+	\vfill
+
+% Bottom of the page
+	{\large \today\par}
+\end{titlepage}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Overview}
+
+\subsection{Team members}
+
+We have six team members:
+\begin{itemize}
+\item Ben Ramchadani
+\item Dmitrij Szamozvancev
+\item Razvan Kusztos
+\item James Wood
+\item Laura Nechita
+\item Jack Needham
+\end{itemize}
+
+
+
+\subsection{Components and roles}
+
+Ben Ramchandani is the project manager and point of contact.
+
+The system is split into three main components:
+\begin{itemize}
+\item The job server and example computations.
+
+Ben Ramchandani and Razvan Kusztos will work on the server.
+
+\item The phone app user interface.
+
+Dmitrij Szamozvancev and Laura Nechita will work on the user interface.
+
+\item The phone app worker service.
+
+James Wood and Jack Needham will work on the app service.
+\end{itemize}
+
+
+
+\newpage
+\section{Implementation plan}
+
+
+\subsection{Server}
+
+Razvan Kusztos and Ben Ramchandani.
+
+\subsubsection{Strategy}
+
+Give that we have split the server into modules, we aim to follow an Agile development method, focusing on building a rapid horizontal prototype before fully implementing each module
+and unit testing them. We hope this will allow us to get a minimum viable product within two weeks so we can begin implementing extra features.
+
+\subsubsection{Prototype}
+
+We aim to have a working prototype with very limited functionality ready in the next few days.
+This will allows us to quickly find unforeseen problems with the design and give us a base for moving forward.\\
+
+We then intend to fully implement the Network module first,this allows us to test its design and also means it is fixed and available as soon as possible for the app to test against.\\
+
+The other modules can be replaced with basic prototypes:\\
+Computation module: A single example computation - checking for prime numbers\\
+Database module: Print requests to console\\
+Scheduler: Just keep a list of jobs\\
+
+
+\subsubsection{Implementation order}
+
+Once the initial prototype is complete we will properly implement the rest of the modules to specification in this order.
+
+\paragraph{Scheduler:} This allows us to test the system with multiple users and ensure it gives correct results.
+
+\paragraph{Computation module:} This allows us to begin making and testing more example computations.
+
+\paragraph{Database module:} This can be left until now as the previous modules only need to read, not write, from it.
+
+\paragraph{Computation Template Manager and Customer interface:} These are left until last as the system can be tested to a large extent with these replaced with hardcoded versions.
+
+
+\subsubsection{Additional work}
+
+After each part is implemented to the specification, if we have time we will start developing additional features.\\
+For example:
+\begin{itemize}
+\item An interface for customer to use.
+\item Our own HTTP server for giving out data.
+\item Runtime loading of new computation templates.
+\end{itemize}
+
+\subsubsection{Unit tests}
+
+We will split the modules between us when we implement them. We will write unit tests not only for our own modules, but for each others.
+This ensures we have a common understanding of each module. The tests will use JUnit, the standard for Java.
+
+
+
+
+
+
+
+\subsection{Device user interface}
+
+\subsection{Device service}
+
+\subsection{Integration testing}
+\paragraph{Stress test}
+
+Once we have a minimal viable product we will test the system with an image feature extraction computation that will need to distribute pictures across the connected devices.
+We will use this example as it utilizes all the server modules and since it is an intensive computation, we will be able to deliver some representative benchmarks.
+These benchmarks will allow us to plan any tweaks to the system before the deadline.
+
+\end{document}
