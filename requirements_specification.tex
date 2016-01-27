@@ -13,6 +13,7 @@
 
 \setlength{\textheight}{710pt}
 \setlength{\topmargin}{-60pt}
+\setlength{\parindent}{0pt}
 
 \lstset{frame=tb,
   language=Java,
@@ -339,7 +340,7 @@ The computation will be recorded in the database and handed over to the computat
 
 The customer needs to specify to the server a series of data that will specify the computation, such as the input, a map function etc. He/She will choose the function that will be applied to the data either from a set of predefined one, or build one himself based on our templates.
 
-\hspace{-110pt}\includegraphics[height=270pt]{serveruml.png}
+\hspace{-95pt}\includegraphics[height=270pt]{serveruml.png}
 
 \subsubsection{Worker Devices}
 The app for the worker devices is split into two main functionalities: the Worker App and the Background Service. 
@@ -390,15 +391,18 @@ The computation itself will run in a background service. The service will run al
 A database will be used in order to keep track of the number of jobs solved and how long it took to compute it. This will have an impact on the computation per time graphic and also for the social part of the app.
 
 A local, shared database will be used to store metadata about the running and completed jobs and computations. The background service adds entries to the database when it receives a new job or computation and after it has finished the process. The user activity (GUI) can then access this database for statistics and evaluating rewards.
+\vspace{1em}
 
-\paragraph{Computation table:}
+\textbf{Computation table:}
+
 Name\\
 ID\\
 Parameters\\
 Status: waiting, active, complete, error\\
 Result
+\vspace{1em}
 
-\paragraph{Completed job table}
+\textbf{Completed job table:}
 
 Computation ID\\
 Job ID\\
@@ -422,6 +426,7 @@ Phone ID\\
 	\item We assume that the device will protect itself from overheating.
 \end{itemize} 
 
+\newpage
 \section{Management strategy}
 
 Project manager: Ben Ramchandani
