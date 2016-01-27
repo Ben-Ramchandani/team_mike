@@ -7,9 +7,7 @@
 #Any other data can just be added to all the phones requests, eg gps co-ordinates, battery info etc.
 #The order of key:value pairs does not matter.
 
-
 ### Phone request to server to fetch a new job ###
-
 {
     "version": "0.0.1",
     "request": "getJob",
@@ -17,7 +15,6 @@
 }
 
 #Server response
-
 {
     "version": "0.0.1",
     "response_code": 200, #Just reuse HTTP codes - 200 OK
@@ -27,7 +24,6 @@
 }
 
 #If no jobs are available
-
 {
     "version": "0.0.1",
     "response_code": 404,
@@ -36,7 +32,6 @@
 }
 
 #On an unexpected request return an error
-
 {
     "version": "0.0.1",
     "response_code": xxx, #xxx != 200
@@ -49,9 +44,8 @@
 
 
 ### Phone request for computation data ###
+
 #Request for job data is nearly identical, but replace "computationData" with "jobData".
-
-
 {
     "version": "0.0.1",
     "request": "getComputationData",
@@ -61,7 +55,6 @@
 }
 
 #Server response
-
 {
     "version": "0.0.1",
     "response_code": 200,
@@ -73,10 +66,6 @@
 }
 
 
-
-
-
-
 ### Phone request for code (a Java object) ###
 #Instead of providing the code from this API we simply serve it off an HTTP server at some URL,
 #(probably http://groups.ds.cam.ac.uk/clteach/grpproj/mike/$computationName).
@@ -85,11 +74,7 @@
 #We can upgrade to HTTPS with a hard coded certificate for just the code easily
 #The app can use URLClassLoader to hide the complexity of dynamically loading classes over the internet.
 
-
-
-
 ### Phone submitting completed job ###
-
 {
     "version": "0.0.1",
     "request": "submitJob",
@@ -102,11 +87,8 @@
 #No response expected
 
 
-
-
 ### Phone requesting the server log something ###
 #For debugging/error purposes
-
 {
     "version": "0.0.1",
     "request": "log",

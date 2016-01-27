@@ -14,6 +14,7 @@ public interface Job {
     
     //Get the data to send to the client.
     //Should be specific to this job.
+    //This could consist of links to other resources to be fetched over HTTP.
     public String getJobData();
     
     //Add the data returned by the phone before handing it back to it's parent Computation.

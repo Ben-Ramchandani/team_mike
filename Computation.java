@@ -43,9 +43,4 @@
     
     //We may add information about whether each job should be run on multiple phones,
     //which would give a better guarantee of accurate results.
-    
-    //Reset all active jobs.
-    //This can be used if a server restart looses the list of active jobs.
-    //If this is not possible the computation should reset.
-    public void reset();
 }
