@@ -240,7 +240,7 @@ From the customer’s point of view, we provide a service to have large computat
 \item Be able to suspend or stop computation on request from interface.
 \item Run computations with minimal permissions.
 \item Provide an interface for the computation to fetch data over HTTP.
-\item Rrun computations only at times determined by the settings.
+\item Run computations only at times determined by the settings.
 \begin{itemize}
 \item On charge.
 \item Above \% battery.
@@ -330,9 +330,9 @@ If data is too large to be served by the job server then it will be handed off t
 The database will be available for querying from from the server interface to fetch computation results and logs.
 
 %Razvan this is your functions module with a different name
-\paragraph{Computation template manager}
+\paragraph{Computation template manager:}
 
-This module will manage the run time creation of Copmutations that follow one of our templates. It will take the name of a template and it's parameters and create the Copmutation object.
+This module will manage the run time creation of Computations that follow one of our templates. It will take the name of a template and it's parameters and create the Computation object.
 The computation will be recorded in the database and handed over to the computation module.
 
 \paragraph{Customer Interface:}
@@ -373,10 +373,25 @@ We will extend this interface to create computation templates that the customer 
 
 \lstinputlisting[language=Java]{Job.java}
 
-\subsubsection{Dabase entries}
+\subsubsection{User interface}
+The graphical interface of the user application will enable the user to control various aspects of the computation process, as well as set preferences and constraints. A master toggle can be used to enable or disable the computation service: turning it on will initialise a background service and connect the application to the server. This gives the user a simple way to start and end computations, and also prevents unnecessary processing if the user launches the app accidentally. The user can log in via their Google or Facebook account to access the social features of the application, but this is not necessary. \\
+The home screen will give a brief description of the currently running computations, quick settings and short statistics. A navigation menu gives access to the list of computations, detailed statistics, settings and achievements. 
+\begin{itemize}
+    \item The Computations screen lists the selected computations and lets the user add a new one.
+    \item The Statistics screen shows simple graphs and tables that give information about the completed jobs and computations, duration of activity, etc. 
+    \item The Achievements screen lists general and computation-specific achievements to provide an incentive for users to use the application.
+    \item The Settings screen lets the user tailor the computation process to their needs. Settings include: setting the mobile data usage limit (how much data can be accessed and sent through the mobile network when WiFi is not available – can be 0), battery usage limit (computation should stop when battery level reaches a lower limit), details about location (e.g. computation can be more intensive when phone is at home), scheduling (time periods when computation can become more intensive), notifications, etc.
+\end{itemize}
+The application also lets the user connect to Facebook and share statistics or achievements which also helps to advertise the application.\\
+The computation itself will run in a background service. The service will run all the time, and check if the phone is charging (using BatteryManager). In the case that a computation can take place, the service will start the computation. If the phone is not charging but the job has not finished, then all the data will be discarded and the service will send an availability signal to the server.
+
+\subsubsection{Database service}
+
+A database will be used in order to keep track of the number of jobs solved and how long it took to compute it. This will have an impact on the computation per time graphic and also for the social part of the app.
+
+A local, shared database will be used to store metadata about the running and completed jobs and computations. The background service adds entries to the database when it receives a new job or computation and after it has finished the process. The user activity (GUI) can then access this database for statistics and evaluating rewards.
 
 \paragraph{Computation table:}
-
 Name\\
 ID\\
 Parameters\\
