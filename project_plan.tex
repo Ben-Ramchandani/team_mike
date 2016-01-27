@@ -96,7 +96,7 @@ Razvan Kusztos and Ben Ramchandani.
 
 \subsubsection{Strategy}
 
-Give that we have split the server into modules, we aim to follow an Agile development method, focusing on building a rapid horizontal prototype before fully implementing each module
+Given that we have split the server into modules, we aim to follow an Agile development method, focusing on building a rapid horizontal prototype before fully implementing each module
 and unit testing them. We hope this will allow us to get a minimum viable product within two weeks so we can begin implementing extra features.
 
 \subsubsection{Prototype}
@@ -104,10 +104,10 @@ and unit testing them. We hope this will allow us to get a minimum viable produc
 We aim to have a working prototype with very limited functionality ready in the next few days.
 This will allows us to quickly find unforeseen problems with the design and give us a base for moving forward.\\
 
-We then intend to fully implement the Network module first,this allows us to test its design and also means it is fixed and available as soon as possible for the app to test against.\\
+We then intend to fully implement the Network module first, this allows us to test its design and also means it is fixed and available as soon as possible for the app to test against.\\
 
 The other modules can be replaced with basic prototypes:\\
-Computation module: A single example computation - checking for prime numbers\\
+Computation module: A single example computation -- checking for prime numbers\\
 Database module: Print requests to console\\
 Scheduler: Just keep a list of jobs\\
 
@@ -147,6 +147,32 @@ This ensures we have a common understanding of each module. The tests will use J
 
 
 \subsection{Device user interface}
+
+Laura Nechita and Dmitrij Szamozvancev
+
+\subsubsection{Strategy} 
+In the last two weeks the team members have familiarised themselves with Android development, with us paying particular attention to the user interface and Android-specific features and APIs. A basic mockup of the interface can be quickly built using the available tools, and the custom functionality can be integrated and tested in parallel with the other subteams.
+
+\subsubsection{Prototype}
+We plan to have a basic prototype ready in the next few days, hopefully before the client meeting. The app would already have the general layout and menu structure, but no functionality. The modules can be connected to the various UI elements as they are being developed, which allows for quick and continuous testing. 
+
+\subsubsection{Implementation order}
+With the basic prototype finished, we intend to add functionality to the components in roughly the following order:
+\paragraph{Background service: } Set up and test the background execution service where the client code can run.
+\paragraph{Android-specific features: } Functionality related to the Android platform (e.g. battery and data management, location services) which can be set up before the back-end service is fully implemented.
+\paragraph{Database and social features: } Set up the database for the UI and service, add log-in options and basic social interactions.
+\paragraph{Integration: } Build in the back-end components and make the system fully functional.
+
+\subsubsection{Additional work} 
+Additional, optional features that we will consider if the time permits it:
+\begin{itemize}
+    \item Visualisation of the statistics (graphs, charts, etc.)
+    \item Additional settings and options for the user
+    \item A promotional website for the application and the service
+\end{itemize}
+
+\subsubsection{Testing}
+Testing of the user interface elements is made easy by the built-in emulator tool and the ability to use the application on an actual phone by connecting it to the program. Once the application is functional, it can be tested by running the example computations on the team members' phones, and we can even try to find a larger testing group to examine the scalability of our solution.
 
 %%%
 
