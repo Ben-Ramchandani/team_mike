@@ -1,8 +1,7 @@
-﻿#Proposed API for server/phone interaction, feel free to comment/change things.
-
-#Anything after a hash is a comment, otherwise it's JSON.
-#Basically my plan is just to send (UTF 8 encoded) JSON strings over a TCP socket.
+﻿#Server phone API
+#This API is based on sending (UTF 8 encoded) JSON strings over a TCP socket in a request/respons style.
 #We let the Java library and TCP worry about getting a reliable connection.
+#Anything after a hash is a comment, otherwise it's JSON.
 
 #phone-id could be the android ID: 'Secure.getString(getContext().getContentResolver(), Secure.ANDROID_ID);'
 #Any other data can just be added to all the phones requests, eg gps co-ordinates, battery info etc.
@@ -32,17 +31,17 @@
 {
     "version": "0.0.1",
     "response_code": 404,
-    "error": "No jobs lol", #Optional
+    "error": "No jobs available", #Optional
     "request": "getJob"
 }
 
-#On an unexpected error return something like
+#On an unexpected request return an error
 
 {
     "version": "0.0.1",
     "response_code": xxx, #xxx != 200
     "error": "Error description" #Optional
-    "request_header": "The header the server recieved", #Optional
+    "request_header": "Theheadertheserverrecieved", #Optional
     "request": "getJob",
     "jobID": x,
     "computationID": x

@@ -106,45 +106,11 @@ For clarity, we introduce the following terms:
       \item [The system.] The combination of server and devices is referred to as the system.
 \end{description}
 From the customer’s point of view, we provide a service to have large computations done quickly. For users, we plan to offer rewards for doing work, the details of which will be explored later in the document.
-\section{System Description}
-Our system will consist of a server, an app for the worker devices and (possibly) an interface for the customer. We are modelling it after the MapReduce programming framework.
 
-\subsection{Server}
-The server is the bridge between the customers request and the working devices. It will run in a JVM and consist of a series of modules that process the data and transfer information across the network. 
 
-\paragraph{Server/Client Module:}
 
-The server and working devices will communicate via JSON messages, aiming for platform independence. This module is responsible for mapping the IP addresses of the devices with their ID, sending and receiving messages. It will also ensure that the message passing is reliable and signal any repeated errors from the devices. The types of messages and their contents will be described in further sections.
+\section{System Requirements}
 
-\paragraph{JSON Parse Module:}
-
-This module is responsible for translating the data from the internal java representation to the platform independent JSON format. 
-
-\paragraph{Parallelization Module:}
-
-The client will send requests that involve big data. This module will split the data into independent jobs that are solvable at the device level. The hyper-parameters can be either fixed or vary as we are able to gain insights into the pool of available devices. We restrict the customer in the sense that we require his inputs to allow a simple parallelization routine, as it is in the case of MapReduce. 
-
-\paragraph{Scheduler Module:}
-
-The server will keep a queue of available jobs and a queue of available devices. The scheduler will link the job and device. It will take into account whether the job is fitted for the device (e.g. send less data to a device that is not on charge). It should also track whether the jobs are being finalized in the selected time. If not, the job is sent again. However, the first result to come is the one that will be taken into account. This part is also concerned with keeping internal state of the server consistent; make sure that jobs receive only one result etc.
-
-Whenever a valid result is received, the job associated is marked as completed, and the result is registered in a result table. When all the jobs from a given Computation are done, the result table is either used as a seed for a further Computation, or sent back to the Customer. 
-
-\paragraph{Database Module:}
-
-This module is concerned with keeping a structured record of all the data, as well as easy means from fetching data from the customers' source and sending it to the devices. It shall map the data to the Computations. In the scope of each Computation, data should have unique keys integer keys in order to simplify the parallelization. We expect most data to be in a URL format, that the devices will be able to fetch themselves.
-The database is available for querying from the devices, as we aim to send data via an already established protocol. 
-
-\subsection{Worker Devices}
-The app for the worker devices is split into two main functionalities: the Worker App and the Background Service. 
-
-\paragraph{The Worker App}
-is the application through which we ensure that the device's owner has the incentives to let the app run. This will consist of a system of leaderboards, achievements and rewards, stats of the  computation performed, news about the project they are contributing to, sharing etc.
-\paragraph{The Background Service} 
-is the program that connects to the main server. Whenever the device is available it will notify the server, sending meta-information (battery life, location, position, charging state) that will aid in tailoring the job to not interfere with the owners' experience. It will receive Jobs from the server and send back the result. If the computation fails the device will discard and resend the availability message.
-
-\subsection{Customer Interface}
-The customer needs to specify to the server a series of data that will specify the computation, such as the input, a map function etc. He/She will choose the function that will be applied to the data either from a set of predefined one, or build one himself based on our templates.
 
 \subsection{Functional Requirements}
 
@@ -218,23 +184,180 @@ The customer needs to specify to the server a series of data that will specify t
 	\item Users cannot cheat the system and get rewards without doing work, and customers cannot submit their projects for free.
 \end{itemize}
 
-\section{Component Specifications}
+\subsection{Per component requirements}
+
+\subsubsection{Server}
+
+\paragraph{Must:}
+
+\begin{itemize}
+\item Store active computations.
+\item Send jobs and data to devices on request.
+\item Be able to time out jobs that are not completed.
+\item Receive data for completed jobs.
+\item Retire computations that are complete, and make their result available.
+\item Handle multiple connected devices.
+\end{itemize}
+
+\paragraph{Should:}
+
+\begin{itemize}
+\item Store who completed each job.
+\item Verify jobs are correct where possible, and be able to send repeats of each job otherwise.
+\item Be able to load in new computations at run time.
+\item Be able to shutdown and resume without loss of result data.
+\item Be flexible in the types of computation available.
+\end{itemize}
+
+\paragraph{Could:}
+
+\begin{itemize}
+\item Send a list of available activities to the phone on request.
+\item Allow a phone to request a job from a certain computation.
+\item Be able to handle computations which involve large input files.
+\item Provide an interface for the customer to submit and get back computations.
+\end{itemize}
+
+\subsubsection{The app background service}
+
+\paragraph{Must:}
+
+\begin{itemize}
+\item Fetch jobs and data from job server.
+\item Get settings from the interface app.
+\item Run job in the background.
+\item Return data to job server.
+\item Queue requests and job submission if no connection is available.
+\end{itemize}
+
+\paragraph{Should:}
+
+\begin{itemize}
+\item Cache computation data and code to lower network traffic.
+\item Be able to suspend or stop computation on request from interface.
+\item Run the computation with minimal permissions.
+\item Provide an interface for the computation to fetch data over HTTP.
+\item Rrun computations only at times determined by the settings.
+\begin{itemize}
+\item On charge.
+\item Above \% battery.
+\item On WiFi.
+\item Combination of above.
+\end{itemize}
+\item Only use mobile network if allowed by settings.
+\item Run when the device starts.
+\item Keep track of time spent computing.
+\end{itemize}
+
+\subsubsection{The user interface app}
+
+\paragraph{Must:}
+
+\begin{itemize}
+\item Have the following settings, and be able to communicate them to the background service.
+\begin{itemize}
+\item Enable/disable service.
+\end{itemize}
+\item Have the service be able to access the settings when the app is not running.
+\item Be able to start the service.
+\end{itemize}
+
+\paragraph{Should:}
+
+\begin{itemize}
+\item Have the following settings, and be able to communicate them to the background service.
+\begin{itemize}
+\item Enable/disable service.
+\item Run only when charging.
+\item Only use WiFi.
+\end{itemize}
+\item Display current jobs/computations to user.
+\item Display the time spent on computations.
+\end{itemize}
+
+\paragraph{Could:}
+
+\begin{itemize}
+\item Allow user to specify which activities to run.
+\item Integrate with Facebook to post stats about computations completed.
+\end{itemize}
+
+\subsection{Acceptance criteria}
+
+%%%
+
+\section{Specification}
+
+\subsection{System description}
+
+Our system will consist of a server, an app for the worker devices and (possibly) an interface for the customer. We are modelling it after the MapReduce programming framework.
+
+\subsubsection{Server}
+The server is the bridge between the customers request and the working devices. It will run in a JVM and consist of a series of modules that process the data and transfer information across the network.
+
+\paragraph{Network Module:}
+
+The server and working devices will communicate via JSON messages, aiming for platform independence. This module is responsible for mapping the IP addresses of the devices with their ID, and spawning threads to incoming handle requests. It will also ensure that the message passing is reliable and signal any repeated errors from the devices. The types of messages and their contents will be described in further sections.
+
+\paragraph{JSON Parse Module:}
+
+This module is responsible for translating the data from the internal Java representation to the platform independent JSON format. 
+
+%\paragraph{Parallelization Module:}
+%
+%The client will send requests that involve big data. This module will split the data into independent jobs that are solvable at the device level. The hyper-parameters can be either fixed or vary as we are able to gain insights into the pool of available devices. We restrict the customer in the sense that we require his inputs to allow a simple parallelization routine, as it is in the case of MapReduce. 
+
+\paragraph{Computation module:}
+
+This module will manage active computations, fetching jobs and data, passing on results, keeping track of their progress and handling failure, as well as allowing new computations to be added to the system.
+We will have templates for computations, like MapReduce, that the customer provides the input for. We provide routines to parallelize the computations into jobs that run on individual devices.
+Once a computation is complete the result will be written to the database and the result becomes available for request.
+
+\paragraph{Scheduler Module:}
+
+The server will keep a queue of available jobs and a queue of available devices. The scheduler will link the job and device. It could take into account whether the job is fitted for the device (e.g. send less data to a device that is not on charge). It should also track whether the jobs are being finalized in the selected time. If not, the job is sent again. However, the first result to come is the one that will be taken into account. This part is also concerned with keeping internal state of the server consistent; make sure that jobs receive only one result etc.
+
+Whenever a valid result is received, the job associated is marked as completed, and it is passed back to the computation. The job ID and the phone that completed it is recorded in the database.
+
+\paragraph{Database Module:}
+
+This module is concerned with keeping a structured record of all the data, as well as easy means from fetching data from the customers' source and sending it to the devices.
+It will store a record of completed computations and their result, a list of job ids and the phone that completed them, and a log of diagnostic messages and errors.It will also store data for specific computations and manage a separate HTTP server that handles extra data for computations. In the scope of each Computation, jobs and data should have unique keys integer keys in order to simplify the storage mechanisms.
+If data is too large to be served by the job server then it will be handed off to a separate HTTP server running on a different port.
+The database will be available for querying from from the server interface to fetch computation results and logs.
+
+\subsubsection{Worker Devices}
+The app for the worker devices is split into two main functionalities: the Worker App and the Background Service. 
+
+\paragraph{The Worker App}
+is the application through which we ensure that the device's owner has the incentives to let the app run. This will consist of a system of leaderboards, achievements and rewards, stats of the  computation performed, news about the project they are contributing to, sharing etc.
+\paragraph{The Background Service} 
+is the program that connects to the main server. Whenever the device is available it will notify the server, sending meta-information (battery life, location, position, charging state) that will aid in tailoring the job to not interfere with the owners' experience. It will receive Jobs from the server and send back the result. If the computation fails the device will discard and resend the availability message.
+
+\subsubsection{Customer Interface}
+The customer needs to specify to the server a series of data that will specify the computation, such as the input, a map function etc. He/She will choose the function that will be applied to the data either from a set of predefined one, or build one himself based on our templates.
+
+\subsection{Interface Specifications}
 
 
-\subsection{Message passing}
+\subsubsection{Server to device API}
 
-The main types of messages will be: \\
-Device to Server: ResultMessage, AvailableMessage \\ 
-Server to Device: JobMessage
+The device will send requests to which the server will respond.
+There will be no ongoing connections, which should reduce load on the server, and minimal state about currently available users, which simplifies the server network component.
 
-\lstinputlisting{server_api_json.txt}
-\subsection{Interface Code}
+\lstinputlisting[language=Ruby]{server_api_json.txt}
 
+\newpage
+\subsubsection{Computation interface}
+
+We will extend this interface to create computation templates that the customer provides input for.
 \lstinputlisting[language=Java]{Computation.java}
 
 \lstinputlisting[language=Java]{ComputationCode.java}
 
 \lstinputlisting[language=Java]{Job.java}
+
+
 
 \subsection{Constraints, assumptions and dependencies}
 \paragraph{Constraints}
