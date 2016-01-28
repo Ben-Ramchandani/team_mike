@@ -104,7 +104,7 @@ and unit testing them. We hope this will allow us to get a minimum viable produc
 We aim to have a working prototype with very limited functionality ready in the next few days.
 This will allows us to quickly find unforeseen problems with the design and give us a base for moving forward.\\
 
-We then intend to fully implement the Network module first, this allows us to test its design and also means it is fixed and available as soon as possible for the app to test against.\\
+We then intend to fully implement the Network module, this allows us to test its design and also means that the AIP is fixed and available as soon as possible for the app to test against.\\
 
 The other modules can be replaced with basic prototypes:\\
 Computation module: A single example computation -- checking for prime numbers\\
@@ -118,7 +118,7 @@ Once the initial prototype is complete we will properly implement the rest of th
 
 \paragraph{Scheduler:} This allows us to test the system with multiple users and ensure it gives correct results.
 
-\paragraph{Computation module:} This allows us to begin making and testing more example computations.
+\paragraph{Computation module:} This allows us to begin making and testing more example computations and templates.
 
 \paragraph{Database module:} This can be left until now as in most cases the previous modules only need to read from, not write to, the database.
 
@@ -131,7 +131,7 @@ After each part is implemented to the specification, if we have time we will sta
 For example:
 \begin{itemize}
 \item An interface for customer to use.
-\item Our own HTTP server for giving out data.
+\item Our own HTTP server for giving out data, using a database back end.
 \item Runtime loading of new computation templates.
 \end{itemize}
 
@@ -148,7 +148,7 @@ This ensures we have a common understanding of each module. The tests will use J
 
 \subsection{Device user interface}
 
-Laura Nechita and Dmitrij Szamozvancev
+Laura Nechita and Dmitrij Szamozvancev.
 
 \subsubsection{Strategy} 
 In the last two weeks the team members have familiarised themselves with Android development, with us paying particular attention to the user interface and Android-specific features and APIs. A basic mockup of the interface can be quickly built using the available tools, and the custom functionality can be integrated and tested in parallel with the other subteams.
@@ -174,17 +174,47 @@ Additional, optional features that we will consider if the time permits it:
 \subsubsection{Testing}
 Testing of the user interface elements is made easy by the built-in emulator tool and the ability to use the application on an actual phone by connecting it to the program. Once the application is functional, it can be tested by running the example computations on the team members' phones, and we can even try to find a larger testing group to examine the scalability of our solution.
 
-%%%
 
+\newpage
 \subsection{Device service}
 
-%%%
+James Wood and Jack Needham
+
+\subsubsection{Strategy}
+
+The background service will be built closely in tandem with the user interface portion of the app, so we will be communicating closely with them and maintaining feature parity.
+
+\subsubsection{Prototype}
+
+We intend to build the prototype in two stages, these will then be used together to guide the rest of the implementation.
+
+A service that interacts with the user interface portion of the app will be built, so we can ensure data can be passed between the processes.
+This will also ensure we have a functioning service that will persist in the background.
+
+The next part is a prototype that interacts with the server using the specified API. We should test this works as soon as we can so we can fix any problems that could arise.
+
+\subsubsection{Implementation}
+
+Once the prototype is done we will implement the core functionality that runs the computation on the phone and ensure that is working with the other components before adding more features.
+
+\subsubsection{Additional work}
+Additional features that may be added once the core functionality is complete, for example:
+\begin{itemize}
+\item Notifying the app user interface of current jobs/computations
+\item Functionality to fetch extra data for the computation over HTTP when requested
+\item Being able to reduce the priority and suspend computations without losing progress
+\item Sending additional data to the server, like location and remaining battery
+\end{itemize}
+
 
 \subsection{Integration testing}
+
+Part of our strategy is to have prototype implementations for the interfaces between components as soon as possible, which should minimize problems when integrating.
+
 \paragraph{Stress test}
 
 Once we have a minimal viable product we will test the system with an image feature extraction computation. This will need to distribute images across the connected devices.
-We will use this example as it utilizes all the server modules and since it is an intensive computation, we will be able to deliver some representative benchmarks.
+We use this example as it utilizes all the server modules and, since it is an intensive computation, we will be able to deliver some representative benchmarks.
 These benchmarks will allow us to plan any tweaks to the system before the final deadline.
 
 \end{document}

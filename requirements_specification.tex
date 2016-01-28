@@ -130,7 +130,7 @@ From the customer’s point of view, we provide a service to have large computat
 
 \begin{itemize}
 	\item Response times vary on the type of job, but long running jobs shall be interrupted after a timeout period has ended.
-	\item The application should not drain battery excessively, so the intensity of computation must be limited when the device is not charging.
+	\item The application should not drain battery excessively, so the intensity of computation should be limited when the device is not charging.
 	\item The computation should not impact the performance of other active applications heavily.
 	\item The computation should not cause any overheating or damage the hardware.
 	\item Data-heavy computation should not be performed over the mobile network.
@@ -142,7 +142,7 @@ From the customer’s point of view, we provide a service to have large computat
 \begin{itemize}
 	\item The server managing computations and jobs must be secure.
 	\item Users should not be able to access the rewards without performing useful work.
-	\item No code should be sent to the users from the server that can compromise the phone.
+	\item No code should be sent to the users from the server that can compromise their device.
 \end{itemize} 
 
 \subsection{Reliability}
@@ -178,7 +178,7 @@ From the customer’s point of view, we provide a service to have large computat
 \subsection{Acceptance Criteria}
 
 \begin{itemize}
-	\item Client application can stably run in the background without draining the battery or using too much mobile data.
+	\item Client application can stably run in the background without excessively draining the battery or using too much mobile data.
 	\item Computations can run in parallel on multiple devices and provide useful, correct results to the server.
 	\item Server can effectively manage running computations and jobs, send new jobs to clients, collect results and control timeouts.
 	\item Server can verify the results and forward them to the customer.
@@ -339,19 +339,23 @@ The computation will be recorded in the database and handed over to the computat
 
 \paragraph{Customer Interface:}
 
-The customer needs to specify to the server a series of data that will specify the computation, such as the input, a map function etc. He/She will choose the function that will be applied to the data either from a set of predefined one, or build one himself based on our templates.
+The customer needs to give to the server a series of data that will specify the computation, such as the input, a map function etc.
+They will choose the parallelization method (e.g. MapReduce) that will be applied to the data from a set of predefined templates.
+
+\subsubsection{ULM class diagram of the server}
+This doesn't include all the implementation details, like custom exceptions etc. It is intended to give a graphical overview.
 
 \hspace{-95pt}\includegraphics[height=270pt]{serveruml.png}
 
 \subsubsection{Worker Devices}
-The app for the worker devices is split into two main functionalities: the Worker App and the Background Service. 
+The app for the worker devices is split into two main functionalities: the Worker App (the user interface) and the Background Service. 
 
 \paragraph{The Worker App:}
 
-The application through which we ensure that the device's owner has the incentives to let the app run. This will consist of a system of leaderboards, achievements and rewards, stats of the  computation performed, news about the project they are contributing to, sharing etc.
+The app that provides the user interface. It should include settings that determine when and how computations run, as well as displaying information about them to the user.
 
 \paragraph{The Background Service:} 
-The program that connects to the main server. Whenever the device is available it will notify the server, sending meta-information (battery life, location, position, charging state) that will aid in tailoring the job to not interfere with the owners' experience. It will receive Jobs from the server and send back the result. If the computation fails the device will discard and resend the availability message.
+Running in the background on the device, this program connects to the main server. Whenever the device is available it will notify the server, sending meta-information (battery life, location, position, charging state) that may aid in tailoring the job to not interfere with the owners' experience. It will receive Jobs from the server as well as the input data for them and send back the result. If the computation fails the device will discard it and resend the job request.
 
 
 
@@ -410,7 +414,7 @@ Number of bytes analysed\\
 \end{multicols}
 
 
-\subsection{Constraints and assumptions}% and dependencies}
+\subsection{Constraints, Assumptions and Dependencies}
 \paragraph{Constraints}
 \begin{itemize}
 	\item The jobs should have small to medium computation in order to make sure at least one job can be solved while, say, the device is charging. This is due to the fact that we don't have direct control of how long the user will let jobs run. This means we can only process computations that can be split into small jobs.
@@ -425,6 +429,16 @@ Number of bytes analysed\\
 	\item We assume that the device will protect itself from overheating.
 \end{itemize} 
 
+\paragraph{Dependencies}
+\begin{itemize}
+\item The app depends on the Android SDK and ecosystem.
+\item The server will use Java, so depend on OpenJDK and the associated standard library.
+\item The app will use SQLite to store settings.
+\item The server will use the PostgreSQL database.
+\item The server will use Apache HTTP for serving code and large data files.
+\item The org.json Java package will be used for JSON parsing.
+\end{itemize}
+
 \newpage
 \section{Management strategy}
 
@@ -432,7 +446,8 @@ Project manager: Ben Ramchandani
 
 \subsection{Team split by component}
 
-We have split up into smaller groups to work on individual components.
+We have split up into smaller sub-groups to work on individual components.
+Our management plans are described in the Project Plan document.
 
 \subsubsection{Server}
 
