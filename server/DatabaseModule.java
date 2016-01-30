@@ -1,3 +1,5 @@
+import java.util.List;
+
 public interface DatabaseModule {
     //This class manages the PostgreSQL database and any other non-volatile storage
     
@@ -43,18 +45,18 @@ public interface DatabaseModule {
     
     public void setComputationFailed(long ID);
     
-    public void computationComplete(long ID, string result);
+    public void computationComplete(long ID, String result);
     
-    public List<long> getComputationIDList();
+    public long[] getComputationIDArray();
     
-    public CopmutationDescr getComputation(long ID); //ComputationDesc is an object with the properties in the DB table
+    public ComputationDesc getComputation(long ID); //ComputationDesc is an object with the properties in the DB table
     
-    public void removeCopmutation(long ID);
+    public void removeComputation(long ID);
     
     public void addCompletedJob(Job j, long phoneID);
     
     public long getPhoneID(long jobID);
     public long getPhoneID(String jobName);
     
-    public List<long> getJobsByPhone(long phoneID);
+    public long[] getJobsByPhone(long phoneID);
 }

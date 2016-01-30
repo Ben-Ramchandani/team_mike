@@ -4,6 +4,5 @@ public class ComputationDesc {
     public String name;
     public String param;
     public String result = "";
-    public String status;
     public ComputationStatus status;
 }

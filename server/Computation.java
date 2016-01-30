@@ -1,4 +1,5 @@
-﻿public interface Computation {
+
+public interface Computation {
     //The interface for the computation Object, either a template that we make, or given to us directly by the customer.
     //All methods:
     //MUST be thread safe.
