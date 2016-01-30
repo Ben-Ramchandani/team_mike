@@ -1,0 +1,102 @@
+#Simplified Server/device API
+
+
+### For the job server ###
+==========================
+
+
+#Use HTTP(S) over TCP, with UTF-8 encoded JSON in the body.
+
+### Device requesting job ###
+
+HTTP POST to /getjob
+
+#Include JSON body:
+
+{
+    "version": "0.0.1",
+    "phone-id": "ANDROID_ID",
+    #Battery, memory, location...
+}
+
+#Expect response
+#We inlcude a job and computation ID
+#Small amounts of data for the job are included within this request,
+#e.g number ranges.
+#Pictures and similar should be requested separately from the data server.
+
+HTTP response code 200 - OK, close connection.
+
+#Include JSON body:
+
+{
+    "version": "0.0.1",
+    "jobData": "string",                #A small amount (<1MB) of data to send from the job server.
+    "fetchJobData": bool,               #Should extra data be fetched from /data/$computationName$/$jobName$?
+    "fetchComputationData": bool,       #Should extra data be fetched from /data/$computationName$?
+    "computationName": "name",          #Name assigned by the server, unique identifier, instead of ID
+    "jobName": "name",                  #Name assigned by the server, unique identifier
+    "jobDescriptionName": "string"      #name to send to UI for display
+    "jobDescription": "string",         #Description to send to the UI to display
+}
+
+
+# If no jobs are available on the server return HTTP response 555 - No Job, close connection
+
+#On other errors use normal HTTP response codes:
+#404 - not found, 400 - bad request, 503 - service unavailable e.t.c
+
+
+
+### Phone submitting Job ###
+
+HTTP POST to /submitjob
+
+#Include JSON body:
+
+{
+    "version": "0.0.1",
+    "phone-id": "ANDROID_ID",
+    #Battery, memory, location...
+    "computationName": "name",      #Name assigned by the server, unique identifier
+    "jobName": "name",              #Name assigned by the server, unique identifier
+    "resultData": "string"          #Result of the job
+}
+
+
+#Expect empty 200 - OK response
+
+
+
+### Phone requesting the server log something ###
+#For debugging/error purposes
+
+HTTP POST /log
+{
+    "version": "0.0.1",
+    "phone-id": "ANDROID_ID",
+    "logData": "string"
+}
+
+#Expect 200 - OK
+
+
+
+
+### For the Data server ###
+===========================
+
+#This HTTP(S) server gives out the .class files for the device to run,
+#as well as larger blocks of data, like hi-res images, to relieve load on the job server.
+#It will have a separate address to the job server (though this may be the same address because we are poor)
+#Will run on a different port
+
+#If extra data is required from this the "fetchJobData" or "fetchComputationData" flags will be set in the JSON.
+#Computation data and code fetched from here may be cached. 
+
+#For code point URLClassLoader at /code/$computationName/$
+
+#Request data from 
+#/data/$computationName$ or /data/$computationName$/$jobName$.
+
+#Normal HTTP(S) GET, no JSON metadata.

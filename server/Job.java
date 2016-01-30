@@ -4,6 +4,8 @@ public interface Job {
     
     //A unique (for this Computation) identifier associated with this job, given by the server.
     public long getJobID();
+    //Unique string identifier.
+    public String getJobName();
     
     //The ID of its parent computation
     public long getComputationID();
@@ -19,4 +21,10 @@ public interface Job {
     
     //Add the data returned by the phone before handing it back to it's parent Computation.
     public void addReturnData(String data) throws FormatInvalidException;
+    
+    //Get the title to be displayed on the UI
+    public String getDescTitle();
+    
+    //Get a description to be displayed in the UI
+    public String getDescString();
 }
