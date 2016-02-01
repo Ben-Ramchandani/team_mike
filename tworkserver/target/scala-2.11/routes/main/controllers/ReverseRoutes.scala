@@ -1,7 +1,7 @@
 
 // @GENERATOR:play-routes-compiler
-// @SOURCE:/home/razvan/groupproject/tworkserver/conf/routes
-// @DATE:Mon Feb 01 16:13:14 GMT 2016
+// @SOURCE:/home/razvan/groupproject/team_mike/tworkserver/conf/routes
+// @DATE:Mon Feb 01 20:43:47 GMT 2016
 
 import play.api.mvc.{ QueryStringBindable, PathBindable, Call, JavascriptLiteral }
 import play.core.routing.{ HandlerDef, ReverseRouteContext, queryString, dynamicString }
@@ -35,7 +35,19 @@ package controllers {
     }
 
   
-    // @LINE:13
+    // @LINE:21
+    def result(id:Long): Call = {
+      import ReverseRouteContext.empty
+      Call("POST", _prefix + { _defaultPrefix } + "result/" + implicitly[PathBindable[Long]].unbind("id", id))
+    }
+  
+    // @LINE:18
+    def subscribe(id:Long): Call = {
+      import ReverseRouteContext.empty
+      Call("GET", _prefix + { _defaultPrefix } + "computation/" + implicitly[PathBindable[Long]].unbind("id", id))
+    }
+  
+    // @LINE:12
     def available(): Call = {
       import ReverseRouteContext.empty
       Call("GET", _prefix + { _defaultPrefix } + "available")
@@ -45,6 +57,12 @@ package controllers {
     def index(): Call = {
       import ReverseRouteContext.empty
       Call("GET", _prefix)
+    }
+  
+    // @LINE:15
+    def job(): Call = {
+      import ReverseRouteContext.empty
+      Call("GET", _prefix + { _defaultPrefix } + "job")
     }
   
   }

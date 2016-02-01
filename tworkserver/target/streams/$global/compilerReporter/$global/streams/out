@@ -1,6 +1,1 @@
-[0m[[31merror[0m] [0m/home/razvan/groupproject/tworkserver/app/twork/Devices.java:13: non-static variable instance cannot be referenced from a static context[0m
-[0m[[31merror[0m] [0minstance[0m
-[0m[[31merror[0m] [0m/home/razvan/groupproject/tworkserver/app/twork/Devices.java:14: non-static variable instance cannot be referenced from a static context[0m
-[0m[[31merror[0m] [0minstance[0m
-[0m[[31merror[0m] [0m/home/razvan/groupproject/tworkserver/app/twork/Devices.java:16: non-static variable instance cannot be referenced from a static context[0m
-[0m[[31merror[0m] [0minstance[0m
+[0m[[31merror[0m] [0m/home/razvan/groupproject/team_mike/tworkserver/app/controllers/Application.java:64: ';' expected[0m

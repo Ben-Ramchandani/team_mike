@@ -1,7 +1,7 @@
 
 // @GENERATOR:play-routes-compiler
-// @SOURCE:/home/razvan/groupproject/tworkserver/conf/routes
-// @DATE:Mon Feb 01 16:13:14 GMT 2016
+// @SOURCE:/home/razvan/groupproject/team_mike/tworkserver/conf/routes
+// @DATE:Mon Feb 01 20:43:47 GMT 2016
 
 import play.api.routing.JavaScriptReverseRoute
 import play.api.mvc.{ QueryStringBindable, PathBindable, Call, JavascriptLiteral }
@@ -43,7 +43,27 @@ package controllers.javascript {
     }
 
   
-    // @LINE:13
+    // @LINE:21
+    def result: JavaScriptReverseRoute = JavaScriptReverseRoute(
+      "controllers.Application.result",
+      """
+        function(id) {
+          return _wA({method:"POST", url:"""" + _prefix + { _defaultPrefix } + """" + "result/" + (""" + implicitly[PathBindable[Long]].javascriptUnbind + """)("id", id)})
+        }
+      """
+    )
+  
+    // @LINE:18
+    def subscribe: JavaScriptReverseRoute = JavaScriptReverseRoute(
+      "controllers.Application.subscribe",
+      """
+        function(id) {
+          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "computation/" + (""" + implicitly[PathBindable[Long]].javascriptUnbind + """)("id", id)})
+        }
+      """
+    )
+  
+    // @LINE:12
     def available: JavaScriptReverseRoute = JavaScriptReverseRoute(
       "controllers.Application.available",
       """
@@ -59,6 +79,16 @@ package controllers.javascript {
       """
         function() {
           return _wA({method:"GET", url:"""" + _prefix + """"})
+        }
+      """
+    )
+  
+    // @LINE:15
+    def job: JavaScriptReverseRoute = JavaScriptReverseRoute(
+      "controllers.Application.job",
+      """
+        function() {
+          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "job"})
         }
       """
     )
