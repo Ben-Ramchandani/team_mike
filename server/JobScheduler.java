@@ -1,3 +1,5 @@
+package team_mike.server;
+
 public interface JobScheduler {
     /*
     Manages running jobs.
@@ -6,10 +8,11 @@ public interface JobScheduler {
     and timing out jobs that dont come back for too long.
     */
     
-    public Job getJob() throws JobNotAvailableException;
+	//Will return null if no jobs are available.
+    public JobData getJob(long phoneID);
     
     //Mimic the exceptions thrown by Copmutation.submitJob()
     //If the job fails submission then th JobScheduler will note it.
     //If a job fails repeatedly the computation will be failed.
-    public void submitJob();
+    public void submitJob(JobData j, long phoneID, String result);
 }

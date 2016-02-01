@@ -1,3 +1,5 @@
+package team_mike.server;
+
 public class ComputationDesc {
     //This class just holds data from the DB in a convenient format.
     public long id;
