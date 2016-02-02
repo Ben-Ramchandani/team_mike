@@ -8,7 +8,7 @@ public interface JobScheduler {
     
 	/* 
 	 * Make this singleton. 
-	 * Pass in the device to getJob() so we can allow at some point the users to make computations
+	 * Pass in the device to getJob() so we can allow at some point the users to choose computations
 	 * Maybe it shouldn't be an interface as we will have a way to find priority for the Job type -> so only one way to Schedule.
 	*/
 	
