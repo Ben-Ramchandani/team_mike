@@ -1,4 +1,4 @@
-import java.util.List;
+package team_mike.server;
 
 public interface DatabaseModule {
     //This class manages the PostgreSQL database and any other non-volatile storage

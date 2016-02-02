@@ -1,3 +1,5 @@
+package team_mike.server;
+
 public interface ComputationManager {
     /*
     This module manages active computations, fetching jobs from them and commiting results from the database,
@@ -7,12 +9,13 @@ public interface ComputationManager {
     
     //The scheduler requests jobs here
     //Get a job from any of the available computations.
-    //Only throw the exception if none of them have jobs available.
-    public Job getJob() throws JobNotAvailableException;
+    //Return null if no jobs are available
+    public Job getJob();
     
-    //Just pass through exceptions from Computation.submitJob()
+    
     //Pass the job on to the relevant computation object.
-    public void submitJob(Job j) throws JobInvalidException, FormatInvalidException;
+	//Write the job/phoneID to the Job part of the database.
+    public void submitJob(Job j, long phoneID);
     
     //If a job fails repeatedly.
     //Take the computation out the pool, log it and mark as failed in DB.

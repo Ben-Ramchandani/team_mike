@@ -1,3 +1,5 @@
+package team_mike.server;
+
 
 public interface Computation {
     //The interface for the computation Object, either a template that we make, or given to us directly by the customer.
@@ -16,9 +18,10 @@ public interface Computation {
     
     //Request a job from this computation.
     //If the Computation needs other jobs to complete first, or is exhausted, then JobNotAvailableException should be thrown.
-    public Job getJob() throws JobNotAvailableException;
+    public Job getJob();
 
     //Have all jobs been given out (not necessarily been handed back in).
+    //An exausted computation should never become un-exausted.
     public boolean isExausted();
     
     //Check whether this computation is complete.
@@ -29,11 +32,8 @@ public interface Computation {
     public String getResult();
     
 
-    
-    //Get the data associated with this computation.
-    //This should only be data common to all jobs this object gives.
-    //Should be constant.
-    public String getComputationData();
+    //Is there extra data associated with this computation?
+    public boolean hasExtraComputationData();
     
     
     //Submit a completed job, validating if possible.

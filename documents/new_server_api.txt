@@ -36,8 +36,8 @@ HTTP response code 200 - OK, close connection.
     "fetchComputationData": bool,       #Should extra data be fetched from /data/$computationName$?
     "computationName": "name",          #Name assigned by the server, unique identifier, instead of ID
     "jobName": "name",                  #Name assigned by the server, unique identifier
-    "jobDescriptionName": "string"      #name to send to UI for display
-    "jobDescription": "string",         #Description to send to the UI to display
+    "jobDescriptionName": "string",     #name to send to UI for display
+    "jobDescription": "string"          #Description to send to the UI to display
 }
 
 
