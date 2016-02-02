@@ -1,3 +1,5 @@
+package twork;
+
 public interface JobScheduler {
     /*
     Manages running jobs.

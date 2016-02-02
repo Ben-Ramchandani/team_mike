@@ -1,18 +1,15 @@
 [0m[[0mdebug[0m] [0m[0m
 [0m[[0mdebug[0m] [0mInitial source changes: [0m
 [0m[[0mdebug[0m] [0m	removed:Set()[0m
-[0m[[0mdebug[0m] [0m	added: Set(/home/razvan/groupproject/team_mike/tworkserver/app/twork/Job.java, /home/razvan/groupproject/team_mike/tworkserver/app/twork/JJob.java, /home/razvan/groupproject/team_mike/tworkserver/app/twork/JobScheduler.java, /home/razvan/groupproject/team_mike/tworkserver/app/twork/Jobs.java)[0m
-[0m[[0mdebug[0m] [0m	modified: Set(/home/razvan/groupproject/team_mike/tworkserver/app/twork/Device.java, /home/razvan/groupproject/team_mike/tworkserver/app/controllers/Application.java, /home/razvan/groupproject/team_mike/tworkserver/app/twork/Devices.java)[0m
+[0m[[0mdebug[0m] [0m	added: Set()[0m
+[0m[[0mdebug[0m] [0m	modified: Set()[0m
 [0m[[0mdebug[0m] [0mRemoved products: Set()[0m
 [0m[[0mdebug[0m] [0mExternal API changes: API Changes: Set()[0m
 [0m[[0mdebug[0m] [0mModified binary dependencies: Set()[0m
-[0m[[0mdebug[0m] [0mInitial directly invalidated sources: Set(/home/razvan/groupproject/team_mike/tworkserver/app/twork/Job.java, /home/razvan/groupproject/team_mike/tworkserver/app/twork/JJob.java, /home/razvan/groupproject/team_mike/tworkserver/app/twork/JobScheduler.java, /home/razvan/groupproject/team_mike/tworkserver/app/twork/Device.java, /home/razvan/groupproject/team_mike/tworkserver/app/controllers/Application.java, /home/razvan/groupproject/team_mike/tworkserver/app/twork/Jobs.java, /home/razvan/groupproject/team_mike/tworkserver/app/twork/Devices.java)[0m
+[0m[[0mdebug[0m] [0mInitial directly invalidated sources: Set()[0m
 [0m[[0mdebug[0m] [0m[0m
 [0m[[0mdebug[0m] [0mSources indirectly invalidated by:[0m
 [0m[[0mdebug[0m] [0m	product: Set()[0m
 [0m[[0mdebug[0m] [0m	binary dep: Set()[0m
 [0m[[0mdebug[0m] [0m	external source: Set()[0m
-[0m[[0mdebug[0m] [0mAll initially invalidated sources: Set(/home/razvan/groupproject/team_mike/tworkserver/app/twork/Job.java, /home/razvan/groupproject/team_mike/tworkserver/app/twork/JJob.java, /home/razvan/groupproject/team_mike/tworkserver/app/twork/JobScheduler.java, /home/razvan/groupproject/team_mike/tworkserver/app/twork/Device.java, /home/razvan/groupproject/team_mike/tworkserver/app/controllers/Application.java, /home/razvan/groupproject/team_mike/tworkserver/app/twork/Jobs.java, /home/razvan/groupproject/team_mike/tworkserver/app/twork/Devices.java)[0m
-[0m[[0minfo[0m] [0mCompiling 7 Java sources to /home/razvan/groupproject/team_mike/tworkserver/target/scala-2.11/classes...[0m
-[0m[[0mdebug[0m] [0mAttempting to call com.sun.tools.javac.api.JavacTool@32c69d69 directly...[0m
-[0m[[31merror[0m] [0m(compile:[31mcompileIncremental[0m) javac returned nonzero exit code[0m
+[0m[[0mdebug[0m] [0mAll initially invalidated sources: Set()[0m

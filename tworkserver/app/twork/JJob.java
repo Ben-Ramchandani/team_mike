@@ -1,6 +1,5 @@
 package twork;
-import
-@Entity
-public class JJob extends Model{
+
+public class JJob {
 //will rename
 }

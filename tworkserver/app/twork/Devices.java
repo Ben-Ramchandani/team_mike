@@ -11,7 +11,7 @@ public class Devices {
 	
 	private static Devices instance = null;
 	
-	private static HashMap<Long,Device> devices;
+	private static HashMap<Long,Device> devices = new HashMap<Long,Device>();
 	
 	public static Devices getInstance() {
 		if (instance == null) {

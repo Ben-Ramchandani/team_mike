@@ -4,7 +4,7 @@
 		module="tworkserver_2.11"
 		revision="1.0-SNAPSHOT"
 		status="integration"
-		publication="20160201231414"
+		publication="20160202120344"
 	>
 		<description>
 		tworkserver
@@ -46,7 +46,5 @@
 		<dependency org="com.typesafe.play" name="play-java-jdbc_2.11" rev="2.4.6" conf="compile->default(compile)"/>
 		<dependency org="com.typesafe.play" name="play-cache_2.11" rev="2.4.6" conf="compile->default(compile)"/>
 		<dependency org="com.typesafe.play" name="play-java-ws_2.11" rev="2.4.6" conf="compile->default(compile)"/>
-		<dependency org="com.typesafe.play" name="play-java-jpa_2.11" rev="2.4.6" conf="compile->default(compile)"/>
-		<dependency org="org.hibernate" name="hibernate-enititymanager_2.11" rev="3.6.9.Final" conf="compile->default(compile)"/>
 	</dependencies>
 </ivy-module>

@@ -1,7 +1,7 @@
 
 // @GENERATOR:play-routes-compiler
 // @SOURCE:/home/razvan/groupproject/team_mike/tworkserver/conf/routes
-// @DATE:Mon Feb 01 20:43:47 GMT 2016
+// @DATE:Tue Feb 02 12:10:43 GMT 2016
 
 package router
 
@@ -47,8 +47,9 @@ class Routes(
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """assets/$file<.+>""", """controllers.Assets.versioned(path:String = "/public", file:Asset)"""),
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """available""", """controllers.Application.available()"""),
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """job""", """controllers.Application.job()"""),
+    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """data/$jobID<[^/]+>""", """controllers.Application.data(jobID:Long)"""),
+    ("""POST""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """result/$jobID<[^/]+>""", """controllers.Application.result(jobID:Long)"""),
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """computation/$id<[^/]+>""", """controllers.Application.subscribe(id:Long)"""),
-    ("""POST""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """result/$id<[^/]+>""", """controllers.Application.result(id:Long)"""),
     Nil
   ).foldLeft(List.empty[(String,String,String)]) { (s,e) => e.asInstanceOf[Any] match {
     case r @ (_,_,_) => s :+ r.asInstanceOf[(String,String,String)]
@@ -90,7 +91,7 @@ class Routes(
     )
   )
 
-  // @LINE:12
+  // @LINE:18
   private[this] lazy val controllers_Application_available2_route = Route("GET",
     PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("available")))
   )
@@ -102,12 +103,18 @@ class Routes(
       "available",
       Nil,
       "GET",
-      """ Availability request""",
+      """ Availability request
+ JSON:
+	phone-id       : string
+	battery-life   : 0 - 100	
+	on-charge      : 0 / 1
+	on-WiFi		   : 0 / 1
+ also initialise session -> send ok().""",
       this.prefix + """available"""
     )
   )
 
-  // @LINE:15
+  // @LINE:22
   private[this] lazy val controllers_Application_job3_route = Route("GET",
     PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("job")))
   )
@@ -119,31 +126,32 @@ class Routes(
       "job",
       Nil,
       "GET",
-      """ Job request""",
+      """ Job request
+ """,
       this.prefix + """job"""
     )
   )
 
-  // @LINE:18
-  private[this] lazy val controllers_Application_subscribe4_route = Route("GET",
-    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("computation/"), DynamicPart("id", """[^/]+""",true)))
+  // @LINE:25
+  private[this] lazy val controllers_Application_data4_route = Route("GET",
+    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("data/"), DynamicPart("jobID", """[^/]+""",true)))
   )
-  private[this] lazy val controllers_Application_subscribe4_invoker = createInvoker(
-    Application_1.subscribe(fakeValue[Long]),
+  private[this] lazy val controllers_Application_data4_invoker = createInvoker(
+    Application_1.data(fakeValue[Long]),
     HandlerDef(this.getClass.getClassLoader,
       "router",
       "controllers.Application",
-      "subscribe",
+      "data",
       Seq(classOf[Long]),
       "GET",
-      """ Computation subscription""",
-      this.prefix + """computation/$id<[^/]+>"""
+      """ Data request""",
+      this.prefix + """data/$jobID<[^/]+>"""
     )
   )
 
-  // @LINE:21
+  // @LINE:28
   private[this] lazy val controllers_Application_result5_route = Route("POST",
-    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("result/"), DynamicPart("id", """[^/]+""",true)))
+    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("result/"), DynamicPart("jobID", """[^/]+""",true)))
   )
   private[this] lazy val controllers_Application_result5_invoker = createInvoker(
     Application_1.result(fakeValue[Long]),
@@ -154,7 +162,24 @@ class Routes(
       Seq(classOf[Long]),
       "POST",
       """ Send result""",
-      this.prefix + """result/$id<[^/]+>"""
+      this.prefix + """result/$jobID<[^/]+>"""
+    )
+  )
+
+  // @LINE:31
+  private[this] lazy val controllers_Application_subscribe6_route = Route("GET",
+    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("computation/"), DynamicPart("id", """[^/]+""",true)))
+  )
+  private[this] lazy val controllers_Application_subscribe6_invoker = createInvoker(
+    Application_1.subscribe(fakeValue[Long]),
+    HandlerDef(this.getClass.getClassLoader,
+      "router",
+      "controllers.Application",
+      "subscribe",
+      Seq(classOf[Long]),
+      "GET",
+      """ Computation subscription""",
+      this.prefix + """computation/$id<[^/]+>"""
     )
   )
 
@@ -173,28 +198,34 @@ class Routes(
         controllers_Assets_versioned1_invoker.call(Assets_0.versioned(path, file))
       }
   
-    // @LINE:12
+    // @LINE:18
     case controllers_Application_available2_route(params) =>
       call { 
         controllers_Application_available2_invoker.call(Application_1.available())
       }
   
-    // @LINE:15
+    // @LINE:22
     case controllers_Application_job3_route(params) =>
       call { 
         controllers_Application_job3_invoker.call(Application_1.job())
       }
   
-    // @LINE:18
-    case controllers_Application_subscribe4_route(params) =>
-      call(params.fromPath[Long]("id", None)) { (id) =>
-        controllers_Application_subscribe4_invoker.call(Application_1.subscribe(id))
+    // @LINE:25
+    case controllers_Application_data4_route(params) =>
+      call(params.fromPath[Long]("jobID", None)) { (jobID) =>
+        controllers_Application_data4_invoker.call(Application_1.data(jobID))
       }
   
-    // @LINE:21
+    // @LINE:28
     case controllers_Application_result5_route(params) =>
+      call(params.fromPath[Long]("jobID", None)) { (jobID) =>
+        controllers_Application_result5_invoker.call(Application_1.result(jobID))
+      }
+  
+    // @LINE:31
+    case controllers_Application_subscribe6_route(params) =>
       call(params.fromPath[Long]("id", None)) { (id) =>
-        controllers_Application_result5_invoker.call(Application_1.result(id))
+        controllers_Application_subscribe6_invoker.call(Application_1.subscribe(id))
       }
   }
 }

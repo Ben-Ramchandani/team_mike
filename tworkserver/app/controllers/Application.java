@@ -34,21 +34,25 @@ public class Application extends Controller {
     		d = Devices.getDevice(Long.parseLong(session("sessionID")));
     		RequestBody body = request().body();
     		JsonNode jn = body.asJson();
-    		
+    		/*
     		//need to make these secure;
     		d.deviceID = jn.get("phone-id").asText("");
     		d.batteryLife = jn.get("battery-life").asInt();
     		d.onCharge = jn.get("on-charge").asBoolean();
     		d.onWiFi = jn.get("on-wifi").asBoolean();
-    	}	
-    	return ok();
+    	*/}	
+    	return ok(Long.toString(d.sessionID));
     }
     
-    public Result subscribe(Long id) { 
+    public Result subscribe(Long jobID) { 
     	/*
     	 * feature to be added
     	 * need to implement log in features for dima's app
     	 */
+    	return ok();
+    }
+    
+    public Result data(Long jobID) {
     	return ok();
     }
     
@@ -60,12 +64,13 @@ public class Application extends Controller {
     	*/
     	if (session("sessionID") == null) 
         	return unauthorized();
+    	Device d = Devices.getInstance().getDevice(session("sessionID"));
+    	Job j = JobScheduler.getJob(d);
     	
-    	Device d = Devices.getDevice(session("sessionID")) {
-    	Job j = JobScheduler.getJob();
-    	}
-    	
+    //	d.currentJob = j.getJobId();
+    	return ok("it works");
     }
+    	
     
     public Result result(Long id) {
     	return ok();

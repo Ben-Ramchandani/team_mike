@@ -1,4 +1,4 @@
-
+package twork;
 
 
 public interface Job {
@@ -19,7 +19,7 @@ public interface Job {
     //A reference to its parent computation.
     //Should be initialised by the computation object before it is handed to the server.
     
-    public Computation getParentComputation();
+   // public Computation getParentComputation();
     
     //Get the data to send to the client.
     //Should be specific to this job.
@@ -27,7 +27,7 @@ public interface Job {
     public String getJobData();
     
     //Add the data returned by the phone before handing it back to it's parent Computation.
-    public void addReturnData(String data) throws FormatInvalidException;
+    //public void addReturnData(String data) throws FormatInvalidException;
     
     
     

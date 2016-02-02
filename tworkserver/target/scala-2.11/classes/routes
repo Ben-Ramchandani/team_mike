@@ -9,13 +9,23 @@ GET     /                           controllers.Application.index()
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
 # Availability request
-GET     /available                  controllers.Application.available()
+# JSON:
+#	phone-id       : string
+#	battery-life   : 0 - 100	
+#	on-charge      : 0 / 1
+#	on-WiFi		   : 0 / 1
+# also initialise session -> send ok().
+GET    /available                  controllers.Application.available()
 
 # Job request
+# 
 GET     /job                        controllers.Application.job()
+
+# Data request
+GET		/data/:jobID				controllers.Application.data(jobID: Long)
+
+# Send result
+POST    /result/:jobID              controllers.Application.result(jobID: Long)
 
 # Computation subscription
 GET     /computation/:id            controllers.Application.subscribe(id: Long)
-
-# Send result
-POST    /result/:id                 controllers.Application.result(id: Long)

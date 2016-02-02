@@ -7,7 +7,7 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies for tworkserver#tworkserver_2.11;1.0-SNAPSHOT [compile][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->org.scala-lang#scala-library;2.11.6 [compile->default(compile)][0m
 [0m[[0minfo[0m] [0mResolving org.scala-lang#scala-library;2.11.6 ...[0m
-[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@6e581bc5[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@537e72f[0m
 [0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scala-lang#scala-library;2.11.6[0m
 [0m[[0mdebug[0m] [0m	found org.scala-lang#scala-library;2.11.6 in sbt-chain[0m
 [0m[[0mdebug[0m] [0m	[2.11.6] org.scala-lang#scala-library;2.11.6[0m
@@ -1127,67 +1127,6 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-ws_2.11;2.4.6->oauth.signpost#signpost-commonshttp4;1.2.1.2 [runtime->runtime(*)][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-ws_2.11;2.4.6->oauth.signpost#signpost-commonshttp4;1.2.1.2 [runtime->compile][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-ws_2.11;2.4.6 [compile->master][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->default(compile)][0m
-[0m[[0minfo[0m] [0mResolving com.typesafe.play#play-java-jpa_2.11;2.4.6 ...[0m
-[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: dependency: com.typesafe.play#play-java-jpa_2.11;2.4.6 {compile=[default(compile)]}[0m
-[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: com.typesafe.play#play-java-jpa_2.11;2.4.6[0m
-[0m[[0mdebug[0m] [0m	found com.typesafe.play#play-java-jpa_2.11;2.4.6 in sbt-chain[0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->runtime][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [compile->master(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [compile->master(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [compile->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [compile->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [compile->master(compile)][0m
-[0m[[0minfo[0m] [0mResolving org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final ...[0m
-[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: dependency: org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final {compile=[compile(*), master(compile)], runtime=[runtime(*)]}[0m
-[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final[0m
-[0m[[0mdebug[0m] [0m	found org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final in sbt-chain[0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [compile->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [compile->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->master][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final [compile->default(compile)][0m
-[0m[[0minfo[0m] [0mResolving org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final ...[0m
-[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: dependency: org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final {compile=[default(compile)]}[0m
-[0m[[0minfo[0m] [0mResolving org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final ...[0m
-[0m[[0mdebug[0m] [0msbt-chain-delegate: Checking cache for: dependency: org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final {compile=[default(compile)]}[0m
-[0m[[0mdebug[0m] [0m		tried /home/razvan/.ivy2/local/org.hibernate/hibernate-enititymanager_2.11/3.6.9.Final/ivys/ivy.xml[0m
-[0m[[0mdebug[0m] [0m	local: no ivy file found for org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final[0m
-[0m[[0mdebug[0m] [0m		tried /home/razvan/.activator/repository/org.hibernate/hibernate-enititymanager_2.11/3.6.9.Final/ivys/ivy.xml[0m
-[0m[[0mdebug[0m] [0m	activator-launcher-local: no ivy file found for org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final[0m
-[0m[[0mdebug[0m] [0m		tried /home/razvan/activator-dist-1.3.7/repository/org.hibernate/hibernate-enititymanager_2.11/3.6.9.Final/ivys/ivy.xml[0m
-[0m[[0mdebug[0m] [0m	activator-local: no ivy file found for org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final[0m
-[0m[[0mdebug[0m] [0m		tried https://repo1.maven.org/maven2/org/hibernate/hibernate-enititymanager_2.11/3.6.9.Final/hibernate-enititymanager_2.11-3.6.9.Final.pom[0m
-[0m[[0mdebug[0m] [0mCLIENT ERROR: Not Found url=https://repo1.maven.org/maven2/org/hibernate/hibernate-enititymanager_2.11/3.6.9.Final/hibernate-enititymanager_2.11-3.6.9.Final.pom[0m
-[0m[[0mdebug[0m] [0m	public: no ivy file found for org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final[0m
-[0m[[0mdebug[0m] [0m		tried http://repo.typesafe.com/typesafe/releases/org/hibernate/hibernate-enititymanager_2.11/3.6.9.Final/hibernate-enititymanager_2.11-3.6.9.Final.pom[0m
-[0m[[0mdebug[0m] [0mCLIENT ERROR: Not Found url=http://repo.typesafe.com/typesafe/releases/org/hibernate/hibernate-enititymanager_2.11/3.6.9.Final/hibernate-enititymanager_2.11-3.6.9.Final.pom[0m
-[0m[[0mdebug[0m] [0m	typesafe-releases: no ivy file found for org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final[0m
-[0m[[0mdebug[0m] [0m		tried http://repo.typesafe.com/typesafe/ivy-releases/org.hibernate/hibernate-enititymanager_2.11/3.6.9.Final/ivys/ivy.xml[0m
-[0m[[0mdebug[0m] [0mCLIENT ERROR: Not Found url=http://repo.typesafe.com/typesafe/ivy-releases/org.hibernate/hibernate-enititymanager_2.11/3.6.9.Final/ivys/ivy.xml[0m
-[0m[[0mdebug[0m] [0m	typesafe-ivy-releasez: no ivy file found for org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final[0m
-[0m[[33mwarn[0m] [0m	module not found: org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final[0m
-[0m[[33mwarn[0m] [0m==== local: tried[0m
-[0m[[33mwarn[0m] [0m  /home/razvan/.ivy2/local/org.hibernate/hibernate-enititymanager_2.11/3.6.9.Final/ivys/ivy.xml[0m
-[0m[[33mwarn[0m] [0m==== activator-launcher-local: tried[0m
-[0m[[33mwarn[0m] [0m  /home/razvan/.activator/repository/org.hibernate/hibernate-enititymanager_2.11/3.6.9.Final/ivys/ivy.xml[0m
-[0m[[33mwarn[0m] [0m==== activator-local: tried[0m
-[0m[[33mwarn[0m] [0m  /home/razvan/activator-dist-1.3.7/repository/org.hibernate/hibernate-enititymanager_2.11/3.6.9.Final/ivys/ivy.xml[0m
-[0m[[33mwarn[0m] [0m==== public: tried[0m
-[0m[[33mwarn[0m] [0m  https://repo1.maven.org/maven2/org/hibernate/hibernate-enititymanager_2.11/3.6.9.Final/hibernate-enititymanager_2.11-3.6.9.Final.pom[0m
-[0m[[33mwarn[0m] [0m==== typesafe-releases: tried[0m
-[0m[[33mwarn[0m] [0m  http://repo.typesafe.com/typesafe/releases/org/hibernate/hibernate-enititymanager_2.11/3.6.9.Final/hibernate-enititymanager_2.11-3.6.9.Final.pom[0m
-[0m[[33mwarn[0m] [0m==== typesafe-ivy-releasez: tried[0m
-[0m[[33mwarn[0m] [0m  http://repo.typesafe.com/typesafe/ivy-releases/org.hibernate/hibernate-enititymanager_2.11/3.6.9.Final/ivys/ivy.xml[0m
 [0m[[0mdebug[0m] [0mresolving dependencies for configuration 'runtime'[0m
 [0m[[0mdebug[0m] [0m== resolving dependencies for tworkserver#tworkserver_2.11;1.0-SNAPSHOT [runtime][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies for tworkserver#tworkserver_2.11;1.0-SNAPSHOT [compile][0m
@@ -1940,23 +1879,6 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-ws_2.11;2.4.6->oauth.signpost#signpost-commonshttp4;1.2.1.2 [runtime->runtime(*)][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-ws_2.11;2.4.6->oauth.signpost#signpost-commonshttp4;1.2.1.2 [runtime->compile][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-ws_2.11;2.4.6 [compile->master][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->default(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->runtime][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [compile->master(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [compile->master(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [compile->master(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->master][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final [compile->default(compile)][0m
 [0m[[0mdebug[0m] [0mresolving dependencies for configuration 'test'[0m
 [0m[[0mdebug[0m] [0m== resolving dependencies for tworkserver#tworkserver_2.11;1.0-SNAPSHOT [test][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies for tworkserver#tworkserver_2.11;1.0-SNAPSHOT [runtime][0m
@@ -2710,23 +2632,6 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-ws_2.11;2.4.6->oauth.signpost#signpost-commonshttp4;1.2.1.2 [runtime->runtime(*)][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-ws_2.11;2.4.6->oauth.signpost#signpost-commonshttp4;1.2.1.2 [runtime->compile][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-ws_2.11;2.4.6 [compile->master][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->default(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->runtime][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [compile->master(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [compile->master(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [compile->master(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->master][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final [compile->default(compile)][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-test_2.11;2.4.6 [test->default(compile)][0m
 [0m[[0minfo[0m] [0mResolving com.typesafe.play#play-test_2.11;2.4.6 ...[0m
 [0m[[0mdebug[0m] [0msbt-chain: Checking cache for: dependency: com.typesafe.play#play-test_2.11;2.4.6 {test=[default(compile)]}[0m
@@ -3947,23 +3852,6 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-ws_2.11;2.4.6->oauth.signpost#signpost-commonshttp4;1.2.1.2 [runtime->runtime(*)][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-ws_2.11;2.4.6->oauth.signpost#signpost-commonshttp4;1.2.1.2 [runtime->compile][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-ws_2.11;2.4.6 [compile->master][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->default(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->runtime][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [compile->master(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [compile->master(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [compile->master(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->master][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final [compile->default(compile)][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies for tworkserver#tworkserver_2.11;1.0-SNAPSHOT [optional][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies for tworkserver#tworkserver_2.11;1.0-SNAPSHOT [provided][0m
 [0m[[0mdebug[0m] [0mresolving dependencies for configuration 'runtime-internal'[0m
@@ -4719,23 +4607,6 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-ws_2.11;2.4.6->oauth.signpost#signpost-commonshttp4;1.2.1.2 [runtime->runtime(*)][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-ws_2.11;2.4.6->oauth.signpost#signpost-commonshttp4;1.2.1.2 [runtime->compile][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-ws_2.11;2.4.6 [compile->master][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->default(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->runtime][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [compile->master(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [compile->master(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [compile->master(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->master][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final [compile->default(compile)][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies for tworkserver#tworkserver_2.11;1.0-SNAPSHOT [optional][0m
 [0m[[0mdebug[0m] [0mresolving dependencies for configuration 'test-internal'[0m
 [0m[[0mdebug[0m] [0m== resolving dependencies for tworkserver#tworkserver_2.11;1.0-SNAPSHOT [test-internal][0m
@@ -5491,23 +5362,6 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-ws_2.11;2.4.6->oauth.signpost#signpost-commonshttp4;1.2.1.2 [runtime->runtime(*)][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-ws_2.11;2.4.6->oauth.signpost#signpost-commonshttp4;1.2.1.2 [runtime->compile][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-ws_2.11;2.4.6 [compile->master][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->default(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->runtime][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [compile->master(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [compile->master(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [compile->master(compile)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [compile->compile(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.scala-lang#scala-library;2.11.6 [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->com.typesafe.play#play-java-jdbc_2.11;2.4.6 [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [runtime->runtime(*)][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies com.typesafe.play#play-java-jpa_2.11;2.4.6->org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final [runtime->compile][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-java-jpa_2.11;2.4.6 [compile->master][0m
-[0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final [compile->default(compile)][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-test_2.11;2.4.6 [test->default(compile)][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-test_2.11;2.4.6 [test->runtime][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->com.typesafe.play#play-test_2.11;2.4.6 [test->compile][0m
@@ -6784,7 +6638,6 @@
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.play#play-java-jdbc_2.11;2.4.6!play-java-jdbc_2.11.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.play#play-cache_2.11;2.4.6!play-cache_2.11.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.play#play-java-ws_2.11;2.4.6!play-java-ws_2.11.jar[0m
-[0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.play#play-java-jpa_2.11;2.4.6!play-java-jpa_2.11.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.apache.commons#commons-lang3;3.4!commons-lang3.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang.modules#scala-xml_2.11;1.0.1!scala-xml_2.11.jar(bundle)[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.play#play_2.11;2.4.6!play_2.11.jar[0m
@@ -6854,7 +6707,6 @@
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.apache.httpcomponents#httpcore;4.0.1!httpcore.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.apache.httpcomponents#httpclient;4.0.1!httpclient.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] commons-logging#commons-logging;1.1.1!commons-logging.jar[0m
-[0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.hibernate.javax.persistence#hibernate-jpa-2.1-api;1.0.0.Final!hibernate-jpa-2.1-api.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.play#play-test_2.11;2.4.6!play-test_2.11.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] junit#junit;4.12!junit.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.novocode#junit-interface;0.11!junit-interface.jar[0m
@@ -6931,12 +6783,7 @@
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-sbt#control_2.11;0.13.8-M3!control_2.11.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.akka#akka-actor_2.11;2.3.8!akka-actor_2.11.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.akka#akka-testkit_2.11;2.3.8!akka-testkit_2.11.jar[0m
-[0m[[0mdebug[0m] [0m:: resolution report :: resolve 3360ms :: artifacts dl 66ms[0m
-[0m[[33mwarn[0m] [0m	::::::::::::::::::::::::::::::::::::::::::::::[0m
-[0m[[33mwarn[0m] [0m	::          UNRESOLVED DEPENDENCIES         ::[0m
-[0m[[33mwarn[0m] [0m	::::::::::::::::::::::::::::::::::::::::::::::[0m
-[0m[[33mwarn[0m] [0m	:: org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final: not found[0m
-[0m[[33mwarn[0m] [0m	::::::::::::::::::::::::::::::::::::::::::::::[0m
+[0m[[0mdebug[0m] [0m:: resolution report :: resolve 4290ms :: artifacts dl 85ms[0m
 [0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT compile produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-compile.xml[0m
 [0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT runtime produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-runtime.xml[0m
 [0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT test produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-test.xml[0m
@@ -6951,60 +6798,5 @@
 [0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT pom produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-pom.xml[0m
 [0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT scala-tool produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-scala-tool.xml[0m
 [0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT fork-run produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-fork-run.xml[0m
-[0m[[0mdebug[0m] [0m	resolve done (3360ms resolve - 66ms download)[0m
-[0m[[33mwarn[0m] [0m[0m
-[0m[[33mwarn[0m] [0m	Note: Unresolved dependencies path:[0m
-[0m[[33mwarn[0m] [0m		org.hibernate:hibernate-enititymanager_2.11:3.6.9.Final (/home/razvan/groupproject/team_mike/tworkserver/build.sbt#L9-16)[0m
-[0m[[33mwarn[0m] [0m		  +- tworkserver:tworkserver_2.11:1.0-SNAPSHOT[0m
-sbt.ResolveException: unresolved dependency: org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final: not found
-	at sbt.IvyActions$.sbt$IvyActions$$resolve(IvyActions.scala:291)
-	at sbt.IvyActions$$anonfun$updateEither$1.apply(IvyActions.scala:188)
-	at sbt.IvyActions$$anonfun$updateEither$1.apply(IvyActions.scala:165)
-	at sbt.IvySbt$Module$$anonfun$withModule$1.apply(Ivy.scala:155)
-	at sbt.IvySbt$Module$$anonfun$withModule$1.apply(Ivy.scala:155)
-	at sbt.IvySbt$$anonfun$withIvy$1.apply(Ivy.scala:132)
-	at sbt.IvySbt.sbt$IvySbt$$action$1(Ivy.scala:57)
-	at sbt.IvySbt$$anon$4.call(Ivy.scala:65)
-	at xsbt.boot.Locks$GlobalLock.withChannel$1(Locks.scala:93)
-	at xsbt.boot.Locks$GlobalLock.xsbt$boot$Locks$GlobalLock$$withChannelRetries$1(Locks.scala:78)
-	at xsbt.boot.Locks$GlobalLock$$anonfun$withFileLock$1.apply(Locks.scala:97)
-	at xsbt.boot.Using$.withResource(Using.scala:10)
-	at xsbt.boot.Using$.apply(Using.scala:9)
-	at xsbt.boot.Locks$GlobalLock.ignoringDeadlockAvoided(Locks.scala:58)
-	at xsbt.boot.Locks$GlobalLock.withLock(Locks.scala:48)
-	at xsbt.boot.Locks$.apply0(Locks.scala:31)
-	at xsbt.boot.Locks$.apply(Locks.scala:28)
-	at sbt.IvySbt.withDefaultLogger(Ivy.scala:65)
-	at sbt.IvySbt.withIvy(Ivy.scala:127)
-	at sbt.IvySbt.withIvy(Ivy.scala:124)
-	at sbt.IvySbt$Module.withModule(Ivy.scala:155)
-	at sbt.IvyActions$.updateEither(IvyActions.scala:165)
-	at sbt.Classpaths$$anonfun$sbt$Classpaths$$work$1$1.apply(Defaults.scala:1369)
-	at sbt.Classpaths$$anonfun$sbt$Classpaths$$work$1$1.apply(Defaults.scala:1365)
-	at sbt.Classpaths$$anonfun$doWork$1$1$$anonfun$87.apply(Defaults.scala:1399)
-	at sbt.Classpaths$$anonfun$doWork$1$1$$anonfun$87.apply(Defaults.scala:1397)
-	at sbt.Tracked$$anonfun$lastOutput$1.apply(Tracked.scala:37)
-	at sbt.Classpaths$$anonfun$doWork$1$1.apply(Defaults.scala:1402)
-	at sbt.Classpaths$$anonfun$doWork$1$1.apply(Defaults.scala:1396)
-	at sbt.Tracked$$anonfun$inputChanged$1.apply(Tracked.scala:60)
-	at sbt.Classpaths$.cachedUpdate(Defaults.scala:1419)
-	at sbt.Classpaths$$anonfun$updateTask$1.apply(Defaults.scala:1348)
-	at sbt.Classpaths$$anonfun$updateTask$1.apply(Defaults.scala:1310)
-	at scala.Function1$$anonfun$compose$1.apply(Function1.scala:47)
-	at sbt.$tilde$greater$$anonfun$$u2219$1.apply(TypeFunctions.scala:40)
-	at sbt.std.Transform$$anon$4.work(System.scala:63)
-	at sbt.Execute$$anonfun$submit$1$$anonfun$apply$1.apply(Execute.scala:226)
-	at sbt.Execute$$anonfun$submit$1$$anonfun$apply$1.apply(Execute.scala:226)
-	at sbt.ErrorHandling$.wideConvert(ErrorHandling.scala:17)
-	at sbt.Execute.work(Execute.scala:235)
-	at sbt.Execute$$anonfun$submit$1.apply(Execute.scala:226)
-	at sbt.Execute$$anonfun$submit$1.apply(Execute.scala:226)
-	at sbt.ConcurrentRestrictions$$anon$4$$anonfun$1.apply(ConcurrentRestrictions.scala:159)
-	at sbt.CompletionService$$anon$2.call(CompletionService.scala:28)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
-	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
-	at java.lang.Thread.run(Thread.java:745)
-[0m[[31merror[0m] [0m(*:[31mupdate[0m) sbt.ResolveException: unresolved dependency: org.hibernate#hibernate-enititymanager_2.11;3.6.9.Final: not found[0m
+[0m[[0mdebug[0m] [0m	resolve done (4290ms resolve - 85ms download)[0m
+[0m[[0minfo[0m] [0mDone updating.[0m
