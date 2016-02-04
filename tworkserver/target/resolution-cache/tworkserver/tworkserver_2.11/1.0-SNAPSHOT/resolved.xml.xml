@@ -4,7 +4,7 @@
 		module="tworkserver_2.11"
 		revision="1.0-SNAPSHOT"
 		status="integration"
-		publication="20160202120344"
+		publication="20160203161550"
 	>
 		<description>
 		tworkserver
@@ -35,8 +35,9 @@
 	<dependencies>
 		<dependency org="org.scala-lang" name="scala-compiler" rev="2.11.6" conf="scala-tool->default,optional(default)"/>
 		<dependency org="org.scala-lang" name="scala-library" rev="2.11.6" conf="scala-tool->default,optional(default);compile->default(compile)"/>
-		<dependency org="com.typesafe.play" name="twirl-api_2.11" rev="1.1.1" conf="compile->default(compile)"/>
 		<dependency org="com.typesafe.play" name="play-enhancer" rev="1.1.0" conf="compile->default(compile)"/>
+		<dependency org="com.typesafe.play" name="twirl-api_2.11" rev="1.1.1" conf="compile->default(compile)"/>
+		<dependency org="com.typesafe.play" name="play-ebean_2.11" rev="1.0.0" conf="compile->default(compile)"/>
 		<dependency org="com.typesafe.play" name="play-server_2.11" rev="2.4.6" conf="compile->default(compile)"/>
 		<dependency org="com.typesafe.play" name="play-test_2.11" rev="2.4.6" conf="test->default(compile)"/>
 		<dependency org="com.typesafe.play" name="play-omnidoc_2.11" rev="2.4.6" conf="docs->default(compile)"/>
@@ -46,5 +47,7 @@
 		<dependency org="com.typesafe.play" name="play-java-jdbc_2.11" rev="2.4.6" conf="compile->default(compile)"/>
 		<dependency org="com.typesafe.play" name="play-cache_2.11" rev="2.4.6" conf="compile->default(compile)"/>
 		<dependency org="com.typesafe.play" name="play-java-ws_2.11" rev="2.4.6" conf="compile->default(compile)"/>
+		<dependency org="org.postgresql" name="postgresql" rev="9.4.1207.jre7" conf="compile->default(compile)"/>
+		<dependency org="org.hibernate" name="hibernate-entitymanager" rev="4.3.9.Final" conf="compile->default(compile)"/>
 	</dependencies>
 </ivy-module>

@@ -2,6 +2,8 @@ package twork;
 
 import java.util.List;
 
+import models.Job;
+
 public class Jobs {
 	//Also singleton
 	

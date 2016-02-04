@@ -2,14 +2,16 @@ name := """tworkserver"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayJava)
+lazy val root = (project in file(".")).enablePlugins(PlayJava,PlayEbean)
 
 scalaVersion := "2.11.6"
 
 libraryDependencies ++= Seq(
   javaJdbc,
   cache,
-  javaWs
+  javaWs,
+  "org.postgresql" % "postgresql" % "9.4.1207.jre7",
+  "org.hibernate" % "hibernate-entitymanager" % "4.3.9.Final"
 )
 
 

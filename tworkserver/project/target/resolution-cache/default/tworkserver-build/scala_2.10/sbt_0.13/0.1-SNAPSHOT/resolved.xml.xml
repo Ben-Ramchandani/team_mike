@@ -4,7 +4,7 @@
 		module="tworkserver-build"
 		revision="0.1-SNAPSHOT"
 		status="integration"
-		publication="20160201231345"
+		publication="20160203161250"
 		e:sbtVersion="0.13" e:scalaVersion="2.10"
 	>
 		<description>
@@ -44,6 +44,7 @@
 		<dependency org="com.typesafe.sbt" name="sbt-digest" rev="1.1.0" conf="compile->default(compile)" e:sbtVersion="0.13" e:scalaVersion="2.10"/>
 		<dependency org="com.typesafe.sbt" name="sbt-mocha" rev="1.1.0" conf="compile->default(compile)" e:sbtVersion="0.13" e:scalaVersion="2.10"/>
 		<dependency org="com.typesafe.sbt" name="sbt-play-enhancer" rev="1.1.0" conf="compile->default(compile)" e:sbtVersion="0.13" e:scalaVersion="2.10"/>
+		<dependency org="com.typesafe.sbt" name="sbt-play-ebean" rev="1.0.0" conf="compile->default(compile)" e:sbtVersion="0.13" e:scalaVersion="2.10"/>
 		<dependency org="com.typesafe.sbteclipse" name="sbteclipse-plugin" rev="4.0.0" conf="compile->default(compile)" e:sbtVersion="0.13" e:scalaVersion="2.10"/>
 		<dependency org="org.scala-sbt" name="sbt-core-next" rev="0.1.1" conf="compile->default(compile)" e:sbtVersion="0.13" e:scalaVersion="2.10"/>
 		<dependency org="com.typesafe.play" name="sbt-fork-run-plugin" rev="2.4.6" conf="compile->default(compile)" e:sbtVersion="0.13" e:scalaVersion="2.10"/>

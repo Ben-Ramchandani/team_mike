@@ -1,8 +1,16 @@
 package twork;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
+import com.avaje.ebean.Ebean;
+
+import models.Job;
+
 public class Device {
 
 	public static final int NULL_JOB = 0;
+	public static final int WAITING_TIME = 50;
 	public long sessionID;
 	
 	public int batteryLife;
@@ -14,6 +22,9 @@ public class Device {
 	
 	public long currentJob = NULL_JOB;
 	public boolean onWiFi;
+	
+	
+	public Timer t = new Timer();
 	
 	public Device(long sessionID) {
 		this.sessionID = sessionID;
@@ -35,4 +46,34 @@ public class Device {
 	public long getSessionID() {
 		return sessionID;
 	}
+	
+	
+	public void startCounter() {
+		t.schedule(new TimeoutTask(this), WAITING_TIME);
+	}
+	
+	public static class TimeoutTask extends TimerTask {
+		
+		Device trigger;
+		
+		public TimeoutTask(Device d) {
+			trigger = d;
+		}
+		
+		@Override
+		public void run() {
+			synchronized(trigger) {
+				trigger.jobsFailed++;
+				trigger.currentJob = NULL_JOB;
+			}
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
 }

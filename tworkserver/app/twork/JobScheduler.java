@@ -1,5 +1,7 @@
 package twork;
 
+import models.Job;
+
 public interface JobScheduler {
     /*
     Manages running jobs.

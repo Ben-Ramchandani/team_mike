@@ -1,7 +1,7 @@
 
 // @GENERATOR:play-routes-compiler
 // @SOURCE:/home/razvan/groupproject/team_mike/tworkserver/conf/routes
-// @DATE:Tue Feb 02 12:10:43 GMT 2016
+// @DATE:Wed Feb 03 20:43:35 GMT 2016
 
 package router
 
@@ -50,6 +50,7 @@ class Routes(
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """data/$jobID<[^/]+>""", """controllers.Application.data(jobID:Long)"""),
     ("""POST""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """result/$jobID<[^/]+>""", """controllers.Application.result(jobID:Long)"""),
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """computation/$id<[^/]+>""", """controllers.Application.subscribe(id:Long)"""),
+    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """function/$functionID<[^/]+>""", """controllers.Application.function(functionID:Long)"""),
     Nil
   ).foldLeft(List.empty[(String,String,String)]) { (s,e) => e.asInstanceOf[Any] match {
     case r @ (_,_,_) => s :+ r.asInstanceOf[(String,String,String)]
@@ -91,7 +92,7 @@ class Routes(
     )
   )
 
-  // @LINE:18
+  // @LINE:19
   private[this] lazy val controllers_Application_available2_route = Route("GET",
     PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("available")))
   )
@@ -109,12 +110,13 @@ class Routes(
 	battery-life   : 0 - 100	
 	on-charge      : 0 / 1
 	on-WiFi		   : 0 / 1
+ set cookie in the header; all the other requests should have that cookie set.
  also initialise session -> send ok().""",
       this.prefix + """available"""
     )
   )
 
-  // @LINE:22
+  // @LINE:31
   private[this] lazy val controllers_Application_job3_route = Route("GET",
     PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("job")))
   )
@@ -127,12 +129,20 @@ class Routes(
       Nil,
       "GET",
       """ Job request
- """,
+ just include the cookie
+
+	This will return a json object:
+	job-id 			: long
+	function-class 	: string    -You call the URLCLassLoader. 
+ 	computation-id	: long
+	job-description : string
+	return a non 200 code if there is no job.
+""",
       this.prefix + """job"""
     )
   )
 
-  // @LINE:25
+  // @LINE:35
   private[this] lazy val controllers_Application_data4_route = Route("GET",
     PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("data/"), DynamicPart("jobID", """[^/]+""",true)))
   )
@@ -144,12 +154,13 @@ class Routes(
       "data",
       Seq(classOf[Long]),
       "GET",
-      """ Data request""",
+      """ Data request
+  This will return a raw file and a 200 code.""",
       this.prefix + """data/$jobID<[^/]+>"""
     )
   )
 
-  // @LINE:28
+  // @LINE:42
   private[this] lazy val controllers_Application_result5_route = Route("POST",
     PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("result/"), DynamicPart("jobID", """[^/]+""",true)))
   )
@@ -161,12 +172,16 @@ class Routes(
       "result",
       Seq(classOf[Long]),
       "POST",
-      """ Send result""",
+      """ Send result
+	
+	Send the raw file -> empty is failed
+
+""",
       this.prefix + """result/$jobID<[^/]+>"""
     )
   )
 
-  // @LINE:31
+  // @LINE:46
   private[this] lazy val controllers_Application_subscribe6_route = Route("GET",
     PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("computation/"), DynamicPart("id", """[^/]+""",true)))
   )
@@ -178,8 +193,26 @@ class Routes(
       "subscribe",
       Seq(classOf[Long]),
       "GET",
-      """ Computation subscription""",
+      """ That is for later
+ Computation subscription""",
       this.prefix + """computation/$id<[^/]+>"""
+    )
+  )
+
+  // @LINE:52
+  private[this] lazy val controllers_Application_function7_route = Route("GET",
+    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("function/"), DynamicPart("functionID", """[^/]+""",true)))
+  )
+  private[this] lazy val controllers_Application_function7_invoker = createInvoker(
+    Application_1.function(fakeValue[Long]),
+    HandlerDef(this.getClass.getClassLoader,
+      "router",
+      "controllers.Application",
+      "function",
+      Seq(classOf[Long]),
+      "GET",
+      """ Serialized vs URL""",
+      this.prefix + """function/$functionID<[^/]+>"""
     )
   )
 
@@ -198,34 +231,40 @@ class Routes(
         controllers_Assets_versioned1_invoker.call(Assets_0.versioned(path, file))
       }
   
-    // @LINE:18
+    // @LINE:19
     case controllers_Application_available2_route(params) =>
       call { 
         controllers_Application_available2_invoker.call(Application_1.available())
       }
   
-    // @LINE:22
+    // @LINE:31
     case controllers_Application_job3_route(params) =>
       call { 
         controllers_Application_job3_invoker.call(Application_1.job())
       }
   
-    // @LINE:25
+    // @LINE:35
     case controllers_Application_data4_route(params) =>
       call(params.fromPath[Long]("jobID", None)) { (jobID) =>
         controllers_Application_data4_invoker.call(Application_1.data(jobID))
       }
   
-    // @LINE:28
+    // @LINE:42
     case controllers_Application_result5_route(params) =>
       call(params.fromPath[Long]("jobID", None)) { (jobID) =>
         controllers_Application_result5_invoker.call(Application_1.result(jobID))
       }
   
-    // @LINE:31
+    // @LINE:46
     case controllers_Application_subscribe6_route(params) =>
       call(params.fromPath[Long]("id", None)) { (id) =>
         controllers_Application_subscribe6_invoker.call(Application_1.subscribe(id))
+      }
+  
+    // @LINE:52
+    case controllers_Application_function7_route(params) =>
+      call(params.fromPath[Long]("functionID", None)) { (functionID) =>
+        controllers_Application_function7_invoker.call(Application_1.function(functionID))
       }
   }
 }
