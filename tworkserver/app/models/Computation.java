@@ -11,13 +11,15 @@ import play.data.validation.*;
 @Entity
 @Table(name = "all_computation")
 public class Computation {
-	
+
+
 	@Id
 	public Long computationID;
 	public String computationName;
 	public String computationDescription;
 	
 	public int jobsLeft;
+	public int totalJobs;
 	
 	/*
 	 * Cases for computations
@@ -44,5 +46,5 @@ public class Computation {
 	}
 	
 	
-	//public logo image?
+	public Long logoImageID;
 }

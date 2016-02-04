@@ -1,7 +1,7 @@
 
 // @GENERATOR:play-routes-compiler
 // @SOURCE:/home/razvan/groupproject/team_mike/tworkserver/conf/routes
-// @DATE:Wed Feb 03 20:43:35 GMT 2016
+// @DATE:Thu Feb 04 12:20:52 GMT 2016
 
 package router
 
@@ -50,7 +50,7 @@ class Routes(
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """data/$jobID<[^/]+>""", """controllers.Application.data(jobID:Long)"""),
     ("""POST""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """result/$jobID<[^/]+>""", """controllers.Application.result(jobID:Long)"""),
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """computation/$id<[^/]+>""", """controllers.Application.subscribe(id:Long)"""),
-    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """function/$functionID<[^/]+>""", """controllers.Application.function(functionID:Long)"""),
+    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """function/$functionID<[^/]+>""", """controllers.Application.function(functionID:String)"""),
     Nil
   ).foldLeft(List.empty[(String,String,String)]) { (s,e) => e.asInstanceOf[Any] match {
     case r @ (_,_,_) => s :+ r.asInstanceOf[(String,String,String)]
@@ -181,7 +181,7 @@ class Routes(
     )
   )
 
-  // @LINE:46
+  // @LINE:47
   private[this] lazy val controllers_Application_subscribe6_route = Route("GET",
     PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("computation/"), DynamicPart("id", """[^/]+""",true)))
   )
@@ -193,23 +193,22 @@ class Routes(
       "subscribe",
       Seq(classOf[Long]),
       "GET",
-      """ That is for later
- Computation subscription""",
+      """ Computation subscription""",
       this.prefix + """computation/$id<[^/]+>"""
     )
   )
 
-  // @LINE:52
+  // @LINE:53
   private[this] lazy val controllers_Application_function7_route = Route("GET",
     PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("function/"), DynamicPart("functionID", """[^/]+""",true)))
   )
   private[this] lazy val controllers_Application_function7_invoker = createInvoker(
-    Application_1.function(fakeValue[Long]),
+    Application_1.function(fakeValue[String]),
     HandlerDef(this.getClass.getClassLoader,
       "router",
       "controllers.Application",
       "function",
-      Seq(classOf[Long]),
+      Seq(classOf[String]),
       "GET",
       """ Serialized vs URL""",
       this.prefix + """function/$functionID<[^/]+>"""
@@ -255,15 +254,15 @@ class Routes(
         controllers_Application_result5_invoker.call(Application_1.result(jobID))
       }
   
-    // @LINE:46
+    // @LINE:47
     case controllers_Application_subscribe6_route(params) =>
       call(params.fromPath[Long]("id", None)) { (id) =>
         controllers_Application_subscribe6_invoker.call(Application_1.subscribe(id))
       }
   
-    // @LINE:52
+    // @LINE:53
     case controllers_Application_function7_route(params) =>
-      call(params.fromPath[Long]("functionID", None)) { (functionID) =>
+      call(params.fromPath[String]("functionID", None)) { (functionID) =>
         controllers_Application_function7_invoker.call(Application_1.function(functionID))
       }
   }

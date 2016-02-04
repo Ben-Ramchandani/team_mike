@@ -42,6 +42,7 @@ GET		/data/:jobID				controllers.Application.data(jobID: Long)
 POST    /result/:jobID              controllers.Application.result(jobID: Long)
 
 # That is for later
+
 # Computation subscription
 GET     /computation/:id            controllers.Application.subscribe(id: Long)
 
@@ -49,4 +50,4 @@ GET     /computation/:id            controllers.Application.subscribe(id: Long)
 
 
 # Serialized vs URL
-GET		/function/:functionID		controllers.Application.function(functionID:Long)
+GET		/function/:functionID		controllers.Application.function(functionID: String)

@@ -2,7 +2,21 @@ package twork;
 
 import models.Job;
 
-public interface JobScheduler {
+public class JobScheduler {
+	
+	
+	private JobScheduler() {
+	}
+	
+	private JobScheduler instance = null;
+	
+	public JobScheduler getInstance() {
+		if (instance == null) {
+			instance = new JobScheduler();
+		}
+		return instance;
+	}
+	
     /*
     Manages running jobs.
     The network handler will call getJob() to fetch a job, and submitJob() when a completed job comes back.
@@ -16,6 +30,9 @@ public interface JobScheduler {
 	 * Maybe it shouldn't be an interface as we will have a way to find priority for the Job type -> so only one way to Schedule.
 	*/
 	
+	
+	
+	
     public static Job getJob(Device d) {
     	// Apply algorithm to match device with best job, or just random for now (Ben)
     	
@@ -24,9 +41,4 @@ public interface JobScheduler {
 		return null;
 		
 	}
-    
-    //Mimic the exceptions thrown by Copmutation.submitJob()
-    //If the job fails submission then th JobScheduler will note it.
-    //If a job fails repeatedly the computation will be failed.
-    public void submitJob();
 }

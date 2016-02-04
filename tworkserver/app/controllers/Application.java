@@ -101,9 +101,11 @@ public class Application extends Controller {
 
 		Device d = Devices.getInstance().getDevice(session("sessionID"));
 		Job j = JobScheduler.getJob(d);
-
+		
+		if (j == null) 
+			return ok();
 		if (d.currentJob != d.NULL_JOB) 
-			return this.forbidden();
+			return forbidden();
 
 		j.retries++;
 		Ebean.update(j);

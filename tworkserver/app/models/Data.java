@@ -32,6 +32,8 @@ public class Data extends Model{
 	@Id
 	public Long dataID;
 
+
+
 	@Constraints.Required
 	public String type;
 	//Can either be immediate or file.

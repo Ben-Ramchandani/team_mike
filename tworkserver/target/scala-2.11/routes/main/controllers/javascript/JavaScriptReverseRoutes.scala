@@ -1,7 +1,7 @@
 
 // @GENERATOR:play-routes-compiler
 // @SOURCE:/home/razvan/groupproject/team_mike/tworkserver/conf/routes
-// @DATE:Wed Feb 03 20:43:35 GMT 2016
+// @DATE:Thu Feb 04 12:20:52 GMT 2016
 
 import play.api.routing.JavaScriptReverseRoute
 import play.api.mvc.{ QueryStringBindable, PathBindable, Call, JavascriptLiteral }
@@ -43,12 +43,12 @@ package controllers.javascript {
     }
 
   
-    // @LINE:52
+    // @LINE:53
     def function: JavaScriptReverseRoute = JavaScriptReverseRoute(
       "controllers.Application.function",
       """
         function(functionID) {
-          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "function/" + (""" + implicitly[PathBindable[Long]].javascriptUnbind + """)("functionID", functionID)})
+          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "function/" + (""" + implicitly[PathBindable[String]].javascriptUnbind + """)("functionID", encodeURIComponent(functionID))})
         }
       """
     )
@@ -63,7 +63,7 @@ package controllers.javascript {
       """
     )
   
-    // @LINE:46
+    // @LINE:47
     def subscribe: JavaScriptReverseRoute = JavaScriptReverseRoute(
       "controllers.Application.subscribe",
       """

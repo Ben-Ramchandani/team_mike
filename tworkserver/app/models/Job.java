@@ -29,6 +29,7 @@ public class Job extends Model {
 	
 	public Integer retries;
 	
+	
 	public String export() {
     	StringBuilder sb = new StringBuilder();
     	Formatter formatter = new Formatter(sb);

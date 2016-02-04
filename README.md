@@ -6,11 +6,8 @@ I will log here what I think it needs to be done in further iterations:
  3. Create an in memory data structure for jobs that allows prioritization and multiplexing on computationID
     The jobs class should take care of this.
         Alternatively, pick a job at random (I personally think that this is the best solution)
-
 4. Build on the computation class and create parallelization for the prime number example only
 5. Create a "user" interface for creating Computations so that we can test the application properly
-
-
 6. We should start integrating the service soon.
 
 
