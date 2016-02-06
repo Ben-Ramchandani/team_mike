@@ -2,6 +2,7 @@ package twork;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 
 import com.avaje.ebean.Ebean;
 
@@ -30,8 +31,8 @@ public class Device {
 		this.sessionID = sessionID;
 	}
 	
-	public void registerJob(long jobID) {
-		currentJob = jobID;
+	public synchronized void registerJob(UUID jobID) {
+		currentJob = jobID.getLeastSignificantBits();
 	}
 	
 	public void setBatteryLife(int batteryLife) {
@@ -64,16 +65,11 @@ public class Device {
 		public void run() {
 			synchronized(trigger) {
 				trigger.jobsFailed++;
+				JobScheduler.getInstance().timeoutJob(trigger.currentJob);
 				trigger.currentJob = NULL_JOB;
 			}
 		}
 		
 	}
-	
-	
-	
-	
-	
-	
 	
 }

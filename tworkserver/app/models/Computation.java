@@ -14,7 +14,7 @@ public class Computation {
 
 
 	@Id
-	public Long computationID;
+	public UUID computationID;
 	public String computationName;
 	public String computationDescription;
 	

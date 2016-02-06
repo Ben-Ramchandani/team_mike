@@ -1,19 +1,18 @@
 package controllers;
 
-import java.io.IOException;
-import java.util.List;
-
-import com.avaje.ebean.Ebean;
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.UUID;
 
 import models.Data;
 import models.Job;
-import play.*;
-import play.mvc.*;
-import play.mvc.BodyParser.Json;
+import play.mvc.Controller;
 import play.mvc.Http.RequestBody;
-import twork.*;
-import views.html.*;
+import play.mvc.Result;
+import twork.Device;
+import twork.Devices;
+import twork.JobScheduler;
+
+import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class Application extends Controller {
 
@@ -37,7 +36,7 @@ public class Application extends Controller {
 		}
 
 		else {
-			d = Devices.getDevice(Long.parseLong(session("sessionID")));
+			d = Devices.getInstance().getDevice(Long.parseLong(session("sessionID")));
 			RequestBody body = request().body();
 			JsonNode jn = body.asJson();
 			d.deviceID = jn.get("phone-id").asText("");
@@ -58,7 +57,7 @@ public class Application extends Controller {
 
 	public void addTestData(Long jobID) {
 		Data d = new Data();
-		d.dataID = jobID;
+		d.dataID = UUID.randomUUID();
 		d.type = Data.TYPE_IMMEDIATE;
 		d.data = "test data";
 
@@ -103,16 +102,14 @@ public class Application extends Controller {
 		Job j = JobScheduler.getInstance().getJob(d);
 		
 		if (j == null) 
-			return ok();
-		if (d.currentJob != d.NULL_JOB) 
+			return status(555, "NO JOB");
+		if (d.currentJob != Device.NULL_JOB) 
 			return forbidden();
 
-		j.retries++;
-		Ebean.update(j);
 
 		d.registerJob(j.jobID);
-		String s = j.export();
 		d.startCounter();
+		String s = j.export();
 
 		return ok(s);
 	}
@@ -128,8 +125,9 @@ public class Application extends Controller {
 			return unauthorized();
 		
 		//Just pass it straight to the Job scheduler, we could have a job given to multiple phones, or verification to run.
-		JobScheduler.getInstance().submitJob(d, request().body().asRaw().asBytes());
+		JobScheduler.getInstance().submitJob(d, request().body().asText());
 		
+		//Old code for reference, can be deleted if you want
 		/*
 		String s = request().body().asText();
 		Job j = Ebean.find(Job.class,d.currentJob);
@@ -143,6 +141,7 @@ public class Application extends Controller {
 		//TODO notify the computation that it has one less job to do.
 		d.jobsDone++;
 		*/
+		
 		return ok();
 	}
 }
