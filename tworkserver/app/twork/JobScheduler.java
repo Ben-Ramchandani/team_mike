@@ -1,8 +1,12 @@
 package twork;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import models.Data;
 import models.Job;
@@ -10,10 +14,8 @@ import models.Job;
 public class JobScheduler {
 
 
-	private JobScheduler() {
-	}
-
 	private static JobScheduler instance = null;
+	public static final UUID NULL_UUID = new UUID(0L, 0L); 
 
 	public static JobScheduler getInstance() {
 		if (instance == null) {
@@ -38,8 +40,9 @@ public class JobScheduler {
 	private static final long maxFailCount = 3;
 
 	//Decorator for jobs
+	//Stored in memory
 	private class ScheduleJob {
-		private long jobID;
+		private UUID jobID;
 
 
 		//What phone has this job?
@@ -51,7 +54,7 @@ public class JobScheduler {
 		private int failCount;
 		private String result;
 
-		public ScheduleJob(long jID) {
+		public ScheduleJob(UUID jID) {
 			jobID = jID;
 			failed = false;
 			complete = false;
@@ -67,35 +70,32 @@ public class JobScheduler {
 			return failed;
 		}
 
-		public long getJobID() {
+		public UUID getJobID() {
 			return jobID;
 		}
 
 		public void addPhone() {
 			hasPhone = true;
 		}
-		
+
 		public void timeout() {
 			if(!complete) {
 				hasPhone = false;
 				failCount++;
+				checkFailed();
 			}
 		}
 
 		private void checkFailed() {
-			if(failCount >= maxFailCount) {
+			if(failed || failCount >= maxFailCount) {
 				failed = true;
 			}
 		}
 
-		private void update() {
-			checkFailed();
-		}
 
 		public boolean needsPhone() {
 			if(!failed && !complete) {
-				update();
-				return hasPhone;
+				return !hasPhone;
 			} else {
 				return false;
 			}
@@ -118,8 +118,9 @@ public class JobScheduler {
 				throw new RuntimeException();
 			}
 			Data d;
+			UUID dataID = UUID.randomUUID();
 			try {
-				d = Data.store(result, jobID, j.computationID);
+				d = Data.store(result, dataID, j.computationID);
 			} catch (IOException e) {
 				System.err.println("Job save failed: unable to store data.");
 				e.printStackTrace();
@@ -127,30 +128,85 @@ public class JobScheduler {
 				throw new RuntimeException();
 			}
 			d.save();
-			j.outputData = d;
-			j.save();
+			j.outputDataID = dataID;
+			j.update();
 		}
 
 	}
-	
-	Map<Long, ScheduleJob> jobMap;
+
+	Map<UUID, ScheduleJob> jobMap;
 	//Jobs that want more phones.
 	List<ScheduleJob> waitingJobs;
 	//Jobs that are just waiting for results.
 	List<ScheduleJob> activeJobs;
 	
-	public synchronized void timeoutJob(long jobID) {
+	private JobScheduler() {
+		rebuild();
+	}
+	
+	
+	//Completely rebuild state from the Database
+	private synchronized void rebuild() {
+		List<Job> jobs = Job.find.all();
+		Iterator<Job> it = jobs.iterator();
+		jobMap = new HashMap<UUID, ScheduleJob>();
+		waitingJobs = new LinkedList<ScheduleJob>();
+		activeJobs = new LinkedList<ScheduleJob>();
+
+
+		while(it.hasNext()) {
+			Job currentJob = it.next();
+			if(currentJob.outputDataID == Device.NULL_UUID) {
+				ScheduleJob sj = new ScheduleJob(currentJob.jobID);
+				UUID currentJobID = currentJob.jobID;
+				jobMap.put(currentJobID, sj);
+				waitingJobs.add(sj);
+			}
+		}
+	}
+
+	
+	//Called from the Device timeout. 
+	public synchronized void timeoutJob(UUID jobID) {
 		ScheduleJob j = jobMap.get(jobID);
-		j.timeout();
-		activeJobs.remove(j);
-		waitingJobs.add(j);		
+		if(j != null) {
+			j.timeout();
+			activeJobs.remove(j);
+			processJob(j);
+		}
 	}
 
+	private synchronized void processJob(ScheduleJob j) {
+		if(j.isComplete()) {
+			j.save();
+			//TODO: Notify computation manager
+		} else if(j.isFailed()) {
+			//TODO: Notify computation manager
+		} else if(j.needsPhone()) {
+			waitingJobs.add(j);
+		} else {
+			activeJobs.add(j);
+		}
+	}
+
+	
 	//The device  contains the job ID, check they're correct then hand over to here.
-	public synchronized void submitJob(Device d, byte[] data) {
+	public synchronized void submitJob(Device d, String result) {
+		ScheduleJob j = jobMap.get(d.currentJob);
+		if(j == null) {
+			return;
+		}
+		if(!activeJobs.contains(j)) {
+			return;
+		}
 
+		j.addResult(result);
+		activeJobs.remove(j);
+		processJob(j);
 	}
-
+	
+	
+	//Returns null if no jobs are available
 	public synchronized Job getJob(Device d) {
 		if(waitingJobs.isEmpty()) {
 			return null;
@@ -158,11 +214,7 @@ public class JobScheduler {
 			ScheduleJob j = waitingJobs.remove(0);
 			j.addPhone();
 			activeJobs.add(j);
-			return j.getJob();
-		} else {
-			return null;
+			return Job.find.byId(j.getJobID());
 		}
-		return null;
-
 	}
 }

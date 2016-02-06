@@ -1,11 +1,12 @@
 package models;
 
-import java.util.*;
-import javax.persistence.*;
+import java.util.List;
+import java.util.UUID;
 
-import com.avaje.ebean.Model;
-import play.data.format.*;
-import play.data.validation.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 
 @Entity
@@ -18,8 +19,9 @@ public class Computation {
 	public String computationName;
 	public String computationDescription;
 	
+	public boolean failed = false;
+	
 	public int jobsLeft;
-	public int totalJobs;
 	
 	@OneToMany
 	public List<Job> jobs;

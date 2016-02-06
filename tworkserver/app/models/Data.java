@@ -5,13 +5,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
-import javax.persistence.*;
+import java.util.UUID;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import play.data.validation.Constraints;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Model;
-import play.data.format.*;
-import play.data.validation.*;
 
 @Entity
 @Table(name = "all_data")
@@ -66,7 +69,7 @@ public class Data extends Model{
 	
 	//This needs to return the Data instance it makes
 	//Does the data actually need an ID, or can we just reference it?
-	public static Data store(String s, Long dataID, Long computationID) throws IOException {
+	public static Data store(String s, UUID dataID, Long computationID) throws IOException {
 		/* Try to store string s at location dataID.
 		 * If s is small enough, will be immediate data; otherwise a file is created;
 		 * If the file cannot be created it raises and exception.

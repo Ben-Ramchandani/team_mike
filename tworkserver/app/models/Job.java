@@ -3,11 +3,9 @@ package models;
 import java.util.Formatter;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.avaje.ebean.Model;
@@ -24,15 +22,13 @@ public class Job extends Model {
 	
 	public Long computationID;
 	
-	@OneToOne(cascade=CascadeType.ALL)
-	public Data intputData;
+	public UUID intputDataID;
 	
 	public String functionID;
 	//address of the function class.
 	//these are simply on the file system, no database.
 	
-	@OneToOne(cascade=CascadeType.ALL)
-	public Data outputData;
+	public UUID outputDataID = null;
 
 	
 	
@@ -51,6 +47,5 @@ public class Job extends Model {
     	return result;
     }
 	
-	 public static Finder<Long, Job> find = new Finder<Long,Job>(Job.class);
-    
+	 public static Finder<UUID, Job> find = new Finder<UUID,Job>(Job.class);    
 }

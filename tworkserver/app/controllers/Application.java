@@ -68,26 +68,30 @@ public class Application extends Controller {
 		return ok();
 	}
 
-	public Result data(Long jobID) {
+	public Result data(Long longJobID) {
 		//will consider this the data id so far.
 
 		//need to ensure sane limit on the data transfer so we don't fill android's ram
 
 		//From jobs get data id.
+		
+		
 
 		if (session("sessionID") == null) 
 			return unauthorized();
 		Device d = Devices.getInstance().getDevice(session("sessionID"));
-
-		if (d.currentJob != jobID) 
+		
+		//The device class stores the full UUID, we just check the lower bits are right.
+		UUID jobID = d.currentJob;
+		
+		if (jobID.getLeastSignificantBits() != longJobID) 
 			return unauthorized();
 
 		//Maybe actually the data id should just be the job id
 		//Maybe actually we don't even need the data after all
 		//Maybe we just need the job with the associated input?
-
-		Long dataID = jobID; //cheat so I can test;
-		Data myData = Ebean.find(Data.class,dataID);
+		UUID dataID = jobID; //cheat so I can test;
+		Data myData = Ebean.find(Data.class, dataID);
 
 		return ok(myData.getContent());
 	}
@@ -103,7 +107,7 @@ public class Application extends Controller {
 		
 		if (j == null) 
 			return status(555, "NO JOB");
-		if (d.currentJob != Device.NULL_JOB) 
+		if (d.currentJob != Device.NULL_UUID) 
 			return forbidden();
 
 
@@ -121,7 +125,7 @@ public class Application extends Controller {
 
 		Device d = Devices.getInstance().getDevice(session("sessionID"));
 
-		if (d.currentJob != jobID) 
+		if (d.currentJob.getLeastSignificantBits() != jobID) 
 			return unauthorized();
 		
 		//Just pass it straight to the Job scheduler, we could have a job given to multiple phones, or verification to run.

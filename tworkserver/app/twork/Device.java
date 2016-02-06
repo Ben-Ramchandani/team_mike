@@ -4,13 +4,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-import com.avaje.ebean.Ebean;
-
-import models.Job;
-
 public class Device {
 
-	public static final int NULL_JOB = 0;
+	public static final UUID NULL_UUID = new UUID( 0L , 0L );
 	public static final int WAITING_TIME = 50;
 	public long sessionID;
 	
@@ -21,7 +17,7 @@ public class Device {
 	public int jobsDone;
 	public int jobsFailed;
 	
-	public long currentJob = NULL_JOB;
+	public UUID currentJob = NULL_UUID;
 	public boolean onWiFi;
 	
 	
@@ -32,7 +28,7 @@ public class Device {
 	}
 	
 	public synchronized void registerJob(UUID jobID) {
-		currentJob = jobID.getLeastSignificantBits();
+		currentJob = jobID;
 	}
 	
 	public void setBatteryLife(int batteryLife) {
@@ -66,7 +62,7 @@ public class Device {
 			synchronized(trigger) {
 				trigger.jobsFailed++;
 				JobScheduler.getInstance().timeoutJob(trigger.currentJob);
-				trigger.currentJob = NULL_JOB;
+				trigger.currentJob = NULL_UUID;
 			}
 		}
 		
