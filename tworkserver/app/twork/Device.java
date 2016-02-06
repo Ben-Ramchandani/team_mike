@@ -17,7 +17,7 @@ public class Device {
 	public int jobsDone;
 	public int jobsFailed;
 	
-	public UUID currentJob = NULL_UUID;
+	public UUID currentJob;
 	public boolean onWiFi;
 	
 	
@@ -25,6 +25,7 @@ public class Device {
 	
 	public Device(long sessionID) {
 		this.sessionID = sessionID;
+		currentJob = NULL_UUID;
 	}
 	
 	public synchronized void registerJob(UUID jobID) {

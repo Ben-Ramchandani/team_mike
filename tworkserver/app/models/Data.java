@@ -69,7 +69,7 @@ public class Data extends Model{
 	
 	//This needs to return the Data instance it makes
 	//Does the data actually need an ID, or can we just reference it?
-	public static Data store(String s, UUID dataID, Long computationID) throws IOException {
+	public static Data store(String s, UUID dataID, UUID computationID) throws IOException {
 		/* Try to store string s at location dataID.
 		 * If s is small enough, will be immediate data; otherwise a file is created;
 		 * If the file cannot be created it raises and exception.

@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import twork.Device;
+
 import com.avaje.ebean.Model;
 
 @Entity	
@@ -20,7 +22,7 @@ public class Job extends Model {
 	@ManyToOne
 	public Computation parentComputation;
 	
-	public Long computationID;
+	public UUID computationID;
 	
 	public UUID intputDataID;
 	
@@ -28,7 +30,20 @@ public class Job extends Model {
 	//address of the function class.
 	//these are simply on the file system, no database.
 	
-	public UUID outputDataID = null;
+	public UUID outputDataID;
+	
+	public boolean failed;
+	
+	public Job(Computation parent, String description,
+				UUID input, String function) {
+		
+		parentComputation = parent;
+		computationID = parent.computationID;
+		intputDataID = input;
+		functionID = function;
+		outputDataID = Device.NULL_UUID;
+		failed = false;
+	}
 
 	
 	

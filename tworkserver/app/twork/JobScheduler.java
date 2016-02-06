@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.avaje.ebean.Ebean;
+
 import models.Data;
 import models.Job;
 
@@ -41,7 +43,8 @@ public class JobScheduler {
 
 	//Decorator for jobs
 	//Stored in memory
-	private class ScheduleJob {
+	//TODO: Only public for testing
+	public class ScheduleJob {
 		private UUID jobID;
 
 
@@ -140,31 +143,56 @@ public class JobScheduler {
 	//Jobs that are just waiting for results.
 	List<ScheduleJob> activeJobs;
 	
+	//How many completed jobs were in the database on last rebuild?
+	private int deadJobCount;
+	
 	private JobScheduler() {
 		rebuild();
 	}
 	
 	
 	//Completely rebuild state from the Database
-	private synchronized void rebuild() {
-		List<Job> jobs = Job.find.all();
+	//Looses track of active jobs -> they will be refused.
+	//Only intended for server restart.
+	//TODO: Implement non-destructive version.
+	//TODO: only public for testing
+	public synchronized void rebuild() {
+		List<Job> jobs = Ebean.find(Job.class).findList();
 		Iterator<Job> it = jobs.iterator();
 		jobMap = new HashMap<UUID, ScheduleJob>();
 		waitingJobs = new LinkedList<ScheduleJob>();
 		activeJobs = new LinkedList<ScheduleJob>();
+		deadJobCount = 0;
 
 
 		while(it.hasNext()) {
 			Job currentJob = it.next();
-			if(currentJob.outputDataID == Device.NULL_UUID) {
+			if(!currentJob.failed && currentJob.outputDataID.equals(Device.NULL_UUID)) {
 				ScheduleJob sj = new ScheduleJob(currentJob.jobID);
 				UUID currentJobID = currentJob.jobID;
 				jobMap.put(currentJobID, sj);
 				waitingJobs.add(sj);
+			} else {
+				deadJobCount++;
 			}
 		}
 	}
 
+	
+	//Get the number of jobs in the scheduler
+	public int getNumberOfJobs() {
+		return activeJobs.size() + waitingJobs.size();
+	}
+	
+	//Get the number of jobs that have been given out.
+	public int getNumberOfActiveJobs() {
+		return activeJobs.size();
+	}
+	
+	//Get the number of jobs that are in the database, but will not be scheduled.
+	public int getNumberOfCompletedJobs() {
+		return deadJobCount;
+	}
 	
 	//Called from the Device timeout. 
 	public synchronized void timeoutJob(UUID jobID) {
@@ -194,9 +222,11 @@ public class JobScheduler {
 	public synchronized void submitJob(Device d, String result) {
 		ScheduleJob j = jobMap.get(d.currentJob);
 		if(j == null) {
+			System.err.println("Submitted job is not in scheduler, ignoring.");
 			return;
 		}
 		if(!activeJobs.contains(j)) {
+			System.err.println("Submitted job is not in scheduler, ignoring.");
 			return;
 		}
 
@@ -214,6 +244,7 @@ public class JobScheduler {
 			ScheduleJob j = waitingJobs.remove(0);
 			j.addPhone();
 			activeJobs.add(j);
+			d.registerJob(j.getJobID());
 			return Job.find.byId(j.getJobID());
 		}
 	}

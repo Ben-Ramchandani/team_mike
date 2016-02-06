@@ -25,10 +25,11 @@ create table all_jobs (
   job_id                    varchar(40) not null,
   job_description           varchar(255),
   parent_computation_computation_id varchar(40),
-  computation_id            bigint,
+  computation_id            varchar(40),
   intput_data_id            varchar(40),
   function_id               varchar(255),
   output_data_id            varchar(40),
+  failed                    boolean,
   constraint pk_all_jobs primary key (job_id))
 ;
 

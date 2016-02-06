@@ -8,10 +8,12 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.avaje.ebean.Model;
+
 
 @Entity
 @Table(name = "all_computation")
-public class Computation {
+public class Computation extends Model {
 
 
 	@Id

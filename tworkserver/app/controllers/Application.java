@@ -110,8 +110,8 @@ public class Application extends Controller {
 		if (d.currentJob != Device.NULL_UUID) 
 			return forbidden();
 
-
-		d.registerJob(j.jobID);
+		//Done in the Scheduler
+		//d.registerJob(j.jobID);
 		d.startCounter();
 		String s = j.export();
 
