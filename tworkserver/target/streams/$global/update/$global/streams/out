@@ -1,4 +1,4 @@
-[0m[[0minfo[0m] [0mUpdating {file:/home/razvan/groupproject/team_mike/tworkserver/}root...[0m
+[0m[[0minfo[0m] [0mUpdating {file:/media/ben/hdd_free/programming/team_mike/tworkserver/}root...[0m
 [0m[[0mdebug[0m] [0m:: resolving dependencies :: tworkserver#tworkserver_2.11;1.0-SNAPSHOT[0m
 [0m[[0mdebug[0m] [0m	confs: [compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom, scala-tool, fork-run][0m
 [0m[[0mdebug[0m] [0m	validate = true[0m
@@ -7,7 +7,7 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies for tworkserver#tworkserver_2.11;1.0-SNAPSHOT [compile][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies tworkserver#tworkserver_2.11;1.0-SNAPSHOT->org.scala-lang#scala-library;2.11.6 [compile->default(compile)][0m
 [0m[[0minfo[0m] [0mResolving org.scala-lang#scala-library;2.11.6 ...[0m
-[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@3b1c8c95[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@25d39191[0m
 [0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scala-lang#scala-library;2.11.6[0m
 [0m[[0mdebug[0m] [0m	found org.scala-lang#scala-library;2.11.6 in sbt-chain[0m
 [0m[[0mdebug[0m] [0m	[2.11.6] org.scala-lang#scala-library;2.11.6[0m
@@ -8243,20 +8243,20 @@
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-sbt#control_2.11;0.13.8-M3!control_2.11.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.akka#akka-actor_2.11;2.3.8!akka-actor_2.11.jar[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.typesafe.akka#akka-testkit_2.11;2.3.8!akka-testkit_2.11.jar[0m
-[0m[[0mdebug[0m] [0m:: resolution report :: resolve 2089ms :: artifacts dl 80ms[0m
-[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT compile produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-compile.xml[0m
-[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT runtime produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-runtime.xml[0m
-[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT test produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-test.xml[0m
-[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT provided produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-provided.xml[0m
-[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT optional produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-optional.xml[0m
-[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT compile-internal produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-compile-internal.xml[0m
-[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT runtime-internal produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-runtime-internal.xml[0m
-[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT test-internal produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-test-internal.xml[0m
-[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT plugin produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-plugin.xml[0m
-[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT sources produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-sources.xml[0m
-[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT docs produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-docs.xml[0m
-[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT pom produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-pom.xml[0m
-[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT scala-tool produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-scala-tool.xml[0m
-[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT fork-run produced in /home/razvan/groupproject/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-fork-run.xml[0m
-[0m[[0mdebug[0m] [0m	resolve done (2089ms resolve - 80ms download)[0m
+[0m[[0mdebug[0m] [0m:: resolution report :: resolve 11619ms :: artifacts dl 313ms[0m
+[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT compile produced in /media/ben/hdd_free/programming/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-compile.xml[0m
+[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT runtime produced in /media/ben/hdd_free/programming/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-runtime.xml[0m
+[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT test produced in /media/ben/hdd_free/programming/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-test.xml[0m
+[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT provided produced in /media/ben/hdd_free/programming/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-provided.xml[0m
+[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT optional produced in /media/ben/hdd_free/programming/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-optional.xml[0m
+[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT compile-internal produced in /media/ben/hdd_free/programming/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-compile-internal.xml[0m
+[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT runtime-internal produced in /media/ben/hdd_free/programming/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-runtime-internal.xml[0m
+[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT test-internal produced in /media/ben/hdd_free/programming/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-test-internal.xml[0m
+[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT plugin produced in /media/ben/hdd_free/programming/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-plugin.xml[0m
+[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT sources produced in /media/ben/hdd_free/programming/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-sources.xml[0m
+[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT docs produced in /media/ben/hdd_free/programming/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-docs.xml[0m
+[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT pom produced in /media/ben/hdd_free/programming/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-pom.xml[0m
+[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT scala-tool produced in /media/ben/hdd_free/programming/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-scala-tool.xml[0m
+[0m[[0mdebug[0m] [0m	report for tworkserver#tworkserver_2.11;1.0-SNAPSHOT fork-run produced in /media/ben/hdd_free/programming/team_mike/tworkserver/target/resolution-cache/reports/tworkserver-tworkserver_2.11-fork-run.xml[0m
+[0m[[0mdebug[0m] [0m	resolve done (11619ms resolve - 313ms download)[0m
 [0m[[0minfo[0m] [0mDone updating.[0m
