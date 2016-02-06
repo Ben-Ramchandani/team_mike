@@ -8,9 +8,9 @@ public class JobScheduler {
 	private JobScheduler() {
 	}
 	
-	private JobScheduler instance = null;
+	private static JobScheduler instance = null;
 	
-	public JobScheduler getInstance() {
+	public static JobScheduler getInstance() {
 		if (instance == null) {
 			instance = new JobScheduler();
 		}
@@ -30,10 +30,12 @@ public class JobScheduler {
 	 * Maybe it shouldn't be an interface as we will have a way to find priority for the Job type -> so only one way to Schedule.
 	*/
 	
+	//The device  contains the job ID, check they're correct then hand over to here.
+	public void submitJob(Device d, byte[] data) {
+		
+	}
 	
-	
-	
-    public static Job getJob(Device d) {
+    public Job getJob(Device d) {
     	// Apply algorithm to match device with best job, or just random for now (Ben)
     	
     	

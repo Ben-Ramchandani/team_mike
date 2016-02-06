@@ -14,9 +14,11 @@ import play.data.validation.*;
 public class Job extends Model {
 	@Id
 	public Long jobID;
-	public String jobName;
+	public String jobDescription;
 	
 	@ManyToOne
+	public Computation parentComputation;
+	
 	public Long computationID;
 	
 	public Long inputDataID;
@@ -38,8 +40,10 @@ public class Job extends Model {
     					 "\"computation-id\": %l,\n" +
     					 "\"job-id\" : %l,\n       " +
     					 "\"function-class\" : %s,\n" +
-    					 "\"job-description\": %s,\n", computationID, jobID, functionID, jobName);
+    					 "\"job-description\": %s,\n", computationID, jobID, functionID, jobDescription);
     	return formatter.toString();
     }
+	
+	 public static Finder<Long, Job> find = new Finder<Long,Job>(Job.class);
     
 }

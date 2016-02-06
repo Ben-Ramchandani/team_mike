@@ -100,7 +100,7 @@ public class Application extends Controller {
 			return unauthorized();
 
 		Device d = Devices.getInstance().getDevice(session("sessionID"));
-		Job j = JobScheduler.getJob(d);
+		Job j = JobScheduler.getInstance().getJob(d);
 		
 		if (j == null) 
 			return ok();
@@ -126,7 +126,11 @@ public class Application extends Controller {
 
 		if (d.currentJob != jobID) 
 			return unauthorized();
-
+		
+		//Just pass it straight to the Job scheduler, we could have a job given to multiple phones, or verification to run.
+		JobScheduler.getInstance().submitJob(d, request().body().asRaw().asBytes());
+		
+		/*
 		String s = request().body().asText();
 		Job j = Ebean.find(Job.class,d.currentJob);
 		try {
@@ -138,6 +142,7 @@ public class Application extends Controller {
 		}
 		//TODO notify the computation that it has one less job to do.
 		d.jobsDone++;
+		*/
 		return ok();
 	}
 }

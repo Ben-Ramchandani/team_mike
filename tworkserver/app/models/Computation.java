@@ -21,6 +21,9 @@ public class Computation {
 	public int jobsLeft;
 	public int totalJobs;
 	
+	@OneToMany
+	public List<Job> jobs;
+	
 	/*
 	 * Cases for computations
 	 * 
