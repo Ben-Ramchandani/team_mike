@@ -1,7 +1,0 @@
-[0m[[0mdebug[0m] [0mCopy resource mappings: [0m
-[0m[[0mdebug[0m] [0m	(/media/ben/hdd_free/programming/team_mike/tworkserver/conf/application.conf,/media/ben/hdd_free/programming/team_mike/tworkserver/target/scala-2.11/classes/application.conf)[0m
-[0m[[0mdebug[0m] [0m	(/media/ben/hdd_free/programming/team_mike/tworkserver/conf/evolutions,/media/ben/hdd_free/programming/team_mike/tworkserver/target/scala-2.11/classes/evolutions)[0m
-[0m[[0mdebug[0m] [0m	(/media/ben/hdd_free/programming/team_mike/tworkserver/conf/logback.xml,/media/ben/hdd_free/programming/team_mike/tworkserver/target/scala-2.11/classes/logback.xml)[0m
-[0m[[0mdebug[0m] [0m	(/media/ben/hdd_free/programming/team_mike/tworkserver/conf/routes,/media/ben/hdd_free/programming/team_mike/tworkserver/target/scala-2.11/classes/routes)[0m
-[0m[[0mdebug[0m] [0m	(/media/ben/hdd_free/programming/team_mike/tworkserver/conf/evolutions/default,/media/ben/hdd_free/programming/team_mike/tworkserver/target/scala-2.11/classes/evolutions/default)[0m
-[0m[[0mdebug[0m] [0m	(/media/ben/hdd_free/programming/team_mike/tworkserver/conf/evolutions/default/1.sql,/media/ben/hdd_free/programming/team_mike/tworkserver/target/scala-2.11/classes/evolutions/default/1.sql)[0m

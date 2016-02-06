@@ -14,3 +14,6 @@ repository
 templates
 target/
 project/target
+.classpath
+*.bat
+LICENCE
