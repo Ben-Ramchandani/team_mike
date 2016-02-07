@@ -15,16 +15,22 @@ import com.avaje.ebean.Model;
 @Table(name = "all_computation")
 public class Computation extends Model {
 
+	public static final int STATE_FAILED = 1;
+	public static final int STATE_RUNNING = 2;
+	public static final int STATE_COMPLETED = 3;
 
 	@Id
 	public UUID computationID;
 	public String computationName;
 	public String computationDescription;
 	
+	
 	public boolean failed;
 	public boolean running;
 	//Has the result of this computation been collected?
 	public boolean completed;
+	//A single field should suffice here?
+	public int state;
 	
 	public int jobsLeft;
 	

@@ -1,11 +1,13 @@
 package controllers;
 
+import java.io.File;
 import java.util.UUID;
 
 import models.Data;
 import models.Job;
 import play.mvc.Controller;
 import play.mvc.Http.RequestBody;
+import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 import twork.Device;
 import twork.Devices;
@@ -16,12 +18,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class Application extends Controller {
 
-	public Result index() {
-
-		String remote = request().remoteAddress();
-		return ok(remote);
-	}
-
+	
+	
+	
 	public Result available() {
 		/*
 		 * gives the phone a UUID 

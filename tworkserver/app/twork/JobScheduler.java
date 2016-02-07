@@ -35,12 +35,6 @@ public class JobScheduler {
     and timing out jobs that don't come back for too long.
 	 */
 
-	/* 
-	 * Make this singleton. 
-	 * Pass in the device to getJob() so we can allow at some point the users to choose computations
-	 * Maybe it shouldn't be an interface as we will have a way to find priority for the Job type -> so only one way to Schedule.
-	 */
-
 	private static final long maxFailCount = 3;
 
 	//Decorator for jobs

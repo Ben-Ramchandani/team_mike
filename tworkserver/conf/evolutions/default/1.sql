@@ -10,6 +10,7 @@ create table all_computation (
   failed                    boolean,
   running                   boolean,
   completed                 boolean,
+  state                     integer,
   jobs_left                 integer,
   logo_image_id             bigint,
   constraint pk_all_computation primary key (computation_id))
@@ -34,20 +35,16 @@ create table all_jobs (
   constraint pk_all_jobs primary key (job_id))
 ;
 
-alter table all_jobs add constraint fk_all_jobs_parentComputation_1 foreign key (parent_computation_computation_id) references all_computation (computation_id) on delete restrict on update restrict;
+alter table all_jobs add constraint fk_all_jobs_parentComputation_1 foreign key (parent_computation_computation_id) references all_computation (computation_id);
 create index ix_all_jobs_parentComputation_1 on all_jobs (parent_computation_computation_id);
 
 
 
 # --- !Downs
 
-SET REFERENTIAL_INTEGRITY FALSE;
+drop table if exists all_computation cascade;
 
-drop table if exists all_computation;
+drop table if exists all_data cascade;
 
-drop table if exists all_data;
-
-drop table if exists all_jobs;
-
-SET REFERENTIAL_INTEGRITY TRUE;
+drop table if exists all_jobs cascade;
 
