@@ -66,7 +66,7 @@ public class ApplicationTest {
 	public void Job_BasicTest() {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
-				Computation c = new Computation();
+				Computation c = new Computation("Title", "Description");
 				c.save();
 				Job j = new Job(c, "A job", UUID.randomUUID(), "a function");
 				j.save();
@@ -90,7 +90,7 @@ public class ApplicationTest {
 				assertEquals("Empty JS returns null", js.getJob(d), null);
 
 				//Add a job
-				Computation c = new Computation();
+				Computation c = new Computation("Title", "Description");
 				c.save();
 				//The random UUID is the inputData
 				Job j = new Job(c, "A job", UUID.randomUUID(), "a function");
@@ -142,7 +142,14 @@ public class ApplicationTest {
 				Job o = new Job(c, "Another job", UUID.randomUUID(), "a function");
 				o.save();
 				
-				js.rebuild();
+				js.update();
+				assertEquals("JS 2 active jobs", js.getNumberOfJobs(), 2);
+				j.delete();
+				js.update();
+				assertEquals("JS update removes jobs", js.getNumberOfJobs(), 1);
+				j = new Job(c, "A job", UUID.randomUUID(), "a function");
+				j.save();
+				js.update();
 				assertEquals("JS 2 active jobs", js.getNumberOfJobs(), 2);
 				
 				//Check submitting jobs works

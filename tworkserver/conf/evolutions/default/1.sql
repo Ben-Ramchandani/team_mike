@@ -8,8 +8,9 @@ create table all_computation (
   computation_name          varchar(255),
   computation_description   varchar(255),
   failed                    boolean,
+  running                   boolean,
+  completed                 boolean,
   jobs_left                 integer,
-  data                      varchar(255),
   logo_image_id             bigint,
   constraint pk_all_computation primary key (computation_id))
 ;

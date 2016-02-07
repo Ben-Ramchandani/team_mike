@@ -2,10 +2,12 @@ package twork;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import com.avaje.ebean.Ebean;
@@ -174,6 +176,68 @@ public class JobScheduler {
 				waitingJobs.add(sj);
 			} else {
 				deadJobCount++;
+			}
+		}
+	}
+	
+	//Update jobs from the database.
+	//Needs to be called when a computation fails and its jobs have been removed.
+	//Or when a computation is added.
+	//Designed to be cheap to add jobs, it will not hold the lock for very long.
+	public void update() {
+		//Make a copy of our job UUIDs
+		List<UUID> currentJobIDs;
+		synchronized(this) {
+			Set<UUID> ks = jobMap.keySet();
+			currentJobIDs = new LinkedList<UUID>(ks);
+		}
+		
+		//Read in the jobs from the database
+		//Could be slow, so release lock.
+		List<Job> jobs = Ebean.find(Job.class).findList();
+		Iterator<Job> it = jobs.iterator();
+		List<Job> newJobs = new LinkedList<Job>();
+		deadJobCount = 0;
+
+		while(it.hasNext()) {
+			Job job = it.next();
+			if(!job.failed && job.outputDataID.equals(Device.NULL_UUID)) {
+				
+				if(!currentJobIDs.contains(job.jobID)) {
+					//New job we haven't seen before.
+					newJobs.add(job);
+				} else {
+					//Already knew about this one
+					//Remove it from current jobs,
+					//At the end currentJobs will contain all removed jobs.
+					currentJobIDs.remove(job.jobID);
+				}
+			} else {
+				deadJobCount++;
+			}
+		}
+		
+		
+		//Adjust internal lists
+		List<UUID> removedJobIDs = currentJobIDs;
+		List<ScheduleJob> newScheduleJobs = new LinkedList<ScheduleJob>();
+		for(Job j : newJobs) {
+			newScheduleJobs.add(new ScheduleJob(j.jobID));
+		}
+		synchronized(this) {
+			//Remove jobs as necessary.
+			for(UUID u : removedJobIDs) {
+				ScheduleJob sj = jobMap.get(u);
+				if(sj != null) {
+					jobMap.remove(u);
+					activeJobs.remove(sj);
+					waitingJobs.remove(sj);
+				}
+			}
+			//Add new jobs
+			for(ScheduleJob sj : newScheduleJobs) {
+				jobMap.put(sj.jobID, sj);
+				waitingJobs.add(sj);
 			}
 		}
 	}

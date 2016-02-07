@@ -21,7 +21,10 @@ public class Computation extends Model {
 	public String computationName;
 	public String computationDescription;
 	
-	public boolean failed = false;
+	public boolean failed;
+	public boolean running;
+	//Has the result of this computation been collected?
+	public boolean completed;
 	
 	public int jobsLeft;
 	
@@ -39,14 +42,15 @@ public class Computation extends Model {
 	 * 
 	*/
 	
-	public String data;
-	
-	
-	public void parallelize() {
-		//Parallelizer p = new Parallelize
-		
-		//here I create the jobs
+	public Computation(String name, String desc) {
+		computationName = name;
+		computationDescription = desc;
+		failed = completed = running = false;
 	}
+	
+	
+	//I'll have a separate class with the parrallelize stuff in, it's too different between computations.
+
 	
 	public void getinput() {
 		//here I get the input from wherever the user adds it too (late feature)
