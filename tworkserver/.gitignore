@@ -6,3 +6,14 @@ target
 /.project
 /.settings
 /RUNNING_PID
+*.swp
+LICENSE.html
+README.html
+bin/
+repository
+templates
+target/
+project/target
+.classpath
+*.bat
+LICENCE

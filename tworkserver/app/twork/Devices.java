@@ -11,7 +11,7 @@ public class Devices {
 	
 	private static Devices instance = null;
 	
-	private static HashMap<Long,Device> devices = new HashMap<Long,Device>();
+	private HashMap<Long,Device> devices = new HashMap<Long,Device>();
 	
 	public static Devices getInstance() {
 		if (instance == null) {
@@ -28,7 +28,7 @@ public class Devices {
 		return (new Random()).nextInt();
 	}
 	
-	public static Device getDevice(long sessionID) {
+	public Device getDevice(long sessionID) {
 		Device d = devices.get(sessionID);
 		if (d == null) {
 			d = new Device(sessionID);
@@ -37,7 +37,7 @@ public class Devices {
 		return d;
 	}
 
-	public static Device getDevice(String session) {
+	public Device getDevice(String session) {
 		return getDevice(Long.parseLong(session));
 	}
 }

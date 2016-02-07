@@ -2,14 +2,11 @@ package twork;
 
 import java.util.Timer;
 import java.util.TimerTask;
-
-import com.avaje.ebean.Ebean;
-
-import models.Job;
+import java.util.UUID;
 
 public class Device {
 
-	public static final int NULL_JOB = 0;
+	public static final UUID NULL_UUID = new UUID( 0L , 0L );
 	public static final int WAITING_TIME = 50;
 	public long sessionID;
 	
@@ -20,7 +17,7 @@ public class Device {
 	public int jobsDone;
 	public int jobsFailed;
 	
-	public long currentJob = NULL_JOB;
+	public UUID currentJob;
 	public boolean onWiFi;
 	
 	
@@ -28,9 +25,10 @@ public class Device {
 	
 	public Device(long sessionID) {
 		this.sessionID = sessionID;
+		currentJob = NULL_UUID;
 	}
 	
-	public void registerJob(long jobID) {
+	public synchronized void registerJob(UUID jobID) {
 		currentJob = jobID;
 	}
 	
@@ -64,16 +62,11 @@ public class Device {
 		public void run() {
 			synchronized(trigger) {
 				trigger.jobsFailed++;
-				trigger.currentJob = NULL_JOB;
+				JobScheduler.getInstance().timeoutJob(trigger.currentJob);
+				trigger.currentJob = NULL_UUID;
 			}
 		}
 		
 	}
-	
-	
-	
-	
-	
-	
 	
 }

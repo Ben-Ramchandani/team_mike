@@ -1,5 +1,0 @@
-[0m[[31merror[0m] [0m/home/razvan/groupproject/team_mike/tworkserver/conf/routes:52: type mismatch;[0m
-[0m[[31merror[0m] [0m found   : Long[0m
-[0m[[31merror[0m] [0m required: String[0m
-[0m[[31merror[0m] [0mGET		/function/:functionID		controllers.Application.function(functionID:Long)[0m
-[0m[[31merror[0m] [0mone error found[0m

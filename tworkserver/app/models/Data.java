@@ -5,13 +5,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
-import javax.persistence.*;
+import java.util.UUID;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import play.data.validation.Constraints;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Model;
-import play.data.format.*;
-import play.data.validation.*;
 
 @Entity
 @Table(name = "all_data")
@@ -30,7 +33,7 @@ public class Data extends Model{
 	public static final String TYPE_IMMEDIATE = "imediate";
 	public static final int    MAX_IMMEDIATE_LENGTH = 512;
 	@Id
-	public Long dataID;
+	public UUID dataID;
 
 
 
@@ -62,8 +65,11 @@ public class Data extends Model{
 		//I don't see why it needs this to compile, all the branches return something.
 		return null;
 	}
-
-	public static boolean store(String s, Long dataID, Long computationID) throws IOException {
+	
+	
+	//This needs to return the Data instance it makes
+	//Does the data actually need an ID, or can we just reference it?
+	public static Data store(String s, UUID dataID, UUID computationID) throws IOException {
 		/* Try to store string s at location dataID.
 		 * If s is small enough, will be immediate data; otherwise a file is created;
 		 * If the file cannot be created it raises and exception.
@@ -71,13 +77,11 @@ public class Data extends Model{
 		 * If the dataID is already taken, returns false
 		 * If it succeeds, returns true
 		 */
-		
+		Data d;
 		if (Ebean.find(Data.class, dataID) != null) {
-			return false;
-		}
-
-		else {
-			Data d = new Data();
+			return null;
+		} else {
+			d = new Data();
 			d.dataID = dataID;
 			if (s.length() < MAX_IMMEDIATE_LENGTH) {
 				d.type = TYPE_IMMEDIATE;
@@ -89,7 +93,7 @@ public class Data extends Model{
 				d.data = file.toString(); //TODO test this
 			}
 		}
-		return true;
+		return d;
 	}
 
 

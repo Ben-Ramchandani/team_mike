@@ -1,19 +1,18 @@
 package controllers;
 
-import java.io.IOException;
-import java.util.List;
-
-import com.avaje.ebean.Ebean;
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.UUID;
 
 import models.Data;
 import models.Job;
-import play.*;
-import play.mvc.*;
-import play.mvc.BodyParser.Json;
+import play.mvc.Controller;
 import play.mvc.Http.RequestBody;
-import twork.*;
-import views.html.*;
+import play.mvc.Result;
+import twork.Device;
+import twork.Devices;
+import twork.JobScheduler;
+
+import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class Application extends Controller {
 
@@ -37,7 +36,7 @@ public class Application extends Controller {
 		}
 
 		else {
-			d = Devices.getDevice(Long.parseLong(session("sessionID")));
+			d = Devices.getInstance().getDevice(Long.parseLong(session("sessionID")));
 			RequestBody body = request().body();
 			JsonNode jn = body.asJson();
 			d.deviceID = jn.get("phone-id").asText("");
@@ -58,7 +57,7 @@ public class Application extends Controller {
 
 	public void addTestData(Long jobID) {
 		Data d = new Data();
-		d.dataID = jobID;
+		d.dataID = UUID.randomUUID();
 		d.type = Data.TYPE_IMMEDIATE;
 		d.data = "test data";
 
@@ -69,26 +68,30 @@ public class Application extends Controller {
 		return ok();
 	}
 
-	public Result data(Long jobID) {
+	public Result data(Long longJobID) {
 		//will consider this the data id so far.
 
 		//need to ensure sane limit on the data transfer so we don't fill android's ram
 
 		//From jobs get data id.
+		
+		
 
 		if (session("sessionID") == null) 
 			return unauthorized();
 		Device d = Devices.getInstance().getDevice(session("sessionID"));
-
-		if (d.currentJob != jobID) 
+		
+		//The device class stores the full UUID, we just check the lower bits are right.
+		UUID jobID = d.currentJob;
+		
+		if (jobID.getLeastSignificantBits() != longJobID) 
 			return unauthorized();
 
 		//Maybe actually the data id should just be the job id
 		//Maybe actually we don't even need the data after all
 		//Maybe we just need the job with the associated input?
-
-		Long dataID = jobID; //cheat so I can test;
-		Data myData = Ebean.find(Data.class,dataID);
+		UUID dataID = jobID; //cheat so I can test;
+		Data myData = Ebean.find(Data.class, dataID);
 
 		return ok(myData.getContent());
 	}
@@ -100,19 +103,17 @@ public class Application extends Controller {
 			return unauthorized();
 
 		Device d = Devices.getInstance().getDevice(session("sessionID"));
-		Job j = JobScheduler.getJob(d);
+		Job j = JobScheduler.getInstance().getJob(d);
 		
 		if (j == null) 
-			return ok();
-		if (d.currentJob != d.NULL_JOB) 
+			return status(555, "NO JOB");
+		if (d.currentJob != Device.NULL_UUID) 
 			return forbidden();
 
-		j.retries++;
-		Ebean.update(j);
-
-		d.registerJob(j.jobID);
-		String s = j.export();
+		//Done in the Scheduler
+		//d.registerJob(j.jobID);
 		d.startCounter();
+		String s = j.export();
 
 		return ok(s);
 	}
@@ -124,9 +125,14 @@ public class Application extends Controller {
 
 		Device d = Devices.getInstance().getDevice(session("sessionID"));
 
-		if (d.currentJob != jobID) 
+		if (d.currentJob.getLeastSignificantBits() != jobID) 
 			return unauthorized();
-
+		
+		//Just pass it straight to the Job scheduler, we could have a job given to multiple phones, or verification to run.
+		JobScheduler.getInstance().submitJob(d, request().body().asText());
+		
+		//Old code for reference, can be deleted if you want
+		/*
 		String s = request().body().asText();
 		Job j = Ebean.find(Job.class,d.currentJob);
 		try {
@@ -138,6 +144,8 @@ public class Application extends Controller {
 		}
 		//TODO notify the computation that it has one less job to do.
 		d.jobsDone++;
+		*/
+		
 		return ok();
 	}
 }
