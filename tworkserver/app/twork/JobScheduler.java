@@ -156,7 +156,7 @@ public class JobScheduler {
 	private int deadJobCount;
 	
 	private JobScheduler() {
-		rebuild();
+		rebuild_TEST();
 	}
 	
 	
@@ -164,7 +164,7 @@ public class JobScheduler {
 	//Looses track of active jobs -> they will be refused.
 	//Only intended for server restart.
 	//Only public for testing
-	public synchronized void rebuild() {
+	public synchronized void rebuild_TEST() {
 		List<Job> jobs = Ebean.find(Job.class).findList();
 		Iterator<Job> it = jobs.iterator();
 		jobMap = new HashMap<UUID, ScheduleJob>();

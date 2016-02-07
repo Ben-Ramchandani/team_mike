@@ -5,16 +5,28 @@ import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
+import models.CompletedComputation;
 import models.Computation;
+import models.Data;
 import models.Job;
 
 import org.junit.Test;
 
 import com.avaje.ebean.Ebean;
+
+import computations.ComputationCode;
 import computations.PrimeComputation;
+import computations.PrimeComputationCode;
 
 import twork.ComputationManager;
 import twork.Device;
@@ -103,17 +115,149 @@ public class ApplicationTest {
 	public void CM_Test() {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
-
-
+				Logger.enable = true;
 				ComputationManager cm = ComputationManager.getInstance();
+				cm.rebuild_TEST();
 
 				assertEquals("Empty CM is empty", 0, cm.getNumberOfComputations());
 
 				cm.addBasicComputation(new PrimeComputation(), "5");
 
 				assertEquals("CM can add computation", 1, cm.getNumberOfComputations());
-				
+
 				assertTrue("Prime adds jobs", Ebean.find(Job.class).findList().size() > 0);
+			}
+		});
+	}
+
+	public String result;
+	
+	public String genericPrimeTest(final long prime) {
+		running(fakeApplication(inMemoryDatabase()), new Runnable() {
+			public void run() {
+				Logger.enable = false;
+				Ebean.delete(Ebean.find(CompletedComputation.class).findList());
+				Device d = new Device(1L);
+				ComputationManager cm = ComputationManager.getInstance();
+				JobScheduler js = JobScheduler.getInstance();
+				cm.addBasicComputation(new PrimeComputation(), Long.toString(prime));
+
+				Job primeJob;
+				while((primeJob = js.getJob(d)) != null) {
+					ComputationCode cc = new PrimeComputationCode();
+					//TODO: Data dependence
+					Data inData = Ebean.find(Data.class, primeJob.intputDataID);
+					String jobInput = inData.getContent();
+					ByteArrayOutputStream out = new ByteArrayOutputStream();
+					InputStream in = new ByteArrayInputStream(jobInput.getBytes(StandardCharsets.UTF_8));
+					cc.run(in, out);
+					String outString = new String(out.toByteArray(), StandardCharsets.UTF_8);
+					js.submitJob(d, outString);
+				}
+				result = cm.getCompletedComputations().get(0).output;
+			}
+		});
+
+		return result;
+	}
+
+	@Test
+	public void Prime_CorrectnessTest() {
+		//5 is prime
+		String output = genericPrimeTest(5);
+		assertEquals("Prime computation run on 5", output, "No factor found for 5.");
+		
+		//21 = 7 * 3
+		output = genericPrimeTest(21);
+		assertTrue("Prime computation run on 21", output.equals("Found factor for 21: 3.") || output.equals("Found factor for 21: 7."));
+		
+		//29 is prime
+		output = genericPrimeTest(29);
+		assertEquals("Prime computation run on 29", output, "No factor found for 29.");
+		
+		//7919 is prime
+		output = genericPrimeTest(7919);
+		assertEquals("Prime computation run on 7919", output, "No factor found for 7919.");
+		
+		//373987259 = 3571 * 104729
+		output = genericPrimeTest(373987259);
+		assertTrue("Prime computation run on 373987259", output.equals("Found factor for 373987259: 3571.") || output.equals("Found factor for 373987259: 104729."));
+	}
+
+	@Test
+	public void Prime_DetailedTest() {
+		running(fakeApplication(inMemoryDatabase()), new Runnable() {
+			public void run() {
+				Logger.enable = false;
+				Device d = new Device(1L);
+				ComputationManager cm = ComputationManager.getInstance();
+				cm.rebuild_TEST();
+				JobScheduler js = JobScheduler.getInstance();
+				js.rebuild_TEST();
+
+				//Make new computation
+				cm.addBasicComputation(new PrimeComputation(), "4");
+				assertEquals("Prime(4) has 1 job", 1, Ebean.find(Job.class).findList().size());
+
+				//Get its job
+				Job primeJob = js.getJob(d);
+				assertNotNull(primeJob);
+
+				//Run it
+				ComputationCode cc = new PrimeComputationCode();
+				//TODO: Data dependance
+				Data inData = Ebean.find(Data.class, primeJob.intputDataID);
+				assertNotNull("Prime job has associated data", inData);
+
+				String jobInput = inData.getContent();
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				InputStream in = new ByteArrayInputStream(jobInput.getBytes(StandardCharsets.UTF_8));
+
+				cc.run(in, out);
+
+				String outString = new String(out.toByteArray(), StandardCharsets.UTF_8);
+
+				assertEquals("Prime can find out that 2|4", "2", outString);
+
+				assertTrue("No completed Computations", cm.getCompletedComputations().isEmpty());
+
+				//Submit it
+				js.submitJob(d, outString);
+				assertEquals("JS has removed completed job", 0, js.getNumberOfActiveJobs());
+
+				//Get result				
+				List<CompletedComputation> completedComputations = cm.getCompletedComputations();
+
+				assertEquals("One completed computation", 1, completedComputations.size());
+
+				assertEquals("Check Prime output for 4", "Found factor for 4: 2.", completedComputations.get(0).output);
+
+				assertEquals("CM computation has been removed", 0, cm.getNumberOfComputations());
+				assertTrue("Completed job has been deleted", Ebean.find(Job.class).findList().isEmpty());
+
+				//TODO: Finish this (take both jobs at once)
+				/*
+				//Make new Computation
+				cm.addBasicComputation(new PrimeComputation(), "5");
+				assertEquals("Prime(5) has 2 jobs", 2, Ebean.find(Job.class).findList().size());
+
+				//Get the jobs
+				Job primeJob1 = js.getJob(d);
+				assertNotNull(primeJob1);
+				Job primeJob2 = js.getJob(d);
+				assertNotNull(primeJob2);
+
+				inData = Ebean.find(Data.class, primeJob1.intputDataID);
+				assertNotNull("Prime job has associated data", inData);
+
+				jobInput = inData.getContent();
+				out = new ByteArrayOutputStream();
+				in = new ByteArrayInputStream(jobInput.getBytes(StandardCharsets.UTF_8));
+
+				cc.run(in, out);
+
+				String outString = new String(out.toByteArray(), StandardCharsets.UTF_8);
+				 */
 			}
 		});
 	}
@@ -139,7 +283,7 @@ public class ApplicationTest {
 				c.save();
 				j.save();
 				UUID jID = j.jobID;
-				js.rebuild();
+				js.rebuild_TEST();
 
 				//And expect there to be a job now
 				Job g = js.getJob(d);

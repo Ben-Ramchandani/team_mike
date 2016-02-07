@@ -17,7 +17,8 @@ import computations.BasicComputationGenerator;
 public class ComputationManager {
 	
 	//Singleton
-	private static ComputationManager instance;
+	//TODO:
+	public static ComputationManager instance;
 	
 	public static ComputationManager getInstance() {
 		if(instance == null) {
@@ -32,12 +33,12 @@ public class ComputationManager {
 	//Could keep a in memory map from jobID to ComputationID
 
 	private ComputationManager() {
-		rebuild();
+		rebuild_TEST();
 	}
 
 
 	//Rebuild from the database
-	public synchronized void rebuild() {
+	public synchronized void rebuild_TEST() {
 		jobsRemaining = new HashMap<UUID, Integer>();
 		List<Computation> computations = Ebean.find(Computation.class).findList();
 		Iterator<Computation> it = computations.iterator();
@@ -135,10 +136,15 @@ public class ComputationManager {
 			int jobsLeft = c.jobsLeft;
 			if(jobsLeft > 0) {
 				jobsRemaining.put(id, c.jobsLeft);
+				JobScheduler.getInstance().update();
 			} else {
 				Logger.log("Computation added has no jobs.");
 			}
 		}
+	}
+	
+	public List<CompletedComputation> getCompletedComputations() {
+		return Ebean.find(CompletedComputation.class).findList();
 	}
 	
 	private synchronized void completeComputation(UUID computationID) {
@@ -147,6 +153,9 @@ public class ComputationManager {
 		if(comp == null) {
 			Logger.log("Non existent computation completed, ignoring.");
 		} else {
+			comp.jobsLeft = 0;
+			comp.running = false;
+			comp.save();
 			/*
 			 * Have different cases for the different types of computations.
 			 * Just have this one for now.
