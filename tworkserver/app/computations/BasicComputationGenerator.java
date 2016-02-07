@@ -3,6 +3,7 @@ package computations;
 import java.util.UUID;
 
 //This generates a simple computation, like the prime class, where all the input and results can fit in memory.
+//This class MUST have NO STATE whatsoever.
 public interface BasicComputationGenerator {
 	//Should have a default constructor.
 	

@@ -15,12 +15,12 @@ import com.avaje.ebean.Ebean;
 
 public class PrimeComputation implements BasicComputationGenerator {
 
-	private long prime;
 	private final String functionName = "PrimeComputationCode";
 
 
 	@Override
 	public UUID generateComputation(String input) {
+		long prime;
 		try {
 			Scanner s = new Scanner(input);
 			prime = s.nextLong();
@@ -69,6 +69,8 @@ public class PrimeComputation implements BasicComputationGenerator {
 			}
 			
 			c.running = true;
+			c.jobsLeft = c.jobs.size();
+			c.input = input;
 			c.update();
 			Ebean.commitTransaction();
 		} finally {
@@ -79,6 +81,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 	}
 
 	public String getResult(UUID computationID) {
+		long prime;
 		Computation c = Ebean.find(Computation.class, computationID);
 		if(c == null) {
 			return "Error: computation not found";
@@ -89,6 +92,16 @@ public class PrimeComputation implements BasicComputationGenerator {
 		} else if(c.completed) {
 			return "Error: computation has aleady been processed";
 		}
+		
+		try {
+			Scanner s = new Scanner(c.input);
+			prime = s.nextLong();
+			s.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("PrimeComputation: Computation input invalid, expected \"long\"");
+		}
+		
 		c.running = false;
 		c.completed = true;
 		c.update();

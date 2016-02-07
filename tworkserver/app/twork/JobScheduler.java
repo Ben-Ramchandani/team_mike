@@ -2,7 +2,6 @@ package twork;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,10 +9,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import com.avaje.ebean.Ebean;
-
 import models.Data;
 import models.Job;
+
+import com.avaje.ebean.Ebean;
 
 public class JobScheduler {
 
@@ -115,16 +114,17 @@ public class JobScheduler {
 		}
 
 		public void save() {
-			//Conversion from byte[] to string is nasty.
 			Job j = Job.find.byId(jobID);
 			if(j == null) {
 				System.err.println("Job save failed: unable to locate job.");
 				failed = true;
 				throw new RuntimeException();
 			}
+			
 			Data d;
 			UUID dataID = UUID.randomUUID();
 			try {
+				//TODO: uses data class
 				d = Data.store(result, dataID, j.computationID);
 			} catch (IOException e) {
 				System.err.println("Job save failed: unable to store data.");
@@ -132,9 +132,16 @@ public class JobScheduler {
 				failed = true;
 				throw new RuntimeException();
 			}
-			d.save();
 			j.outputDataID = dataID;
-			j.update();
+			
+			Ebean.beginTransaction();
+			try {
+				d.save();
+				j.update();
+				Ebean.commitTransaction();
+			} finally {
+				Ebean.endTransaction();
+			}
 		}
 
 	}
@@ -156,8 +163,7 @@ public class JobScheduler {
 	//Completely rebuild state from the Database
 	//Looses track of active jobs -> they will be refused.
 	//Only intended for server restart.
-	//TODO: Implement non-destructive version.
-	//TODO: only public for testing
+	//Only public for testing
 	public synchronized void rebuild() {
 		List<Job> jobs = Ebean.find(Job.class).findList();
 		Iterator<Job> it = jobs.iterator();
@@ -184,6 +190,7 @@ public class JobScheduler {
 	//Needs to be called when a computation fails and its jobs have been removed.
 	//Or when a computation is added.
 	//Designed to be cheap to add jobs, it will not hold the lock for very long.
+	//Slower if lots of jobs are removed (shouldn't happen much)
 	public void update() {
 		//Make a copy of our job UUIDs
 		List<UUID> currentJobIDs;
@@ -271,9 +278,9 @@ public class JobScheduler {
 	private synchronized void processJob(ScheduleJob j) {
 		if(j.isComplete()) {
 			j.save();
-			//TODO: Notify computation manager
+			ComputationManager.getInstance().jobCompleted(j.getJobID());
 		} else if(j.isFailed()) {
-			//TODO: Notify computation manager
+			ComputationManager.getInstance().jobFailed(j.getJobID());
 		} else if(j.needsPhone()) {
 			waitingJobs.add(j);
 		} else {
@@ -307,6 +314,7 @@ public class JobScheduler {
 		} else {
 			ScheduleJob j = waitingJobs.remove(0);
 			j.addPhone();
+			//Dependent on job only going out once.
 			activeJobs.add(j);
 			d.registerJob(j.getJobID());
 			return Job.find.byId(j.getJobID());

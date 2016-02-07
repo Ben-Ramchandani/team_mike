@@ -3,14 +3,26 @@
 
 # --- !Ups
 
+create table all_completed_computation (
+  completed_computation_id  varchar(40) not null,
+  function_name             varchar(255),
+  computation_description   varchar(255),
+  computation_id            varchar(40),
+  total_jobs                integer,
+  input                     varchar(255),
+  output                    varchar(255),
+  constraint pk_all_completed_computation primary key (completed_computation_id))
+;
+
 create table all_computation (
   computation_id            varchar(40) not null,
-  computation_name          varchar(255),
+  function_name             varchar(255),
   computation_description   varchar(255),
   failed                    boolean,
   running                   boolean,
   completed                 boolean,
   jobs_left                 integer,
+  input                     varchar(255),
   logo_image_id             bigint,
   constraint pk_all_computation primary key (computation_id))
 ;
@@ -42,6 +54,8 @@ create index ix_all_jobs_parentComputation_1 on all_jobs (parent_computation_com
 # --- !Downs
 
 SET REFERENTIAL_INTEGRITY FALSE;
+
+drop table if exists all_completed_computation;
 
 drop table if exists all_computation;
 

@@ -3,6 +3,7 @@ package models;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -18,7 +19,7 @@ public class Computation extends Model {
 
 	@Id
 	public UUID computationID;
-	public String computationName;
+	public String functionName;
 	public String computationDescription;
 	
 	public boolean failed;
@@ -28,8 +29,10 @@ public class Computation extends Model {
 	
 	public int jobsLeft;
 	
-	@OneToMany
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy="parentComputation")
 	public List<Job> jobs;
+	
+	public String input;
 	
 	/*
 	 * Cases for computations
@@ -42,8 +45,8 @@ public class Computation extends Model {
 	 * 
 	*/
 	
-	public Computation(String name, String desc) {
-		computationName = name;
+	public Computation(String function, String desc) {
+		functionName = function;
 		computationDescription = desc;
 		failed = completed = running = false;
 	}
