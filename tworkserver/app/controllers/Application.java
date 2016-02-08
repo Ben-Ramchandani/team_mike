@@ -10,6 +10,7 @@ import play.mvc.Result;
 import twork.Device;
 import twork.Devices;
 import twork.JobScheduler;
+import twork.MyLogger;
 
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -32,19 +33,24 @@ public class Application extends Controller {
 
 		if (session("sessionID") == null) {
 			d = new Device(Devices.getInstance().generateID());
-			session("sessionID",Long.toString(d.getSessionID())); 
+			session("sessionID", d.getSessionID()); 
 		}
 
-		else {
-			d = Devices.getInstance().getDevice(Long.parseLong(session("sessionID")));
-			RequestBody body = request().body();
+		d = Devices.getInstance().getDevice(session("sessionID"));
+		RequestBody body = request().body();
+
+		try {
 			JsonNode jn = body.asJson();
 			d.deviceID = jn.get("phone-id").asText("");
 			d.batteryLife = jn.get("battery-life").asInt();
 			d.onCharge = jn.get("on-charge").asBoolean();
 			d.onWiFi = jn.get("on-wifi").asBoolean();
-		}	
-		return ok(Long.toString(d.sessionID));
+		} catch(Exception e) {
+			//TODO:
+			return ok("Could not parse JSON");
+		}
+
+		return ok(d.sessionID);
 	}
 
 	public Result subscribe(Long jobID) { 
@@ -74,16 +80,16 @@ public class Application extends Controller {
 		//need to ensure sane limit on the data transfer so we don't fill android's ram
 
 		//From jobs get data id.
-		
-		
+
+
 
 		if (session("sessionID") == null) 
 			return unauthorized();
 		Device d = Devices.getInstance().getDevice(session("sessionID"));
-		
+
 		//The device class stores the full UUID, we just check the lower bits are right.
 		UUID jobID = d.currentJob;
-		
+
 		if (jobID.getLeastSignificantBits() != longJobID) 
 			return unauthorized();
 
@@ -96,15 +102,15 @@ public class Application extends Controller {
 		return ok(myData.getContent());
 	}
 
-	
-	
+
+
 	public Result job() {
 		if (session("sessionID") == null) 
 			return unauthorized();
 
 		Device d = Devices.getInstance().getDevice(session("sessionID"));
 		Job j = JobScheduler.getInstance().getJob(d);
-		
+
 		if (j == null) 
 			return status(555, "NO JOB");
 		if (d.currentJob != Device.NULL_UUID) 
@@ -127,10 +133,10 @@ public class Application extends Controller {
 
 		if (d.currentJob.getLeastSignificantBits() != jobID) 
 			return unauthorized();
-		
+
 		//Just pass it straight to the Job scheduler, we could have a job given to multiple phones, or verification to run.
 		JobScheduler.getInstance().submitJob(d, request().body().asText());
-		
+
 		//Old code for reference, can be deleted if you want
 		/*
 		String s = request().body().asText();
@@ -144,8 +150,8 @@ public class Application extends Controller {
 		}
 		//TODO notify the computation that it has one less job to do.
 		d.jobsDone++;
-		*/
-		
+		 */
+
 		return ok();
 	}
 }

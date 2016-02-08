@@ -1,17 +1,15 @@
 package twork;
 
 import java.util.HashMap;
-import java.util.Random;
+import java.util.UUID;
 
 public class Devices {
 	
-	private Devices() {
-		
-	}
+	private Devices() {	}
 	
 	private static Devices instance = null;
 	
-	private HashMap<Long,Device> devices = new HashMap<Long,Device>();
+	private HashMap<String, Device> devices = new HashMap<String, Device>();
 	
 	public static Devices getInstance() {
 		if (instance == null) {
@@ -20,24 +18,23 @@ public class Devices {
 		return instance;
 	}
 	
-	public int generateID() {
-		
-		/*
-		 * TODO: check for unique identifier
-		 */
-		return (new Random()).nextInt();
+	public String generateID() {
+		return UUID.randomUUID().toString();
 	}
 	
-	public Device getDevice(long sessionID) {
+	public Device getDevice(String sessionID) {
+		
+		if(sessionID == null) {
+			sessionID = generateID();
+		}
+		
 		Device d = devices.get(sessionID);
+		
 		if (d == null) {
 			d = new Device(sessionID);
 			devices.put(sessionID, d);
 		}
+		
 		return d;
-	}
-
-	public Device getDevice(String session) {
-		return getDevice(Long.parseLong(session));
 	}
 }

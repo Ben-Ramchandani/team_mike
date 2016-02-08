@@ -8,7 +8,7 @@ public class Device {
 
 	public static final UUID NULL_UUID = new UUID( 0L , 0L );
 	public static final int WAITING_TIME = 50;
-	public long sessionID;
+	public String sessionID;
 	
 	public int batteryLife;
 	public boolean onCharge;
@@ -23,7 +23,7 @@ public class Device {
 	
 	public Timer t = new Timer();
 	
-	public Device(long sessionID) {
+	public Device(String sessionID) {
 		this.sessionID = sessionID;
 		currentJob = NULL_UUID;
 	}
@@ -41,7 +41,7 @@ public class Device {
 		this.onCharge = onCharge;
 	}
 
-	public long getSessionID() {
+	public String getSessionID() {
 		return sessionID;
 	}
 	

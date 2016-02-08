@@ -122,7 +122,7 @@ public class ApplicationTest {
 	public String result;
 
 	public String genericPrimeTest(final long prime, final String name) {
-		Device d = new Device(1L);
+		Device d = new Device("1");
 		ComputationManager cm = ComputationManager.getInstance();
 		JobScheduler js = JobScheduler.getInstance();
 		CustomerComputation custComputation = new CustomerComputation(name, "Prime generic test", "", "PrimeComputation", Long.toString(prime));
@@ -182,7 +182,7 @@ public class ApplicationTest {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
 				MyLogger.enable = false;
-				Device d = new Device(1L);
+				Device d = new Device("1");
 				ComputationManager cm = ComputationManager.getInstance();
 				cm.rebuild_TEST();
 				JobScheduler js = JobScheduler.getInstance();
@@ -263,7 +263,7 @@ public class ApplicationTest {
 			public void run() {
 				MyLogger.enable = false;
 				JobScheduler js = JobScheduler.getInstance();
-				Device d = new Device(1L);
+				Device d = new Device("1");
 
 				//It can't have any Jobs yet.
 				assertEquals("Empty JS returns null", js.getJob(d), null);
