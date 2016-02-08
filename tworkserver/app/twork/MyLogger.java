@@ -1,6 +1,6 @@
 package twork;
 
-public class Logger {
+public class MyLogger {
 	
 	public static boolean enable = true;
 	
@@ -19,6 +19,10 @@ public class Logger {
 	}
 	
 	public static void fatal(String s) {
-		log("[FATAL] ");
+		log("[FATAL] " + s);
+	}
+	
+	public static void critical(String s) {
+		log("[CRITICAL] - The database may be in an invalid state - " + s);
 	}
 }

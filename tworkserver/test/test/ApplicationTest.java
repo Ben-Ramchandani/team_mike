@@ -1,37 +1,37 @@
 package test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
-import models.CompletedComputation;
 import models.Computation;
+import models.CustomerComputation;
 import models.Data;
 import models.Job;
 
 import org.junit.Test;
 
-import com.avaje.ebean.Ebean;
-
-import computations.ComputationCode;
-import computations.PrimeComputation;
-import computations.PrimeComputationCode;
-
 import twork.ComputationManager;
 import twork.Device;
 import twork.JobScheduler;
-import twork.Logger;
+import twork.MyLogger;
+
+import com.avaje.ebean.Ebean;
+import computations.ComputationCode;
+import computations.PrimeComputation;
+import computations.PrimeComputationCode;
 
 
 /**
@@ -41,18 +41,6 @@ import twork.Logger;
  *
  */
 public class ApplicationTest {
-
-	@Test
-	public void simpleCheck() {
-		int a = 1 + 1;
-		assertEquals(2, a);
-	}
-
-	@SuppressWarnings("unused")
-	@Test
-	public void Device_BasicTest() {
-		Device d = new Device(1L);
-	}
 
 	@Test
 	public void deletion_test() {
@@ -114,8 +102,9 @@ public class ApplicationTest {
 	@Test
 	public void CM_Test() {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
+			@SuppressWarnings("deprecation")
 			public void run() {
-				Logger.enable = true;
+				MyLogger.enable = true;
 				ComputationManager cm = ComputationManager.getInstance();
 				cm.rebuild_TEST();
 
@@ -131,64 +120,68 @@ public class ApplicationTest {
 	}
 
 	public String result;
-	
-	public String genericPrimeTest(final long prime) {
-		running(fakeApplication(inMemoryDatabase()), new Runnable() {
-			public void run() {
-				Logger.enable = false;
-				Ebean.delete(Ebean.find(CompletedComputation.class).findList());
-				Device d = new Device(1L);
-				ComputationManager cm = ComputationManager.getInstance();
-				JobScheduler js = JobScheduler.getInstance();
-				cm.addBasicComputation(new PrimeComputation(), Long.toString(prime));
 
-				Job primeJob;
-				while((primeJob = js.getJob(d)) != null) {
-					ComputationCode cc = new PrimeComputationCode();
-					//TODO: Data dependence
-					Data inData = Ebean.find(Data.class, primeJob.intputDataID);
-					String jobInput = inData.getContent();
-					ByteArrayOutputStream out = new ByteArrayOutputStream();
-					InputStream in = new ByteArrayInputStream(jobInput.getBytes(StandardCharsets.UTF_8));
-					cc.run(in, out);
-					String outString = new String(out.toByteArray(), StandardCharsets.UTF_8);
-					js.submitJob(d, outString);
-				}
-				result = cm.getCompletedComputations().get(0).output;
-			}
-		});
+	public String genericPrimeTest(final long prime, final String name) {
+		Device d = new Device(1L);
+		ComputationManager cm = ComputationManager.getInstance();
+		JobScheduler js = JobScheduler.getInstance();
+		CustomerComputation custComputation = new CustomerComputation(name, "Prime generic test", "", "PrimeComputation", Long.toString(prime));
+		cm.runCustomerComputation(custComputation);
+
+		Job primeJob;
+		while((primeJob = js.getJob(d)) != null) {
+			ComputationCode cc = new PrimeComputationCode();
+			//TODO: Data dependence
+			Data inData = Ebean.find(Data.class, primeJob.intputDataID);
+			String jobInput = inData.getContent();
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			InputStream in = new ByteArrayInputStream(jobInput.getBytes(StandardCharsets.UTF_8));
+			cc.run(in, out);
+			String outString = new String(out.toByteArray(), StandardCharsets.UTF_8);
+			js.submitJob(d, outString);
+		}
+		result = cm.getComputationsByCustomerName(name).get(0).output;
+
 
 		return result;
 	}
 
 	@Test
 	public void Prime_CorrectnessTest() {
-		//5 is prime
-		String output = genericPrimeTest(5);
-		assertEquals("Prime computation run on 5", output, "No factor found for 5.");
-		
-		//21 = 7 * 3
-		output = genericPrimeTest(21);
-		assertTrue("Prime computation run on 21", output.equals("Found factor for 21: 3.") || output.equals("Found factor for 21: 7."));
-		
-		//29 is prime
-		output = genericPrimeTest(29);
-		assertEquals("Prime computation run on 29", output, "No factor found for 29.");
-		
-		//7919 is prime
-		output = genericPrimeTest(7919);
-		assertEquals("Prime computation run on 7919", output, "No factor found for 7919.");
-		
-		//373987259 = 3571 * 104729
-		output = genericPrimeTest(373987259);
-		assertTrue("Prime computation run on 373987259", output.equals("Found factor for 373987259: 3571.") || output.equals("Found factor for 373987259: 104729."));
+		running(fakeApplication(inMemoryDatabase()), new Runnable() {
+			public void run() {
+				MyLogger.enable = false;
+				Ebean.delete(Ebean.find(CustomerComputation.class).findList());
+				//5 is prime
+				String output = genericPrimeTest(5, "Ben");
+				assertEquals("Prime computation run on 5", output, "No factor found for 5.");
+
+				//21 = 7 * 3
+				output = genericPrimeTest(21, "Razvan");
+				assertTrue("Prime computation run on 21", output.equals("Found factor for 21: 3.") || output.equals("Found factor for 21: 7."));
+
+				//29 is prime
+				output = genericPrimeTest(29, "Dima");
+				assertEquals("Prime computation run on 29", output, "No factor found for 29.");
+
+				//7919 is prime
+				output = genericPrimeTest(7919, "James");
+				assertEquals("Prime computation run on 7919", output, "No factor found for 7919.");
+
+				//373987259 = 3571 * 104729
+				output = genericPrimeTest(373987259, "Laura");
+				assertTrue("Prime computation run on 373987259", output.equals("Found factor for 373987259: 3571.") || output.equals("Found factor for 373987259: 104729."));
+				
+				assertEquals(Ebean.find(CustomerComputation.class).findList().size(), 5);
+			}
+		});
 	}
 
 	@Test
 	public void Prime_DetailedTest() {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
-				Logger.enable = false;
+				MyLogger.enable = false;
 				Device d = new Device(1L);
 				ComputationManager cm = ComputationManager.getInstance();
 				cm.rebuild_TEST();
@@ -196,7 +189,10 @@ public class ApplicationTest {
 				js.rebuild_TEST();
 
 				//Make new computation
-				cm.addBasicComputation(new PrimeComputation(), "4");
+				CustomerComputation custComputation = new CustomerComputation("Example Joe", "Prime detailed test", "", "PrimeComputation", "4");
+
+				//cm.addBasicComputation(new PrimeComputation(), "4");
+				cm.runCustomerComputation(custComputation);
 				assertEquals("Prime(4) has 1 job", 1, Ebean.find(Job.class).findList().size());
 
 				//Get its job
@@ -205,7 +201,7 @@ public class ApplicationTest {
 
 				//Run it
 				ComputationCode cc = new PrimeComputationCode();
-				//TODO: Data dependance
+				//TODO: Data dependence
 				Data inData = Ebean.find(Data.class, primeJob.intputDataID);
 				assertNotNull("Prime job has associated data", inData);
 
@@ -219,18 +215,17 @@ public class ApplicationTest {
 
 				assertEquals("Prime can find out that 2|4", "2", outString);
 
-				assertTrue("No completed Computations", cm.getCompletedComputations().isEmpty());
 
 				//Submit it
 				js.submitJob(d, outString);
 				assertEquals("JS has removed completed job", 0, js.getNumberOfActiveJobs());
 
 				//Get result				
-				List<CompletedComputation> completedComputations = cm.getCompletedComputations();
+				List<CustomerComputation> customerComputations = cm.getCustomerComputations();
 
-				assertEquals("One completed computation", 1, completedComputations.size());
+				assertEquals("One customer computation", 1, customerComputations.size());
 
-				assertEquals("Check Prime output for 4", "Found factor for 4: 2.", completedComputations.get(0).output);
+				assertEquals("Check Prime output for 4", "Found factor for 4: 2.", customerComputations.get(0).output);
 
 				assertEquals("CM computation has been removed", 0, cm.getNumberOfComputations());
 				assertTrue("Completed job has been deleted", Ebean.find(Job.class).findList().isEmpty());
@@ -266,7 +261,7 @@ public class ApplicationTest {
 	public void JS_FullTest() {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
-				Logger.enable = false;
+				MyLogger.enable = false;
 				JobScheduler js = JobScheduler.getInstance();
 				Device d = new Device(1L);
 
@@ -275,7 +270,6 @@ public class ApplicationTest {
 
 				//Add a job
 				Computation c = new Computation("Title", "Description");
-				c.running = true;
 				c.save();
 				//The random UUID is the inputData
 				Job j = new Job(c, "A job", UUID.randomUUID(), "a function");
@@ -314,7 +308,7 @@ public class ApplicationTest {
 				//Check the job failure mechanic
 				js.timeoutJob(jID);
 				k = js.getJob(d);
-				assertNull("JS failes jobs that repeatedly time out", k);
+				assertNull("JS fails jobs that repeatedly time out", k);
 
 
 				//Check the job has been destroyed or marked as failed
@@ -323,7 +317,6 @@ public class ApplicationTest {
 
 				//Make a new setup
 				c = new Computation("Title", "Description");
-				c.running = true;
 				c.save();
 				j = new Job(c, "A job", UUID.randomUUID(), "a function");
 

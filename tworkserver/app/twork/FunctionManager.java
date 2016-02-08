@@ -4,18 +4,21 @@ import computations.PrimeComputation;
 
 public class FunctionManager {
 	
-	public static final String computationCodePath = "/media/ben/hdd_free/programming/team_mike/computations/";
+	private static FunctionManager instance;
 	
-	public void addComputation(String functionName, String computationName, String input) throws Exception {
-		if(!functionName.equals("PrimeComputation")) {
-			throw new Exception("Function not supported");
-		} else {
-			ComputationManager.getInstance().addBasicComputation(new PrimeComputation(), input);
+	private FunctionManager() {}
+	
+	public static FunctionManager getInstance() {
+		if(instance == null) {
+			instance = new FunctionManager();
 		}
+		return instance;
 	}
 	
+	public static final String computationCodePath = "/media/ben/hdd_free/programming/team_mike/computations/";
+	
 	//Placeholder
-	public static BasicComputationGenerator getBasicComputationGenerator(String name) {
+	public BasicComputationGenerator getBasicComputationGenerator(String name) {
 		return new PrimeComputation();
 	}
 }

@@ -13,5 +13,6 @@ public interface BasicComputationGenerator {
 	
 	//Once the computation finishes, call this to collate the results
 	//UUID of Computation
+	//Should NOT make changes to db
 	public String getResult(UUID computationID);
 }

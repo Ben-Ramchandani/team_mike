@@ -20,12 +20,16 @@ public class Computation extends Model {
 	@Id
 	public UUID computationID;
 	public String functionName;
-	public String computationDescription;
+	//Purely descriptive name
+	public String computationName;
 	
-	public boolean failed;
-	public boolean running;
+	//UUID of the customer computation that spawned this (can be NULL_UUID).
+	public UUID customerComputationID;
+	
+	//public boolean failed;
+	//public boolean running;
 	//Has the result of this computation been collected?
-	public boolean completed;
+	//public boolean completed;
 	
 	public int jobsLeft;
 	
@@ -45,10 +49,9 @@ public class Computation extends Model {
 	 * 
 	*/
 	
-	public Computation(String function, String desc) {
+	public Computation(String function, String name) {
 		functionName = function;
-		computationDescription = desc;
-		failed = completed = running = false;
+		computationName = name;
 	}
 	
 	

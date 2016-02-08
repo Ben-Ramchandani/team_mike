@@ -1,8 +1,6 @@
 package computations;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -73,7 +71,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 				currentEnd += numPerJob;
 			}
 
-			c.running = true;
+			
 			c.jobsLeft = c.jobs.size();
 			c.input = input;
 			c.update();
@@ -90,12 +88,6 @@ public class PrimeComputation implements BasicComputationGenerator {
 		Computation c = Ebean.find(Computation.class, computationID);
 		if(c == null) {
 			return "Error: computation not found";
-		} else if(c.jobsLeft > 0) {
-			return "Error: computation not complete";
-		} else if(c.failed) {
-			return "Error: computation failed";
-		} else if(c.completed) {
-			return "Error: computation has aleady been processed";
 		}
 
 		try {
@@ -106,10 +98,6 @@ public class PrimeComputation implements BasicComputationGenerator {
 			e.printStackTrace();
 			throw new RuntimeException("PrimeComputation: Computation input invalid, expected \"long\"");
 		}
-
-		c.running = false;
-		c.completed = true;
-		c.update();
 
 
 		long factor;
