@@ -5,7 +5,6 @@ import java.util.UUID;
 import models.Data;
 import models.Job;
 import play.mvc.Controller;
-import play.mvc.Http.RequestBody;
 import play.mvc.Result;
 import twork.Device;
 import twork.Devices;
@@ -13,7 +12,6 @@ import twork.JobScheduler;
 import twork.MyLogger;
 
 import com.avaje.ebean.Ebean;
-import com.fasterxml.jackson.databind.JsonNode;
 
 public class Application extends Controller {
 
@@ -28,6 +26,9 @@ public class Application extends Controller {
 		 * gives the phone a UUID 
 		 * starts a session
 		 */
+		
+		//We could change this to give the device the full UUID and have them send it to us each time,
+		//rather than only storing it server side.
 
 		Device d; 
 
@@ -36,19 +37,24 @@ public class Application extends Controller {
 			session("sessionID", d.getSessionID()); 
 		}
 
+		
 		d = Devices.getInstance().getDevice(session("sessionID"));
+		//We'll worry about this later - nothing on the server depends on this.
+		/*
 		RequestBody body = request().body();
 
+		
 		try {
 			JsonNode jn = body.asJson();
 			d.deviceID = jn.get("phone-id").asText("");
-			d.batteryLife = jn.get("battery-life").asInt();
-			d.onCharge = jn.get("on-charge").asBoolean();
-			d.onWiFi = jn.get("on-wifi").asBoolean();
+			d.batteryLife = jn.get("battery-life").asInt(0);
+			d.onCharge = jn.get("on-charge").asBoolean(true);
+			d.onWiFi = jn.get("on-wifi").asBoolean(true);
 		} catch(Exception e) {
-			//TODO:
-			return ok("Could not parse JSON");
+			session().clear();
+			return badRequest("Could not parse JSON.");
 		}
+		*/
 
 		return ok(d.sessionID);
 	}
@@ -58,7 +64,7 @@ public class Application extends Controller {
 		 * feature to be added
 		 * need to implement log-in features for dima's app
 		 */
-		return ok();
+		return notFound();
 	}
 
 	public void addTestData(Long jobID) {
@@ -71,17 +77,10 @@ public class Application extends Controller {
 	}
 
 	public Result function(String functionID) {
-		return ok();
+		return notFound();
 	}
 
 	public Result data(Long longJobID) {
-		//will consider this the data id so far.
-
-		//need to ensure sane limit on the data transfer so we don't fill android's ram
-
-		//From jobs get data id.
-
-
 
 		if (session("sessionID") == null) 
 			return unauthorized();
@@ -93,11 +92,26 @@ public class Application extends Controller {
 		if (jobID.getLeastSignificantBits() != longJobID) 
 			return unauthorized();
 
-		//Maybe actually the data id should just be the job id
-		//Maybe actually we don't even need the data after all
-		//Maybe we just need the job with the associated input?
-		UUID dataID = jobID; //cheat so I can test;
+
+		Job j = Ebean.find(Job.class, jobID);
+		if(j == null) {
+			MyLogger.warn("Request for data: non-existent job");
+			return notFound("Request for data: Server has no record of job (404 Not Found).");
+			
+		}
+		
+		//TODO: data dependence
+		UUID dataID = j.jobID;
+		if(dataID == null) {
+			MyLogger.warn("Request for data: no data in job");
+			return internalServerError("Request for data: No data is attached to job (500 Internal Server Error).");
+		}
+		
 		Data myData = Ebean.find(Data.class, dataID);
+		if(myData == null) {
+			MyLogger.warn("Request for data: data id in job does not exist");
+			return internalServerError("Request for data: Data id in job does not map to anything (500 Internal Server Error).");
+		}
 
 		return ok(myData.getContent());
 	}
@@ -114,11 +128,9 @@ public class Application extends Controller {
 		if (j == null) 
 			return status(555, "NO JOB");
 		if (d.currentJob != Device.NULL_UUID) 
-			return forbidden();
+			return forbidden();//TODO: cancel current job.
 
-		//Done in the Scheduler
-		//d.registerJob(j.jobID);
-		d.startCounter();
+		d.registerJob(j.jobID);
 		String s = j.export();
 
 		return ok(s);
@@ -133,24 +145,12 @@ public class Application extends Controller {
 
 		if (d.currentJob.getLeastSignificantBits() != jobID) 
 			return unauthorized();
-
-		//Just pass it straight to the Job scheduler, we could have a job given to multiple phones, or verification to run.
+		
+		//Just pass the data straight to the Job scheduler.
 		JobScheduler.getInstance().submitJob(d, request().body().asText());
-
-		//Old code for reference, can be deleted if you want
-		/*
-		String s = request().body().asText();
-		Job j = Ebean.find(Job.class,d.currentJob);
-		try {
-			if (Data.store(s,j.outputDataID,j.computationID) == false) 
-				return unauthorized();
-		}
-		catch (IOException e) {
-			return this.internalServerError();
-		}
-		//TODO notify the computation that it has one less job to do.
-		d.jobsDone++;
-		 */
+		
+		//Notify device
+		d.jobComplete();
 
 		return ok();
 	}

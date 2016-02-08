@@ -13,7 +13,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import models.Computation;
@@ -25,6 +27,7 @@ import org.junit.Test;
 
 import twork.ComputationManager;
 import twork.Device;
+import twork.Device.TimeoutJob;
 import twork.JobScheduler;
 import twork.MyLogger;
 
@@ -32,6 +35,8 @@ import com.avaje.ebean.Ebean;
 import computations.ComputationCode;
 import computations.PrimeComputation;
 import computations.PrimeComputationCode;
+
+import java.util.TimerTask;
 
 
 /**
@@ -58,6 +63,37 @@ public class ApplicationTest {
 				c.delete();
 				List<Job> jl = Ebean.find(Job.class).findList();
 				assertTrue(jl.isEmpty());
+			}
+		});
+	}
+	
+	
+	@Test
+	public void timeout_test() {
+		running(fakeApplication(inMemoryDatabase()), new Runnable() {
+			public void run() {
+				//Set up a job as normal.
+				MyLogger.enable = false;
+				Device d = new Device("1");
+				ComputationManager cm = ComputationManager.getInstance();
+				JobScheduler js = JobScheduler.getInstance();
+				CustomerComputation custComputation = new CustomerComputation("Example name", "Prime (timeout_test)", "", "PrimeComputation", "4");
+				cm.runCustomerComputation(custComputation);
+				Job primeJob = js.getJob(d);
+				assertNotNull("Job taken from JS", primeJob);
+				
+				//That should be the only job
+				assertNull("One job is gone", js.getJob(d));
+				
+				//Mimic Device.registerJob
+				d.currentJob = primeJob.jobID;
+				
+				//Force a timeout
+				TimeoutJob t = new Device.TimeoutJob(d);
+				t.run();
+				
+				//Job should be back in scheduler
+				assertNotNull("Job should be back in scheduler", js.getJob(d));
 			}
 		});
 	}
