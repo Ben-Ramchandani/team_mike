@@ -7,7 +7,15 @@ create table all_computation (
   computation_id            varchar(40) not null,
   function_name             varchar(255),
   computation_name          varchar(255),
+<<<<<<< HEAD
+  computation_description   varchar(255),
+  failed                    boolean,
+  running                   boolean,
+  completed                 boolean,
+  state                     integer,
+=======
   customer_computation_id   varchar(40),
+>>>>>>> d9fa18f7783cd06089587da03b35086da7e16ec3
   jobs_left                 integer,
   input                     varchar(255),
   logo_image_id             bigint,
@@ -47,17 +55,20 @@ create table all_jobs (
   constraint pk_all_jobs primary key (job_id))
 ;
 
-alter table all_jobs add constraint fk_all_jobs_parentComputation_1 foreign key (parent_computation_computation_id) references all_computation (computation_id) on delete restrict on update restrict;
+alter table all_jobs add constraint fk_all_jobs_parentComputation_1 foreign key (parent_computation_computation_id) references all_computation (computation_id);
 create index ix_all_jobs_parentComputation_1 on all_jobs (parent_computation_computation_id);
 
 
 
 # --- !Downs
 
-SET REFERENTIAL_INTEGRITY FALSE;
+drop table if exists all_computation cascade;
 
-drop table if exists all_computation;
+drop table if exists all_data cascade;
 
+<<<<<<< HEAD
+drop table if exists all_jobs cascade;
+=======
 drop table if exists all_completed_computation;
 
 drop table if exists all_data;
@@ -65,4 +76,5 @@ drop table if exists all_data;
 drop table if exists all_jobs;
 
 SET REFERENTIAL_INTEGRITY TRUE;
+>>>>>>> d9fa18f7783cd06089587da03b35086da7e16ec3
 

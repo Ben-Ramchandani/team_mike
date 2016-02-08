@@ -1,10 +1,16 @@
 package controllers;
 
+import java.io.File;
 import java.util.UUID;
 
 import models.Data;
 import models.Job;
 import play.mvc.Controller;
+<<<<<<< HEAD
+import play.mvc.Http.RequestBody;
+import play.mvc.Http.MultipartFormData.FilePart;
+=======
+>>>>>>> d9fa18f7783cd06089587da03b35086da7e16ec3
 import play.mvc.Result;
 import twork.Device;
 import twork.Devices;
@@ -15,12 +21,9 @@ import com.avaje.ebean.Ebean;
 
 public class Application extends Controller {
 
-	public Result index() {
-
-		String remote = request().remoteAddress();
-		return ok(remote);
-	}
-
+	
+	
+	
 	public Result available() {
 		/*
 		 * gives the phone a UUID 

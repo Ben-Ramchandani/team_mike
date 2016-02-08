@@ -16,6 +16,9 @@ import com.avaje.ebean.Model;
 @Table(name = "all_computation")
 public class Computation extends Model {
 
+	public static final int STATE_FAILED = 1;
+	public static final int STATE_RUNNING = 2;
+	public static final int STATE_COMPLETED = 3;
 
 	@Id
 	public UUID computationID;
@@ -23,6 +26,15 @@ public class Computation extends Model {
 	//Purely descriptive name
 	public String computationName;
 	
+<<<<<<< HEAD
+	
+	public boolean failed;
+	public boolean running;
+	//Has the result of this computation been collected?
+	public boolean completed;
+	//A single field should suffice here?
+	public int state;
+=======
 	//UUID of the customer computation that spawned this (can be NULL_UUID).
 	public UUID customerComputationID;
 	
@@ -30,6 +42,7 @@ public class Computation extends Model {
 	//public boolean running;
 	//Has the result of this computation been collected?
 	//public boolean completed;
+>>>>>>> d9fa18f7783cd06089587da03b35086da7e16ec3
 	
 	public int jobsLeft;
 	
