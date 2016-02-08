@@ -15,6 +15,7 @@ public class FunctionManager {
 		return instance;
 	}
 	
+	//Obviously this should be changed for the server
 	public static final String computationCodePath = "/media/ben/hdd_free/programming/team_mike/computations/";
 	
 	//Placeholder

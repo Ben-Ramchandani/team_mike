@@ -8,14 +8,13 @@ import static org.junit.Assert.assertTrue;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
+import static play.test.Helpers.testServer;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import models.Computation;
@@ -25,6 +24,7 @@ import models.Job;
 
 import org.junit.Test;
 
+import play.libs.ws.WS;
 import twork.ComputationManager;
 import twork.Device;
 import twork.Device.TimeoutJob;
@@ -35,9 +35,6 @@ import com.avaje.ebean.Ebean;
 import computations.ComputationCode;
 import computations.PrimeComputation;
 import computations.PrimeComputationCode;
-
-import java.util.TimerTask;
-
 
 /**
  *
@@ -62,10 +59,22 @@ public class ApplicationTest {
 				c.save();
 				c.delete();
 				List<Job> jl = Ebean.find(Job.class).findList();
-				assertTrue(jl.isEmpty());
+				assertTrue("Computation deletes cascade to jobs", jl.isEmpty());
 			}
 		});
 	}
+	
+	@Test
+	public void available_test() {
+		running(testServer(9001), new Runnable() {
+			public void run() {
+				assertEquals("Can get a response from available", 200, WS.url("http://localhost:9001/available").get().get(3000L).getStatus());
+			}
+		});
+	}
+	
+	//TODO: Make a full test with cookies and stuff
+
 	
 	
 	@Test
