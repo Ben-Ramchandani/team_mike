@@ -7,8 +7,9 @@ import java.util.UUID;
 public class Device {
 
 	public static final UUID NULL_UUID = new UUID( 0L , 0L );
-	public static final int WAITING_TIME = 50;
-	public long sessionID;
+	//5 minutes (in milliseconds).
+	public static final int WAITING_TIME = 300000;
+	public String sessionID;
 	
 	public int batteryLife;
 	public boolean onCharge;
@@ -21,15 +22,17 @@ public class Device {
 	public boolean onWiFi;
 	
 	
-	public Timer t = new Timer();
+	//A better performing solution would be to have a single timer for all devices.
+	public Timer t;
 	
-	public Device(long sessionID) {
+	public Device(String sessionID) {
 		this.sessionID = sessionID;
 		currentJob = NULL_UUID;
 	}
 	
 	public synchronized void registerJob(UUID jobID) {
 		currentJob = jobID;
+		startTimer();
 	}
 	
 	public void setBatteryLife(int batteryLife) {
@@ -41,30 +44,46 @@ public class Device {
 		this.onCharge = onCharge;
 	}
 
-	public long getSessionID() {
+	public String getSessionID() {
 		return sessionID;
 	}
 	
-	
-	public void startCounter() {
-		t.schedule(new TimeoutTask(this), WAITING_TIME);
+	public synchronized void jobComplete() {
+		currentJob = NULL_UUID;
+		cancelTimer();
+		jobsDone++;
 	}
 	
-	public static class TimeoutTask extends TimerTask {
+	private void cancelTimer() {
+		if(t != null) {
+			t.cancel();
+		}
+	}
+	
+	private void startTimer() {
+		//Run as daemon
+		t = new Timer(true);
+		t.schedule(new TimeoutJob(this), WAITING_TIME);
+	}
+	
+	public static class TimeoutJob extends TimerTask {
 		
-		Device trigger;
+		public Device trigger;
 		
-		public TimeoutTask(Device d) {
+		public TimeoutJob(Device d) {
 			trigger = d;
 		}
 		
 		@Override
 		public void run() {
+			UUID jobID = trigger.currentJob;
 			synchronized(trigger) {
+				//The job timed out.
+				MyLogger.log("Device: Job has been timed out");
 				trigger.jobsFailed++;
-				JobScheduler.getInstance().timeoutJob(trigger.currentJob);
 				trigger.currentJob = NULL_UUID;
 			}
+			JobScheduler.getInstance().timeoutJob(jobID);
 		}
 		
 	}

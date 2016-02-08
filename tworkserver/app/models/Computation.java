@@ -3,6 +3,7 @@ package models;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -21,9 +22,11 @@ public class Computation extends Model {
 
 	@Id
 	public UUID computationID;
+	public String functionName;
+	//Purely descriptive name
 	public String computationName;
-	public String computationDescription;
 	
+<<<<<<< HEAD
 	
 	public boolean failed;
 	public boolean running;
@@ -31,11 +34,22 @@ public class Computation extends Model {
 	public boolean completed;
 	//A single field should suffice here?
 	public int state;
+=======
+	//UUID of the customer computation that spawned this (can be NULL_UUID).
+	public UUID customerComputationID;
+	
+	//public boolean failed;
+	//public boolean running;
+	//Has the result of this computation been collected?
+	//public boolean completed;
+>>>>>>> d9fa18f7783cd06089587da03b35086da7e16ec3
 	
 	public int jobsLeft;
 	
-	@OneToMany
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy="parentComputation")
 	public List<Job> jobs;
+	
+	public String input;
 	
 	/*
 	 * Cases for computations
@@ -48,10 +62,9 @@ public class Computation extends Model {
 	 * 
 	*/
 	
-	public Computation(String name, String desc) {
+	public Computation(String function, String name) {
+		functionName = function;
 		computationName = name;
-		computationDescription = desc;
-		failed = completed = running = false;
 	}
 	
 	

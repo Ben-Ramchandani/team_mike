@@ -6,7 +6,7 @@ import java.util.UUID;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import twork.Device;
 
@@ -32,6 +32,7 @@ public class Job extends Model {
 	
 	public UUID outputDataID;
 	
+	//Slated for removal
 	public boolean failed;
 	
 	public Job(Computation parent, String description,

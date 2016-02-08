@@ -15,12 +15,14 @@ import com.avaje.ebean.Ebean;
 
 public class PrimeComputation implements BasicComputationGenerator {
 
-	private long prime;
 	private final String functionName = "PrimeComputationCode";
 
 
 	@Override
 	public UUID generateComputation(String input) {
+		long prime;
+		
+		
 		try {
 			Scanner s = new Scanner(input);
 			prime = s.nextLong();
@@ -32,13 +34,13 @@ public class PrimeComputation implements BasicComputationGenerator {
 
 		//TODO: this constructor
 		Computation c = new Computation(functionName, "Prime computation");
-		
-		
+
+
 		// ### Start transaction ###
 		Ebean.beginTransaction();
 		try {
 			c.save(); //Generate UUID
-			
+
 			//Generate jobs
 			String primeString = Long.toString(prime);
 			long currentStart = 2L;
@@ -46,29 +48,32 @@ public class PrimeComputation implements BasicComputationGenerator {
 			long numPerJob = prime > 10 ? prime/10 : 1;
 			long currentEnd = currentStart + numPerJob;
 			long stopAt = prime - 1;
-			
+
 			while((currentEnd) <= stopAt) {
-				
+
 				String jobInput = primeString + " " + Long.toString(currentStart) + " " + Long.toString(currentEnd);
 				UUID dataID = UUID.randomUUID();
-				
+
 				try {
-					Data.store(jobInput, dataID, c.computationID);
+					Data d = Data.store(jobInput, dataID, c.computationID);
+					d.save();
 				} catch (IOException e) {
 					System.err.println("Data store failed with IOException");
 					e.printStackTrace();
 					throw new RuntimeException("generateComputation failed");
 				}
-				
+
 				Job j = new Job(c, "Prime job", dataID, functionName);
 				j.save();
 				c.jobs.add(j);
-				
+
 				currentStart = currentEnd;
 				currentEnd += numPerJob;
 			}
+
 			
-			c.running = true;
+			c.jobsLeft = c.jobs.size();
+			c.input = input;
 			c.update();
 			Ebean.commitTransaction();
 		} finally {
@@ -79,21 +84,22 @@ public class PrimeComputation implements BasicComputationGenerator {
 	}
 
 	public String getResult(UUID computationID) {
+		long prime;
 		Computation c = Ebean.find(Computation.class, computationID);
 		if(c == null) {
 			return "Error: computation not found";
-		} else if(c.jobsLeft > 0) {
-			return "Error: computation not complete";
-		} else if(c.failed) {
-			return "Error: computation failed";
-		} else if(c.completed) {
-			return "Error: computation has aleady been processed";
 		}
-		c.running = false;
-		c.completed = true;
-		c.update();
-		
-		
+
+		try {
+			Scanner s = new Scanner(c.input);
+			prime = s.nextLong();
+			s.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("PrimeComputation: Computation input invalid, expected \"long\"");
+		}
+
+
 		long factor;
 		for(Job j : c.jobs) {
 			UUID dataID = j.outputDataID;
@@ -101,14 +107,14 @@ public class PrimeComputation implements BasicComputationGenerator {
 				//TODO: dependent on the data class.
 				Data d = Ebean.find(Data.class, dataID);
 				if(!(d == null)) {
-					if(d.data != "0") {
-						Scanner scan = new Scanner(d.data);
-						try {
-							factor = scan.nextLong();
+					Scanner scan = new Scanner(d.data);
+					try {
+						factor = scan.nextLong();
+						if(factor != 0) {
 							return "Found factor for " + Long.toString(prime) + ": " + Long.toString(factor) + ".";
-						} finally {
-							scan.close();
 						}
+					} finally {
+						scan.close();
 					}
 				}
 			}

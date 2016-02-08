@@ -2,7 +2,6 @@ package twork;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,10 +9,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import com.avaje.ebean.Ebean;
-
 import models.Data;
 import models.Job;
+
+import com.avaje.ebean.Ebean;
 
 public class JobScheduler {
 
@@ -109,16 +108,17 @@ public class JobScheduler {
 		}
 
 		public void save() {
-			//Conversion from byte[] to string is nasty.
 			Job j = Job.find.byId(jobID);
 			if(j == null) {
 				System.err.println("Job save failed: unable to locate job.");
 				failed = true;
 				throw new RuntimeException();
 			}
+
 			Data d;
 			UUID dataID = UUID.randomUUID();
 			try {
+				//TODO: uses data class
 				d = Data.store(result, dataID, j.computationID);
 			} catch (IOException e) {
 				System.err.println("Job save failed: unable to store data.");
@@ -126,9 +126,16 @@ public class JobScheduler {
 				failed = true;
 				throw new RuntimeException();
 			}
-			d.save();
 			j.outputDataID = dataID;
-			j.update();
+
+			Ebean.beginTransaction();
+			try {
+				d.save();
+				j.update();
+				Ebean.commitTransaction();
+			} finally {
+				Ebean.endTransaction();
+			}
 		}
 
 	}
@@ -138,21 +145,20 @@ public class JobScheduler {
 	List<ScheduleJob> waitingJobs;
 	//Jobs that are just waiting for results.
 	List<ScheduleJob> activeJobs;
-	
+
 	//How many completed jobs were in the database on last rebuild?
 	private int deadJobCount;
-	
+
 	private JobScheduler() {
-		rebuild();
+		rebuild_TEST();
 	}
-	
-	
+
+
 	//Completely rebuild state from the Database
 	//Looses track of active jobs -> they will be refused.
 	//Only intended for server restart.
-	//TODO: Implement non-destructive version.
-	//TODO: only public for testing
-	public synchronized void rebuild() {
+	//Only public for testing
+	public synchronized void rebuild_TEST() {
 		List<Job> jobs = Ebean.find(Job.class).findList();
 		Iterator<Job> it = jobs.iterator();
 		jobMap = new HashMap<UUID, ScheduleJob>();
@@ -173,11 +179,12 @@ public class JobScheduler {
 			}
 		}
 	}
-	
+
 	//Update jobs from the database.
 	//Needs to be called when a computation fails and its jobs have been removed.
 	//Or when a computation is added.
 	//Designed to be cheap to add jobs, it will not hold the lock for very long.
+	//Slower if lots of jobs are removed (shouldn't happen much)
 	public void update() {
 		//Make a copy of our job UUIDs
 		List<UUID> currentJobIDs;
@@ -185,7 +192,7 @@ public class JobScheduler {
 			Set<UUID> ks = jobMap.keySet();
 			currentJobIDs = new LinkedList<UUID>(ks);
 		}
-		
+
 		//Read in the jobs from the database
 		//Could be slow, so release lock.
 		List<Job> jobs = Ebean.find(Job.class).findList();
@@ -196,7 +203,7 @@ public class JobScheduler {
 		while(it.hasNext()) {
 			Job job = it.next();
 			if(!job.failed && job.outputDataID.equals(Device.NULL_UUID)) {
-				
+
 				if(!currentJobIDs.contains(job.jobID)) {
 					//New job we haven't seen before.
 					newJobs.add(job);
@@ -210,8 +217,8 @@ public class JobScheduler {
 				deadJobCount++;
 			}
 		}
-		
-		
+
+
 		//Adjust internal lists
 		List<UUID> removedJobIDs = currentJobIDs;
 		List<ScheduleJob> newScheduleJobs = new LinkedList<ScheduleJob>();
@@ -236,38 +243,44 @@ public class JobScheduler {
 		}
 	}
 
-	
+
 	//Get the number of jobs in the scheduler
 	public int getNumberOfJobs() {
 		return activeJobs.size() + waitingJobs.size();
 	}
-	
+
 	//Get the number of jobs that have been given out.
 	public int getNumberOfActiveJobs() {
 		return activeJobs.size();
 	}
-	
+
 	//Get the number of jobs that are in the database, but will not be scheduled.
 	public int getNumberOfCompletedJobs() {
 		return deadJobCount;
 	}
-	
-	//Called from the Device timeout. 
+
+	//Called from the Device timeout.
+	//This can be called on a job that has already been processed
+	//due to nasty concurrency things happening.
 	public synchronized void timeoutJob(UUID jobID) {
 		ScheduleJob j = jobMap.get(jobID);
+
 		if(j != null) {
-			j.timeout();
-			activeJobs.remove(j);
-			processJob(j);
+			//Dependent on job only being out once at a time.
+			if(activeJobs.contains(j)) {
+				j.timeout();
+				activeJobs.remove(j);
+				processJob(j);
+			}
 		}
 	}
 
 	private synchronized void processJob(ScheduleJob j) {
 		if(j.isComplete()) {
 			j.save();
-			//TODO: Notify computation manager
+			ComputationManager.getInstance().jobCompleted(j.getJobID());
 		} else if(j.isFailed()) {
-			//TODO: Notify computation manager
+			ComputationManager.getInstance().jobFailed(j.getJobID());
 		} else if(j.needsPhone()) {
 			waitingJobs.add(j);
 		} else {
@@ -275,7 +288,7 @@ public class JobScheduler {
 		}
 	}
 
-	
+
 	//The device  contains the job ID, check they're correct then hand over to here.
 	public synchronized void submitJob(Device d, String result) {
 		ScheduleJob j = jobMap.get(d.currentJob);
@@ -292,8 +305,8 @@ public class JobScheduler {
 		activeJobs.remove(j);
 		processJob(j);
 	}
-	
-	
+
+
 	//Returns null if no jobs are available
 	public synchronized Job getJob(Device d) {
 		if(waitingJobs.isEmpty()) {
@@ -301,6 +314,7 @@ public class JobScheduler {
 		} else {
 			ScheduleJob j = waitingJobs.remove(0);
 			j.addPhone();
+			//Dependent on job only being out once at a time.
 			activeJobs.add(j);
 			d.registerJob(j.getJobID());
 			return Job.find.byId(j.getJobID());
