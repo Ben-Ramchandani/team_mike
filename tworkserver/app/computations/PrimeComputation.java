@@ -1,6 +1,8 @@
 package computations;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -21,6 +23,8 @@ public class PrimeComputation implements BasicComputationGenerator {
 	@Override
 	public UUID generateComputation(String input) {
 		long prime;
+		
+		
 		try {
 			Scanner s = new Scanner(input);
 			prime = s.nextLong();

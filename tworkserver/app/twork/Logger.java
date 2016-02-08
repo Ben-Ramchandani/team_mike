@@ -9,4 +9,16 @@ public class Logger {
 			System.out.println(s);
 		}
 	}
+	
+	public static void info(String s) {
+		log("[info] " + s);
+	}
+	
+	public static void warn(String s) {
+		log("[warn] " + s);
+	}
+	
+	public static void fatal(String s) {
+		log("[FATAL] ");
+	}
 }

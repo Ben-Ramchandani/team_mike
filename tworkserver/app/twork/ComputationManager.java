@@ -126,6 +126,7 @@ public class ComputationManager {
 	}
 
 	public synchronized void addBasicComputation(BasicComputationGenerator g, String input) {
+		//TODO: This shouldn't be synchronized in the manager
 		UUID id = g.generateComputation(input);
 		
 		//Do some checks and add to the job count map
@@ -138,7 +139,8 @@ public class ComputationManager {
 				jobsRemaining.put(id, c.jobsLeft);
 				JobScheduler.getInstance().update();
 			} else {
-				Logger.log("Computation added has no jobs.");
+				Logger.log("Computation added has no jobs. Will attempt to complete.");
+				completeComputation(id);
 			}
 		}
 	}
