@@ -36,6 +36,10 @@ GET     /job                        controllers.Application.job()
 #  This will return a raw file and a 200 code.
 GET		/data/:jobID				controllers.Application.data(jobID: Long)
 
+#Code request
+#Returns .class file as raw bytes
+GET		/code/:functionName			controllers.Application.getCode(functionName: String)
+
 # Send result
 #	
 #	Send the raw file -> empty is failed

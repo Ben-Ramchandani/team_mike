@@ -13,6 +13,12 @@ import static play.test.Helpers.testServer;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
@@ -22,9 +28,9 @@ import models.CustomerComputation;
 import models.Data;
 import models.Job;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import play.libs.ws.WS;
 import twork.ComputationManager;
 import twork.Device;
 import twork.Device.TimeoutJob;
@@ -34,11 +40,16 @@ import twork.MyLogger;
 import com.avaje.ebean.Ebean;
 import computations.ComputationCode;
 import computations.PrimeComputation;
-import computations.PrimeComputationCode;
+import computations.PrimeComputationCodeInternal;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.lang.reflect.Method;
 
 
 public class ApplicationTest {
-
+	
+	
 	@Test
 	public void deletion_test() {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
@@ -58,20 +69,143 @@ public class ApplicationTest {
 			}
 		});
 	}
+
+
 	
+	public void clear_db() {
+		Ebean.delete(Ebean.find(Computation.class).findList());
+		Ebean.delete(Ebean.find(CustomerComputation.class).findList());
+		Ebean.delete(Ebean.find(Job.class).findList());
+	}
+
 	@Test
-	public void available_test() {
+	public void full_test() {
 		running(testServer(9001), new Runnable() {
 			public void run() {
-				assertEquals("Can get a response from available", 200, WS.url("http://localhost:9001/available").get().get(3000L).getStatus());
+				try {
+					clear_db();
+					MyLogger.enable = false;
+					MyLogger.log("Starting full test.");
+
+					String urlString = "http://localhost:9001/";
+
+					//Send GET /available
+					URL availableURL = new URL(urlString + "available");
+					HttpURLConnection con = (HttpURLConnection) availableURL.openConnection();
+					con.connect();
+
+					//Check the response
+					assertEquals("Available gives 200 response code", 200, con.getResponseCode());
+					String cookie = con.getHeaderField("Set-Cookie");
+					assertNotNull("Available returns a cookie", cookie);
+
+
+					//Send GET /job with no cookie - expect unauthorised.
+					URL jobURL = new URL(urlString + "job");
+					HttpURLConnection jobCon1 = (HttpURLConnection) jobURL.openConnection();
+					jobCon1.connect();
+
+					assertEquals("GET /job with no cookie returns 401 - Unauthorized", 401, jobCon1.getResponseCode());
+
+
+
+					//Send GET /job with cookie - expect NO JOB
+					HttpURLConnection jobCon2 = (HttpURLConnection) jobURL.openConnection();
+					jobCon2.setRequestProperty("Cookie", cookie);
+					jobCon2.connect();
+
+					assertEquals("GET /job with cookie returns 555 - No Job", 555, jobCon2.getResponseCode());
+
+
+					//Add a job
+					ComputationManager cm = ComputationManager.getInstance();
+					CustomerComputation custComputation = new CustomerComputation("John Smith", "Prime(4) example for full test", "", "PrimeComputation", "4");
+					cm.runCustomerComputation(custComputation);
+
+
+					//Send GET /job with cookie - expect a job
+					HttpURLConnection jobCon3 = (HttpURLConnection) jobURL.openConnection();
+					jobCon3.setRequestProperty("Cookie", cookie);
+					jobCon3.connect();
+
+					assertEquals("GET /job with cookie returns 200 - OK", 200, jobCon3.getResponseCode());
+
+
+					InputStream in = jobCon3.getInputStream();
+					StringWriter writer = new StringWriter();
+					IOUtils.copy(in, writer, StandardCharsets.UTF_8);
+					String str = writer.toString();
+					JsonNode jn = (new ObjectMapper()).readTree(str);
+
+					long jobID = jn.get("job-id").asLong();			
+					
+					String functionName = jn.get("function-class").asText();
+					assertNotNull("/job reply has funciton-class", functionName);
+
+					//Send GET /code/:jobID
+					URL codeURL = new URL(urlString + "code/" + functionName);
+					HttpURLConnection codeCon = (HttpURLConnection) codeURL.openConnection();
+					codeCon.setRequestProperty("Cookie", cookie);
+					codeCon.connect();
+					
+					assertEquals("GET /code/:functionName returns 200 - OK", 200, codeCon.getResponseCode());
+					
+					//Fetch and instantiate the class
+					URLClassLoader loader = new URLClassLoader(new URL[] {new URL(urlString + "code/")});
+					Class<?> codeClass = loader.loadClass(functionName);
+					Object o = codeClass.newInstance();
+					Method codeToRun = codeClass.getDeclaredMethod("run", new Class<?>[] {InputStream.class, OutputStream.class});
+					
+					
+					//Get data
+					URL dataURL = new URL(urlString + "data/" + Long.toString(jobID));
+					HttpURLConnection dataCon = (HttpURLConnection) dataURL.openConnection();
+					dataCon.setRequestProperty("Cookie", cookie);
+					dataCon.connect();
+					
+					assertEquals("GET /data/:jobID returns 200 - OK", 200, dataCon.getResponseCode());
+					InputStream jobInput = dataCon.getInputStream();
+					ByteArrayOutputStream jobOutput = new ByteArrayOutputStream();
+					
+					//Run the job
+					codeToRun.invoke(o, jobInput, jobOutput);
+					
+					//Check output
+					String outStr = new String(jobOutput.toByteArray(), StandardCharsets.UTF_8);
+					assertEquals("Output of Prime(4) job is \"2\"", "2", outStr);
+					
+					
+					//Send result back
+					URL resultURL = new URL(urlString + "result/" + Long.toString(jobID));
+					HttpURLConnection resultCon = (HttpURLConnection) resultURL.openConnection();
+					resultCon.setRequestProperty("Cookie", cookie);
+					resultCon.setRequestMethod("POST");
+					resultCon.setRequestProperty("content-type", "text/plain");
+					resultCon.setDoOutput(true);
+					
+					OutputStream osw = resultCon.getOutputStream();
+					osw.write(outStr.getBytes(StandardCharsets.UTF_8));
+					osw.close();
+					
+					assertEquals("POST /result/:jobID returns 200 - OK", 200, resultCon.getResponseCode());
+					
+					List<CustomerComputation> comps = cm.getComputationsByCustomerName("John Smith");
+					assertEquals("One customer computation for John Smith", 1, comps.size());
+					assertEquals("Correct output from full test", comps.get(0).output, "Found factor for 4: 2.");
+
+					MyLogger.log("End full test.");
+				} catch (Exception e) {
+					e.printStackTrace();
+					assertTrue("Exception", false);
+					return;
+				} finally {
+					clear_db();
+				}
 			}
 		});
 	}
-	
-	//TODO: Make a full test with cookies and stuff
 
-	
-	
+
 	@Test
 	public void timeout_test() {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
@@ -85,17 +219,17 @@ public class ApplicationTest {
 				cm.runCustomerComputation(custComputation);
 				Job primeJob = js.getJob(d);
 				assertNotNull("Job taken from JS", primeJob);
-				
+
 				//That should be the only job
 				assertNull("One job is gone", js.getJob(d));
-				
+
 				//Mimic Device.registerJob
 				d.currentJob = primeJob.jobID;
-				
+
 				//Force a timeout
 				TimeoutJob t = new Device.TimeoutJob(d);
 				t.run();
-				
+
 				//Job should be back in scheduler
 				assertNotNull("Job should be back in scheduler", js.getJob(d));
 			}
@@ -170,9 +304,9 @@ public class ApplicationTest {
 
 		Job primeJob;
 		while((primeJob = js.getJob(d)) != null) {
-			ComputationCode cc = new PrimeComputationCode();
+			ComputationCode cc = new PrimeComputationCodeInternal();
 			//TODO: Data dependence
-			Data inData = Ebean.find(Data.class, primeJob.intputDataID);
+			Data inData = Ebean.find(Data.class, primeJob.inputDataID);
 			String jobInput = inData.getContent();
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			InputStream in = new ByteArrayInputStream(jobInput.getBytes(StandardCharsets.UTF_8));
@@ -211,7 +345,7 @@ public class ApplicationTest {
 				//373987259 = 3571 * 104729
 				output = genericPrimeTest(373987259, "Laura");
 				assertTrue("Prime computation run on 373987259", output.equals("Found factor for 373987259: 3571.") || output.equals("Found factor for 373987259: 104729."));
-				
+
 				assertEquals(Ebean.find(CustomerComputation.class).findList().size(), 5);
 			}
 		});
@@ -222,6 +356,14 @@ public class ApplicationTest {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
 				MyLogger.enable = false;
+				
+				
+				
+				clear_db();
+				
+				
+				
+				
 				Device d = new Device("1");
 				ComputationManager cm = ComputationManager.getInstance();
 				cm.rebuild_TEST();
@@ -234,15 +376,17 @@ public class ApplicationTest {
 				//cm.addBasicComputation(new PrimeComputation(), "4");
 				cm.runCustomerComputation(custComputation);
 				assertEquals("Prime(4) has 1 job", 1, Ebean.find(Job.class).findList().size());
+				assertEquals("JS has one job", 1, js.getNumberOfJobs());
+				assertEquals("Both have same job", js.jobMap.keySet().toArray()[0], Ebean.find(Job.class).findList().get(0).jobID);
 
 				//Get its job
 				Job primeJob = js.getJob(d);
 				assertNotNull(primeJob);
 
 				//Run it
-				ComputationCode cc = new PrimeComputationCode();
+				ComputationCode cc = new PrimeComputationCodeInternal();
 				//TODO: Data dependence
-				Data inData = Ebean.find(Data.class, primeJob.intputDataID);
+				Data inData = Ebean.find(Data.class, primeJob.inputDataID);
 				assertNotNull("Prime job has associated data", inData);
 
 				String jobInput = inData.getContent();
@@ -269,30 +413,6 @@ public class ApplicationTest {
 
 				assertEquals("CM computation has been removed", 0, cm.getNumberOfComputations());
 				assertTrue("Completed job has been deleted", Ebean.find(Job.class).findList().isEmpty());
-
-				//TODO: Finish this (take both jobs at once)
-				/*
-				//Make new Computation
-				cm.addBasicComputation(new PrimeComputation(), "5");
-				assertEquals("Prime(5) has 2 jobs", 2, Ebean.find(Job.class).findList().size());
-
-				//Get the jobs
-				Job primeJob1 = js.getJob(d);
-				assertNotNull(primeJob1);
-				Job primeJob2 = js.getJob(d);
-				assertNotNull(primeJob2);
-
-				inData = Ebean.find(Data.class, primeJob1.intputDataID);
-				assertNotNull("Prime job has associated data", inData);
-
-				jobInput = inData.getContent();
-				out = new ByteArrayOutputStream();
-				in = new ByteArrayInputStream(jobInput.getBytes(StandardCharsets.UTF_8));
-
-				cc.run(in, out);
-
-				String outString = new String(out.toByteArray(), StandardCharsets.UTF_8);
-				 */
 			}
 		});
 	}
@@ -302,6 +422,7 @@ public class ApplicationTest {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
 				MyLogger.enable = false;
+				MyLogger.log("Starting JS_FullTest");
 				JobScheduler js = JobScheduler.getInstance();
 				Device d = new Device("1");
 
@@ -353,7 +474,7 @@ public class ApplicationTest {
 
 				//Check the job has been destroyed or marked as failed
 				k = Ebean.find(Job.class, jID);
-				assertTrue(k == null || k.failed);
+				assertTrue("Job has been failed", k == null || k.failed);
 
 				//Make a new setup
 				c = new Computation("Title", "Description");
@@ -385,7 +506,7 @@ public class ApplicationTest {
 				//Check submitting jobs works
 				Job l = js.getJob(d);
 				Job m = js.getJob(d);
-				assertNull(js.getJob(d));
+				assertNull("JS gives out job take two", js.getJob(d));
 				assertTrue("JS Handling multiple jobs", l.jobID.equals(j.jobID) || l.jobID.equals(o.jobID));
 				assertTrue("JS Handling multiple jobs", m.jobID.equals(j.jobID) || m.jobID.equals(o.jobID));
 				assertFalse("JS Handling multiple jobs", l.jobID.equals(m.jobID));
@@ -393,9 +514,9 @@ public class ApplicationTest {
 				l = Ebean.find(Job.class, j.jobID);
 				m = Ebean.find(Job.class, o.jobID);
 				assertTrue("JS Adding data to jobs", m.outputDataID != Device.NULL_UUID);
+				MyLogger.log("Ending JS_FullTest");
 			}
 		});
 	}
-
 
 }

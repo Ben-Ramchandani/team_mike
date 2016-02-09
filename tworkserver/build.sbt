@@ -9,7 +9,7 @@ scalaVersion := "2.11.6"
 libraryDependencies ++= Seq(
   javaJdbc,
   cache,
-  javaWs,
+  //javaWs,
   "org.postgresql" % "postgresql" % "9.4.1207.jre7",
   "org.hibernate" % "hibernate-entitymanager" % "4.3.9.Final"
 )
@@ -21,3 +21,6 @@ routesGenerator := InjectedRoutesGenerator
 
 
 
+
+
+fork in run := true

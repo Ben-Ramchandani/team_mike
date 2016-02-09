@@ -81,6 +81,7 @@ public class ComputationManager {
 			MyLogger.log("Job completed does not exist.");
 			return;
 		}
+		
 
 		UUID computationID = j.computationID;
 		Integer jrInteger = jobsRemaining.get(computationID);
@@ -192,7 +193,7 @@ public class ComputationManager {
 
 			//BAD
 			comp.jobsLeft = 0;
-			comp.save();
+			comp.update();
 			/*
 			 * Have different cases for the different types of computations.
 			 * Just have this one for now.
@@ -205,7 +206,7 @@ public class ComputationManager {
 			cc = getCustomerComputation(comp);
 
 			cc.addResult(result);
-			cc.save();
+			cc.update();
 			comp.delete();
 			MyLogger.log("Computation completed.");
 		}

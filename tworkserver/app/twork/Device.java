@@ -31,8 +31,17 @@ public class Device {
 	}
 	
 	public synchronized void registerJob(UUID jobID) {
-		currentJob = jobID;
-		startTimer();
+		if(currentJob.equals(NULL_UUID)) {
+			currentJob = jobID;
+			startTimer();
+		} else if(currentJob.equals(jobID)) {
+			return;
+		} else {
+			MyLogger.warn("Device.registerJob: Already have job, register anyway. The timer will be terminated without running.");
+			cancelTimer();
+			currentJob = jobID;
+			startTimer();
+		}
 	}
 	
 	public void setBatteryLife(int batteryLife) {
