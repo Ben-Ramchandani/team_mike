@@ -111,7 +111,7 @@ public class JobScheduler {
 		public void save() {
 			Job j = Job.find.byId(jobID);
 			if(j == null) {
-				System.err.println("Job save failed: unable to locate job.");
+				System.out.println("Job save failed: unable to locate job.");
 				failed = true;
 				throw new RuntimeException();
 			}
@@ -122,7 +122,7 @@ public class JobScheduler {
 				//TODO: uses data class
 				d = Data.store(result, dataID, j.computationID);
 			} catch (IOException e) {
-				System.err.println("Job save failed: unable to store data.");
+				System.out.println("Job save failed: unable to store data.");
 				e.printStackTrace();
 				failed = true;
 				throw new RuntimeException();
@@ -293,11 +293,11 @@ public class JobScheduler {
 	public synchronized void submitJob(Device d, String result) {
 		ScheduleJob j = jobMap.get(d.currentJob);
 		if(j == null) {
-			System.err.println("Submitted job is not in scheduler, ignoring.");
+			System.out.println("Submitted job is not in scheduler, ignoring.");
 			return;
 		}
 		if(!activeJobs.contains(j)) {
-			System.err.println("Submitted job is not in scheduler, ignoring.");
+			System.out.println("Submitted job is not in scheduler, ignoring.");
 			return;
 		}
 

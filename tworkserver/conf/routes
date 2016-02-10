@@ -47,6 +47,14 @@ GET		/code/:functionName			controllers.Application.getCode(functionName: String)
 #
 POST    /result/:jobID              controllers.Application.result(jobID: Long)
 
+#TODO: Customer login properly
+#Add example computation
+POST /test/add/:custName/:prime		controllers.Application.addComputation(custName: String, prime: Long)
+
+#Clear database
+GET /test/clear_db					controllers.Application.clear_db()
+
+
 # That is for later
 
 # Computation subscription

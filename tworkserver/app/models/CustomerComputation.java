@@ -1,5 +1,6 @@
 package models;
 
+import java.util.Date;
 import java.util.UUID;
 
 import javax.persistence.Entity;
@@ -17,7 +18,7 @@ import com.avaje.ebean.Model;
 
 @Entity
 @Table(name = "all_completed_computation")
-public class CustomerComputation extends Model {
+public class CustomerComputation extends Model implements Comparable<CustomerComputation> {
 	@Id
 	public UUID CustomerComputationID;
 	//Name of the function
@@ -30,6 +31,17 @@ public class CustomerComputation extends Model {
 	public int status;
 	public UUID computationID;
 	public String customerName;
+	public long timeStamp;
+	
+	public int compareTo(CustomerComputation cc) {
+		if(this.timeStamp < cc.timeStamp) {
+			return -1;
+		} else if(this.timeStamp > cc.timeStamp){
+			return 1;
+		} else {
+			return 0;
+		}
+	}
 	
 	//Status states
 	@Transient
@@ -60,6 +72,7 @@ public class CustomerComputation extends Model {
 		this.input = input;
 		output = "";
 		status = WAITING;
+		timeStamp = (new Date()).getTime();
 		this.save();
 	}
 	
@@ -83,7 +96,12 @@ public class CustomerComputation extends Model {
 		input = c.input;
 		output = "";
 		status = RUNNING;
+		timeStamp = (new Date()).getTime();
 		this.save();
+	}
+	
+	public String toString() {
+		return "Customer Computation:\nCustomer Name: \"" + customerName + "\", input: \"" + input + "\", output: \"" + output + "\".";
 	}
 	
 	public void addResult(String result) {

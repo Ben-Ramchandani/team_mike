@@ -9,6 +9,7 @@ import models.Data;
 import models.Job;
 import play.mvc.Controller;
 import play.mvc.Result;
+import twork.ComputationManager;
 import twork.Device;
 import twork.Devices;
 import twork.FunctionManager;
@@ -21,12 +22,51 @@ import play.mvc.Http.RequestBody;
 
 public class Application extends Controller {
 
+	public Result addComputation(String custName, long prime) {
+		ComputationManager cm = ComputationManager.getInstance();
+		CustomerComputation custComputation = new CustomerComputation(custName, "Prime(4) example for full test", "", "PrimeComputation", Long.toString(prime));
+		cm.runCustomerComputation(custComputation);
+		return ok();
+	}
 	
+	public Result clear_db() {
+		//Check request is from localHost
+		if(!(request().remoteAddress().equals("127.0.0.1") || request().remoteAddress().equals("0:0:0:0:0:0:0:1"))) {
+			return forbidden("Your address is " + request().remoteAddress());
+		}
+		
+		MyLogger.log("Clearing database");
+		Ebean.delete(Ebean.find(Computation.class).findList());
+		Ebean.delete(Ebean.find(CustomerComputation.class).findList());
+		Ebean.delete(Ebean.find(Job.class).findList());
+		ComputationManager.getInstance().rebuild_TEST();
+		JobScheduler.getInstance().rebuild_TEST();
+		return ok();
+	}
+	
+	public boolean hasRun = false;
+	public void runOnStart() {
+		if(hasRun) {
+			return;
+		}
+		hasRun = true;
+		//MyLogger.enable = true;
+		MyLogger.log("Start up code running");
+		MyLogger.log("Clearing database");
+		Ebean.delete(Ebean.find(Computation.class).findList());
+		Ebean.delete(Ebean.find(CustomerComputation.class).findList());
+		Ebean.delete(Ebean.find(Job.class).findList());
+		
+		MyLogger.log("Initializing Managers and Scheduler");
+		ComputationManager.getInstance();
+		JobScheduler.getInstance();
+		FunctionManager.getInstance();
+		MyLogger.log("Start up code finished");
+	}
 	
 	public Result available() {
 		
-		
-		
+		runOnStart();
 		
 		
 		/*
@@ -42,6 +82,7 @@ public class Application extends Controller {
 		if (session("sessionID") == null) {
 			d = new Device(Devices.getInstance().generateID());
 			session("sessionID", d.getSessionID()); 
+			MyLogger.log("Creating new session");
 		}
 
 		
@@ -63,7 +104,6 @@ public class Application extends Controller {
 		}
 		*/
 		
-
 		return ok(d.sessionID);
 	}
 
@@ -146,6 +186,7 @@ public class Application extends Controller {
 		
 		d.registerJob(j.jobID);
 		String s = j.export();
+		MyLogger.log("Handing out job with ID: " + j.jobID);
 		return ok(s);
 	}
 
@@ -166,7 +207,7 @@ public class Application extends Controller {
 		if(result == null) {
 			return badRequest("No data found in result request");//TODO: this should fail the job.
 		}
-		
+		MyLogger.log("Recieved completed job, ID: " + d.currentJob);
 		
 		//Just pass the data straight to the Job scheduler.
 		JobScheduler.getInstance().submitJob(d, result);
@@ -174,6 +215,7 @@ public class Application extends Controller {
 		//Notify device
 		d.jobComplete();
 
+		
 		return ok();
 		
 	}

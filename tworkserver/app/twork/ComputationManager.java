@@ -1,5 +1,6 @@
 package twork;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -167,7 +168,9 @@ public class ComputationManager {
 	}
 
 	public List<CustomerComputation> getCustomerComputations() {
-		return Ebean.find(CustomerComputation.class).findList();
+		List<CustomerComputation> list = Ebean.find(CustomerComputation.class).findList();
+		Collections.sort(list);
+		return list;
 	}
 	
 	
@@ -208,7 +211,13 @@ public class ComputationManager {
 			cc.addResult(result);
 			cc.update();
 			comp.delete();
+			
+			
+			//Add notification here
+			
+			
 			MyLogger.log("Computation completed.");
+			MyLogger.log(cc.toString());
 		}
 	}
 
