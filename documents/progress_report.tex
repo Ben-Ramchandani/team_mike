@@ -89,9 +89,10 @@ as well as configuration and HTML files.
 
 
 \subsection{The Play! Framework}
-
+We have decided to use the Play! Framework. It is an open source server framework which is similar to Django for Python or Ruby on Rails. This enforced some constraints on our model, but also optimized the time taken to write the application. 
+All the communication with the devices is done via HTTP requests at this point. Play! redirects them to a threaded controller pool and runs the appropriate method.
 \subsection{PostgreSQL and data storage}
-
+All the state is kept in a database. We used PostgreSQL due to the advantages it provides: security, caching etc. However, manipulating the database is done at an abstract level via the Ebean persistence library. Using this had an effect on our previous UML diagram. All the building blocks of the server: Computations, Jobs, Devices and Data are now stored in the database. In order to make this possible, we had confine ourselves to the Ebean model, which involves simple fileds and no inheritance. 
 \subsection{Prime Computation Example}
 
 A simple example computation, it takes a single argument, a number $N$, and either finds that the number is prime or returns an example factor for that number.
@@ -99,7 +100,6 @@ This example was chosen because it is easy to understand and easy to split up in
 
 The method for finding a factor is very simplistic, checking every number from 2 to $N-1$. The jobs each have a range to check, split so there are about ten jobs per computation.
 Once the jobs have been completed the server checks through them and checks if any of them found a factor.
-
 \subsection{What happens $<$-- terrible section title}
 
 \subsubsection{Key}
@@ -169,15 +169,23 @@ The test runs a prime computation (on 4, which generates only one job) from star
 
 We are confident enough in these tests to say that the server is ready for integration.
 
-\subsection{UI - incipient phase :)}
+\subsection{Server side UI}
+We started building a UI for our whole application. This involves a quick About section, a section with a link for app downloading and form for performing the computation test. This should be a taster and shall produce statistics of the computation, such as the amount of time taken, the number of devices that was involved in this, number of failures etc. 
+
+The UI is built using a free Bootstrap theme with various modifications to suit our own theme. The communication to the server is done either via jQuery, as it is the case of the Prime example, or using Scala and the helper functions available in the framework which provides easier file uploading methods. 
+
+Next we plan on making a more general form for Customers where they can generate computations by providing Java functions and inputs to run on, either files or raw text(already supported).
 
 \subsection{Refactoring Ideas}
 
 \begin{itemize}
-\item Get rid of the Data
+\item Change the protocol to HTTPS, which is mostly handled by the Play! Framework.
 \item Allow the UI to see the result in realtime.
 \end{itemize}
 
+\subsection{Deployment}
+We have used the free Amazon Web Services to deploy our server. It runs in a Ubuntu environment and we can control the runtime of the application via SSH.
+After integration, we plan on acquiring a domain name.
 \section{Service}
 
 \section{Android Twork App}
