@@ -79,13 +79,14 @@
 \section{Aims and Goals}
 \section{Server}
 
-%Working now, with tests.
-
+The server is working with the prime example, fulfilling all the Must requirements of the requirements.
+Currently being hosted on an Amazon Web Services EC2 instance the server consists of 2356 lines of Java code including tests
+as well as configuration and HTML files.
 
 \subsection{The Computation model}
 
 %We have different types of computations (Take files or just strings), only basic one implemented
-% 2356 lines of Java (Just what we've written, includes tests)
+
 
 \subsection{The Play! Framework}
 
@@ -113,23 +114,48 @@ Once the jobs have been completed the server checks through them and checks if a
 \begin{itemize}
 \item[$\star$] A customer adds a computation to the system via the Web interface.
 
-\item[+] All the jobs necessary to complete the computation are generated and committed to the data base
+
+
+\item[+] All the jobs necessary to complete the computation are generated and committed to the database.
+
+A computation generator is found based on the name of the computation and called.
+All the jobs necessary to complete the computation are explicitly generated when the computation is initialized.
+While this could limit efficiency in some cases, it reduces the state held in the computation.
 
 \item A device:
 \begin{itemize}
-\item Notifies the server it is available, sending information about itself.
+\item[$\star$] Notifies the server it is available, sending information about itself.
+
+A cookie is sent with the response as a way of identifying the device.
+This cookie must be present in subsequent requests.\\
+This has been implemented, however the extra information sent is currently ignored.
+
 \item[+] Requests a job from the server.
+
+Information about the job is sent as JSON in the response, including the job ID and the name of the code file to be sent.
+Requires a session cookie to be present.
+
 \item[+] Fetches the code for that job from the server.
+
+The code is fetched using its full file name, so Java's built in URLClassLoader can be used.
+
 \item[$\star$] Fetches Data for that job from the server.
-\item[+] Runs the job.
+
+This requires that the device has been given this job.
+
+\item[+] Executes the job.
+
+
 \item[$\star$] Returns the result to the server.
+
+This has been implemented, however larger data sizes have not been tested.
 \end{itemize}
 
 \item[+] The server stores the results of jobs as they come in.
 
 \item[+] Once a computation finishes the server runs code to collate the jobs.
 
-\item[-] The result is made available to the Web interface.
+\item[-] The result is made available via the Web interface.
 \end{itemize}
 
 \subsection{Unit Testing}
