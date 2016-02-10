@@ -79,7 +79,13 @@
 \section{Aims and Goals}
 \section{Server}
 
+%Working now, with tests.
+
+
 \subsection{The Computation model}
+
+%We have different types of computations (Take files or just strings), only basic one implemented
+% 2356 lines of Java (Just what we've written, includes tests)
 
 \subsection{The Play! Framework}
 
@@ -87,15 +93,63 @@
 
 \subsection{Prime Computation Example}
 
+A simple example computation, it takes a single argument, a number $N$, and either finds that the number is prime or returns an example factor for that number.
+This example was chosen because it is easy to understand and easy to split up into independent jobs.
+
+The method for finding a factor is very simplistic, checking every number from 2 to $N-1$. The jobs each have a range to check, split so there are about ten jobs per computation.
+Once the jobs have been completed the server checks through them and checks if any of them found a factor.
+
+\subsection{What happens $<$-- terrible section title}
+
+\subsubsection{Key}
+\begin{itemize}
+\item[+] Implemented
+\item[$\star$] Partially implemented / implemented for PrimeComputation only.
+\item[-] Not implemented
+\end{itemize}
+
+\subsubsection{Process}
+
+\begin{itemize}
+\item[$\star$] A customer adds a computation to the system via the Web interface.
+
+\item[+] All the jobs necessary to complete the computation are generated and committed to the data base
+
+\item A device:
+\begin{itemize}
+\item Notifies the server it is available, sending information about itself.
+\item[+] Requests a job from the server.
+\item[+] Fetches the code for that job from the server.
+\item[$\star$] Fetches Data for that job from the server.
+\item[+] Runs the job.
+\item[$\star$] Returns the result to the server.
+\end{itemize}
+
+\item[+] The server stores the results of jobs as they come in.
+
+\item[+] Once a computation finishes the server runs code to collate the jobs.
+
+\item[-] The result is made available to the Web interface.
+\end{itemize}
+
 \subsection{Unit Testing}
+
+The Job server has unit tests covering most components as well as a test that covers the a full computation execution.
+The JUnit framework is used along with Play!'s test helpers, allowing the tests to be run every time the server is built.\\
+The unit tests run inside fake application wrappers provided by Play!, which allow the use of an in memory database during tests.
+The full test starts the server and pretends to be a device by making HTTP requests to localhost,
+the internal server state is only accessed directly to check the result is correct at the end.
+The test runs a prime computation (on 4, which generates only one job) from start to finish.\\
+
+We are confident enough in these tests to say that the server is ready for integration.
 
 \subsection{UI - incipient phase :)}
 
 \subsection{Refactoring Ideas}
 
 \begin{itemize}
- \item Get rid of the Data
- \item Allow the UI to see the result in realtime.
+\item Get rid of the Data
+\item Allow the UI to see the result in realtime.
 \end{itemize}
 
 \section{Service}
