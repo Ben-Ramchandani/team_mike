@@ -182,4 +182,16 @@ We are confident enough in these tests to say that the server is ready for integ
 
 \section{Android Twork App}
 
+
+We decided to keep the original layout and concentrate on adding functionality to the existing buttons and menus. The new components were added in the order shown below:
+
+\begin{itemize}
+    \item Local database: the database residing on the user's device, containing data about the running computations and jobs. Data between the UI and background service is passed through the database to ensure asynchronicity and persistence. The implementation uses SQLite, a popular SQL framework for Android. A helper class provides a clean interface for communicating with the database.
+    \item Computation service: actual computation in the app runs in a separate service, in a new thread. Android services provide persistent computation in the background which can run even if the application is not in view. Technically it is a foreground service, which ensures that the Android system does not kill the service prematurely -- in exchange, a notification must be displayed while the app is running. The service methods can be implemented in a single class and accessed via the UI, so the user can have some control over how and when computation is happening.
+    \item Facebook integration: the social features are one of our main incentives and reward systems in the app, so we needed seamless integration with social networks. The first step was Facebook integration, done through the Facebook API -- for now it's only possible to log in, sharing features can be added when there is something worth sharing.
+    \item Achievements: the in-app reward system comes in the form of achievements, accessible from a separate menu. We plan to have some generic, built-in achievements (like "You performed 20 hours of computation"), as well as let the customers provide their own, computation-specific achievements (e.g. "You have found 5 primes").
+    \item Setup: when the user launches the app for the first time, the device needs to connect to the server, set up the database, fetch computations and jobs and so on. To make this process explicit, a short, one-time setup activity was added where the user can select which computations they want to run and set a few preferences. Even though this process is short, implementing it took quite a long time, but it provided a better view into the workings of the UI system and a few of the new classes have already been reused in different components of the application.
+    \item Statistics: since we need statistics to give out achievements, we thought that the user might be interested to see them real-time, in a more visual way. We are using the MPAndroidChart library to create simple graphs and charts to show the user's progress.
+\end{itemize}
+
 \end{document}
