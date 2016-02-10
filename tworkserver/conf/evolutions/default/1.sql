@@ -44,25 +44,29 @@ create table all_jobs (
   job_description           varchar(255),
   parent_computation_computation_id varchar(40),
   computation_id            varchar(40),
-  intput_data_id            varchar(40),
-  function_id               varchar(255),
+  input_data_id             varchar(40),
+  function_code_name        varchar(255),
   output_data_id            varchar(40),
   failed                    boolean,
   constraint pk_all_jobs primary key (job_id))
 ;
 
-alter table all_jobs add constraint fk_all_jobs_parentComputation_1 foreign key (parent_computation_computation_id) references all_computation (computation_id);
+alter table all_jobs add constraint fk_all_jobs_parentComputation_1 foreign key (parent_computation_computation_id) references all_computation (computation_id) on delete restrict on update restrict;
 create index ix_all_jobs_parentComputation_1 on all_jobs (parent_computation_computation_id);
 
 
 
 # --- !Downs
 
-drop table if exists all_computation cascade;
+SET REFERENTIAL_INTEGRITY FALSE;
 
-drop table if exists all_completed_computation cascade;
+drop table if exists all_computation;
 
-drop table if exists all_data cascade;
+drop table if exists all_completed_computation;
 
-drop table if exists all_jobs cascade;
+drop table if exists all_data;
+
+drop table if exists all_jobs;
+
+SET REFERENTIAL_INTEGRITY TRUE;
 

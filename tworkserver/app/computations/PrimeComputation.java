@@ -8,6 +8,8 @@ import models.Computation;
 import models.Data;
 import models.Job;
 import twork.Device;
+import twork.Jobs;
+import twork.MyLogger;
 
 import com.avaje.ebean.Ebean;
 
@@ -21,8 +23,8 @@ public class PrimeComputation implements BasicComputationGenerator {
 	@Override
 	public UUID generateComputation(String input) {
 		long prime;
-		
-		
+
+
 		try {
 			Scanner s = new Scanner(input);
 			prime = s.nextLong();
@@ -62,7 +64,6 @@ public class PrimeComputation implements BasicComputationGenerator {
 					e.printStackTrace();
 					throw new RuntimeException("generateComputation failed");
 				}
-
 				Job j = new Job(c, "Prime job", dataID, functionName);
 				j.save();
 				c.jobs.add(j);
@@ -71,10 +72,12 @@ public class PrimeComputation implements BasicComputationGenerator {
 				currentEnd += numPerJob;
 			}
 
-			
+
 			c.jobsLeft = c.jobs.size();
 			c.input = input;
 			c.update();
+
+
 			Ebean.commitTransaction();
 		} finally {
 			Ebean.endTransaction();
@@ -100,19 +103,26 @@ public class PrimeComputation implements BasicComputationGenerator {
 		}
 
 
+
 		long factor;
 		for(Job j : c.jobs) {
 			UUID dataID = j.outputDataID;
+			
 			if(!dataID.equals(Device.NULL_UUID)) {
 				//TODO: dependent on the data class.
 				Data d = Ebean.find(Data.class, dataID);
+				
 				if(!(d == null)) {
 					Scanner scan = new Scanner(d.data);
+					
 					try {
 						factor = scan.nextLong();
 						if(factor != 0) {
 							return "Found factor for " + Long.toString(prime) + ": " + Long.toString(factor) + ".";
 						}
+					} catch(Exception e) {
+						MyLogger.warn("Job data format invalid: " + d.data);
+						e.printStackTrace();
 					} finally {
 						scan.close();
 					}

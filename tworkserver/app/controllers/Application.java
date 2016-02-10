@@ -1,24 +1,34 @@
 package controllers;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
+import models.Computation;
+import models.CustomerComputation;
 import models.Data;
 import models.Job;
 import play.mvc.Controller;
 import play.mvc.Result;
 import twork.Device;
 import twork.Devices;
+import twork.FunctionManager;
 import twork.JobScheduler;
 import twork.MyLogger;
 
 import com.avaje.ebean.Ebean;
 
+import play.mvc.Http.RequestBody;
+
 public class Application extends Controller {
 
 	
 	
-	
 	public Result available() {
+		
+		
+		
+		
+		
 		/*
 		 * gives the phone a UUID 
 		 * starts a session
@@ -52,6 +62,7 @@ public class Application extends Controller {
 			return badRequest("Could not parse JSON.");
 		}
 		*/
+		
 
 		return ok(d.sessionID);
 	}
@@ -98,7 +109,7 @@ public class Application extends Controller {
 		}
 		
 		//TODO: data dependence
-		UUID dataID = j.jobID;
+		UUID dataID = j.inputDataID;
 		if(dataID == null) {
 			MyLogger.warn("Request for data: no data in job");
 			return internalServerError("Request for data: No data is attached to job (500 Internal Server Error).");
@@ -109,46 +120,72 @@ public class Application extends Controller {
 			MyLogger.warn("Request for data: data id in job does not exist");
 			return internalServerError("Request for data: Data id in job does not map to anything (500 Internal Server Error).");
 		}
-
+		
 		return ok(myData.getContent());
 	}
 
 
 
 	public Result job() {
-		if (session("sessionID") == null) 
-			return unauthorized();
-
+		
+		if (session("sessionID") == null) {
+			return unauthorized("No session.");
+		}
+		
 		Device d = Devices.getInstance().getDevice(session("sessionID"));
+		
+		if (!d.currentJob.equals(Device.NULL_UUID))  {
+			return forbidden("Already have incomplete job.");//TODO: cancel current job.
+		}
+		
 		Job j = JobScheduler.getInstance().getJob(d);
-
-		if (j == null) 
+		if (j == null) {
 			return status(555, "NO JOB");
-		if (d.currentJob != Device.NULL_UUID) 
-			return forbidden();//TODO: cancel current job.
-
+		}
+		
+		
 		d.registerJob(j.jobID);
 		String s = j.export();
-
 		return ok(s);
 	}
 
-	//make this request id too;
+	
 	public Result result(Long jobID) {
+		
 		if (session("sessionID") == null) 
-			return unauthorized();
+			return unauthorized("No session.");
 
 		Device d = Devices.getInstance().getDevice(session("sessionID"));
 
 		if (d.currentJob.getLeastSignificantBits() != jobID) 
-			return unauthorized();
+			return forbidden("Submission for incorrect job");
+			
+		
+		String result = request().body().asText();
+		
+		if(result == null) {
+			return badRequest("No data found in result request");//TODO: this should fail the job.
+		}
+		
 		
 		//Just pass the data straight to the Job scheduler.
-		JobScheduler.getInstance().submitJob(d, request().body().asText());
+		JobScheduler.getInstance().submitJob(d, result);
 		
 		//Notify device
 		d.jobComplete();
 
 		return ok();
+		
+	}
+	
+	public Result getCode(String functionName) {
+		
+		byte[] b = FunctionManager.getInstance().getCodeClassDefinition(functionName);
+		if(b == null) {
+			MyLogger.log("getCode, job requested has no code.");
+			return notFound("Class not found (404 - Not Found).");
+		}
+		
+		return ok(b);
 	}
 }

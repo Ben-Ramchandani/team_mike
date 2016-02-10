@@ -1,8 +1,7 @@
-package computations;
-
 import java.io.InputStream;
 import java.util.Scanner;
-
+import java.io.StringWriter;
+import org.apache.commons.io.IOUtils;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -17,7 +16,7 @@ public class PrimeComputationCode implements ComputationCode {
 	//prime lowerBound upperBound
 	@Override
 	public void run(InputStream input, OutputStream output) {
-		
+
 		//Parse our input data
 		try {
 			Scanner s = new Scanner(input);
@@ -49,6 +48,7 @@ public class PrimeComputationCode implements ComputationCode {
 		} catch(Exception e) {
 			throw new RuntimeException("PrimeComputationCode failed to package result");
 		}
+
 		return;
 	}
 }

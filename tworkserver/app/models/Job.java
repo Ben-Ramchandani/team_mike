@@ -3,12 +3,10 @@ package models;
 import java.util.Formatter;
 import java.util.UUID;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.*;
 
 import twork.Device;
+import twork.MyLogger;
 
 import com.avaje.ebean.Model;
 
@@ -24,9 +22,9 @@ public class Job extends Model {
 	
 	public UUID computationID;
 	
-	public UUID intputDataID;
+	public UUID inputDataID;
 	
-	public String functionID;
+	private String functionCodeName;
 	//address of the function class.
 	//these are simply on the file system, no database.
 	
@@ -40,8 +38,8 @@ public class Job extends Model {
 		
 		parentComputation = parent;
 		computationID = parent.computationID;
-		intputDataID = input;
-		functionID = function;
+		inputDataID = input;
+		functionCodeName = function;
 		outputDataID = Device.NULL_UUID;
 		failed = false;
 	}
@@ -49,17 +47,24 @@ public class Job extends Model {
 	
 	
 	public String export() {
+		String result = "{}";
+		try {
     	StringBuilder sb = new StringBuilder();
     	Formatter formatter = new Formatter(sb);
     	
-    	formatter.format("{           \n        " +
-    					 "\"computation-id\": %l,\n" +
-    					 "\"job-id\" : %l,\n       " +
-    					 "\"function-class\" : %s,\n" +
-    					 "\"job-description\": %s,\n", computationID, jobID.getLeastSignificantBits(), functionID, jobDescription);
+    	formatter.format("{\n" +
+    					 "\"computation-id\": %d,\n" +
+    					 "\"job-id\" : %d,\n" +
+    					 "\"function-class\" : \"%s\",\n" +
+    					 "\"job-description\": \"%s\"\n}", computationID.getLeastSignificantBits(), jobID.getLeastSignificantBits(), functionCodeName, jobDescription);
     	
-    	String result = formatter.out().toString();
+    	result = formatter.out().toString();
     	formatter.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+			MyLogger.warn("job failed to export");
+		}
+		
     	return result;
     }
 	

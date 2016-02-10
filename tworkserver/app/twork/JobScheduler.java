@@ -104,6 +104,7 @@ public class JobScheduler {
 				//Validate here
 				result = r;
 				complete = true;
+				save();
 			}
 		}
 
@@ -140,11 +141,11 @@ public class JobScheduler {
 
 	}
 
-	Map<UUID, ScheduleJob> jobMap;
+	public Map<UUID, ScheduleJob> jobMap;
 	//Jobs that want more phones.
-	List<ScheduleJob> waitingJobs;
+	private List<ScheduleJob> waitingJobs;
 	//Jobs that are just waiting for results.
-	List<ScheduleJob> activeJobs;
+	private List<ScheduleJob> activeJobs;
 
 	//How many completed jobs were in the database on last rebuild?
 	private int deadJobCount;
@@ -277,7 +278,6 @@ public class JobScheduler {
 
 	private synchronized void processJob(ScheduleJob j) {
 		if(j.isComplete()) {
-			j.save();
 			ComputationManager.getInstance().jobCompleted(j.getJobID());
 		} else if(j.isFailed()) {
 			ComputationManager.getInstance().jobFailed(j.getJobID());
@@ -313,11 +313,16 @@ public class JobScheduler {
 			return null;
 		} else {
 			ScheduleJob j = waitingJobs.remove(0);
+			Job job = Job.find.byId(j.getJobID());
+			if(job == null) {
+				MyLogger.log("Job in scheduler is not in database");
+				return null;
+			}
 			j.addPhone();
 			//Dependent on job only being out once at a time.
 			activeJobs.add(j);
 			d.registerJob(j.getJobID());
-			return Job.find.byId(j.getJobID());
+			return job;
 		}
 	}
 }
