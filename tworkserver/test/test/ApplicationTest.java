@@ -69,6 +69,22 @@ public class ApplicationTest {
 			}
 		});
 	}
+	
+	@Test
+	public void customer_computation_order_test() {
+		running(fakeApplication(inMemoryDatabase()), new Runnable() {
+			public void run() {
+				new CustomerComputation("Example James", "name", "desc", "function", "input");
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {}
+				new CustomerComputation("Example James", "name1", "desc", "function", "input");
+				CustomerComputation c = ComputationManager.getInstance().getComputationsByCustomerName("Example James").get(0);
+				//Should have most recent first
+				assertEquals(c.computationName, "name");
+			}
+		});
+	}
 
 
 	
@@ -78,12 +94,61 @@ public class ApplicationTest {
 		Ebean.delete(Ebean.find(Job.class).findList());
 	}
 
+	
+	//Test disabled because it takes ages
+	/*
 	@Test
-	public void full_test() {
+	public void session_timeout_test() {
 		running(testServer(9001), new Runnable() {
 			public void run() {
+				try{
+				String urlString = "http://localhost:9001/";
+
+				//Send GET /available
+				URL availableURL = new URL(urlString + "available");
+				HttpURLConnection con = (HttpURLConnection) availableURL.openConnection();
+				con.connect();
+				assertEquals("Available gives 200 response code", 200, con.getResponseCode());
+				String cookie = con.getHeaderField("Set-Cookie");
+				assertNotNull("Available returns a cookie", cookie);
+				
+				//Sleep for a bit
+				Thread.sleep(1000);
+				
+				
+				//Send GET /job with cookie - expect NO JOB
+				URL jobURL = new URL(urlString + "job");
+				HttpURLConnection jobCon1 = (HttpURLConnection) jobURL.openConnection();
+				jobCon1.setRequestProperty("Cookie", cookie);
+				jobCon1.connect();
+
+				assertEquals("GET /job with cookie after 1 second returns 555 - No Job", 555, jobCon1.getResponseCode());
+				
+				
+				//Sleep for a bit more
+				Thread.sleep(60000);
+				//Send GET /job with cookie - expect NO JOB
+				HttpURLConnection jobCon2 = (HttpURLConnection) jobURL.openConnection();
+				jobCon2.setRequestProperty("Cookie", cookie);
+				jobCon2.connect();
+
+				assertEquals("GET /job with cookie after 1 minute returns 555 - No Job", 555, jobCon2.getResponseCode());
+				
+				} catch(Throwable t) {
+					t.printStackTrace();
+					assertTrue("Exception", false);
+					return;
+				}
+			}
+		});
+	}
+	*/
+	
+	@Test
+	public void full_test() {
+		running(testServer(9001, fakeApplication(inMemoryDatabase())), new Runnable() {
+			public void run() {
 				try {
-					clear_db();
 					MyLogger.enable = false;
 					MyLogger.log("Starting full test.");
 
@@ -118,9 +183,12 @@ public class ApplicationTest {
 
 
 					//Add a job
-					ComputationManager cm = ComputationManager.getInstance();
-					CustomerComputation custComputation = new CustomerComputation("John Smith", "Prime(4) example for full test", "", "PrimeComputation", "4");
-					cm.runCustomerComputation(custComputation);
+					URL addComputationURL = new URL(urlString + "test/add/" + "John_Smith" + "/" + "4");
+					HttpURLConnection addCon = (HttpURLConnection) addComputationURL.openConnection();
+					addCon.setRequestMethod("POST");
+					addCon.connect();
+					assertEquals("POST /test/add... returns 200 - OK", 200, addCon.getResponseCode());
+					
 
 
 					//Send GET /job with cookie - expect a job
@@ -189,17 +257,17 @@ public class ApplicationTest {
 					
 					assertEquals("POST /result/:jobID returns 200 - OK", 200, resultCon.getResponseCode());
 					
-					List<CustomerComputation> comps = cm.getComputationsByCustomerName("John Smith");
+					
+					ComputationManager cm = ComputationManager.getInstance();
+					List<CustomerComputation> comps = cm.getComputationsByCustomerName("John_Smith");
 					assertEquals("One customer computation for John Smith", 1, comps.size());
 					assertEquals("Correct output from full test", comps.get(0).output, "Found factor for 4: 2.");
-
+					loader.close();
 					MyLogger.log("End full test.");
 				} catch (Exception e) {
 					e.printStackTrace();
 					assertTrue("Exception", false);
 					return;
-				} finally {
-					clear_db();
 				}
 			}
 		});
