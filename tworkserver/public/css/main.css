@@ -1,0 +1,22 @@
+.compmodel{
+
+}
+.text-in{
+  background-color: transparent;
+  border-width: 0px 0px 2px 0px;
+  border-color: #42dca3;
+  color: #42dca3;
+}
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 1px;
+    text-overflow: '';
+}
+input[type=radio]{
+  display: none;
+}
+input[type=radio]:checked + label{
+  background-color: #42dca3;
+  color: black;
+}

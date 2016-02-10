@@ -24,9 +24,9 @@ public class Web extends Controller{
 		play.mvc.Http.MultipartFormData fileBody = body.asMultipartFormData();
 		String immediateInput = fileBody.asFormUrlEncoded().get("input")[0];
 		String computationID = "1";
-		
+
 		assert(immediateInput!=null);
-		
+
 		List<FilePart> files = fileBody.getFiles();
 		for (FilePart filePart : files) {
 			if (filePart != null) {
@@ -41,6 +41,14 @@ public class Web extends Controller{
 			}
 		}
 		return ok();
+	}
+
+	public Result submitComputation() {
+		return ok(views.html.submitcomputation.render(new play.twirl.api.Html("something")));
+	}
+
+	public Result prime(Long input) {
+		
 	}
 
 }
