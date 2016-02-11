@@ -45,10 +45,6 @@ public class Web extends Controller{
 		return ok();
 	}
 
-	public Result submitComputation() {
-		return ok(views.html.submitcomputation.render(new play.twirl.api.Html("something")));
-	}
-	
 
 	public Result primeTest(Long input) {
 		//CustomerComputation custComputation = new CustomerComputation(request().remoteAddress(), "Prime Computation Test", "Prime Computation Test", "PrimeComputation", input.toString());
