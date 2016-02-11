@@ -6,10 +6,12 @@ import java.util.List;
 
 import java.util.Map;
 
+import models.CustomerComputation;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Http.RequestBody;
 import play.mvc.Result;
+import twork.ComputationManager;
 
 public class Web extends Controller{
 
@@ -46,9 +48,20 @@ public class Web extends Controller{
 	public Result submitComputation() {
 		return ok(views.html.submitcomputation.render(new play.twirl.api.Html("something")));
 	}
+	
 
-	public Result prime(Long input) {
+	public Result primeTest(Long input) {
+		//CustomerComputation custComputation = new CustomerComputation(request().remoteAddress(), "Prime Computation Test", "Prime Computation Test", "PrimeComputation", input.toString());
+		//ComputationManager.getInstance().runCustomerComputation(custComputation);
+	
 		
+		//Bad polling
+		//while (custComputation.status != CustomerComputation.RUNNING){			
+		//}
+		
+		return ok(input.toString());
 	}
-
+		
+		
+		
 }

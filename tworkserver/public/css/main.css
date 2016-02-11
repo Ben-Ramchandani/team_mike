@@ -7,6 +7,13 @@
   border-color: #42dca3;
   color: #42dca3;
 }
+
+.number-in{
+  background-color: transparent;
+  border-width: 0px 0px 2px 0px;
+  border-color: #42dca3;
+  color: #42dca3;
+}
 select {
     -webkit-appearance: none;
     -moz-appearance: none;

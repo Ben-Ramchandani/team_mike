@@ -4,8 +4,8 @@
 
 # Home page
 GET     /                           controllers.Web.index()
-POST	/page/upload				controllers.Web.upload() 
-
+POST	/page/upload	          			controllers.Web.upload()
+GET     /prime/:number              controllers.Web.primeTest(number: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
@@ -13,7 +13,7 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 # Availability request
 # JSON:
 #	phone-id       : string
-#	battery-life   : 0 - 100	
+#	battery-life   : 0 - 100
 #	on-charge      : 0 / 1
 #	on-WiFi		   : 0 / 1
 # set cookie in the header; all the other requests should have that cookie set.
@@ -25,7 +25,7 @@ GET    /available                  controllers.Application.available()
 #
 #	This will return a json object:
 #	job-id 			: long
-#	function-class 	: string    -You call the URLCLassLoader. 
+#	function-class 	: string    -You call the URLCLassLoader.
 # 	computation-id	: long
 #	job-description : string
 #	return a non 200 code if there is no job.
@@ -41,7 +41,7 @@ GET		/data/:jobID				controllers.Application.data(jobID: Long)
 GET		/code/:functionName			controllers.Application.getCode(functionName: String)
 
 # Send result
-#	
+#
 #	Send the raw file -> empty is failed
 #
 #

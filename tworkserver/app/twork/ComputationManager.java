@@ -21,7 +21,8 @@ public class ComputationManager {
 	//Singleton
 	//TODO:
 	public static ComputationManager instance;
-
+	
+	
 	public static ComputationManager getInstance() {
 		if(instance == null) {
 			instance = new ComputationManager();
