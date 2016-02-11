@@ -80,15 +80,19 @@
 \section{Server}
 
 The server is working with the prime example, fulfilling all the Must requirements of the requirements.
-Currently being hosted on an Amazon Web Services EC2 instance the server consists of 2356 lines of Java code including tests
+Currently being hosted on an Amazon Web Services EC2 instance the server consists of 2356 lines of Java code, including tests,
 as well as configuration and HTML files.
 
 
 \subsection{The Play! Framework}
 We have decided to use the Play! Framework. It is an open source server framework which is similar to Django for Python or Ruby on Rails. This enforced some constraints on our model, but also optimized the time taken to write the application. 
 All the communication with the devices is done via HTTP requests at this point. Play! redirects them to a threaded controller pool and runs the appropriate method.
+
+
 \subsection{PostgreSQL and data storage}
 All the state is kept in a database. We used PostgreSQL due to the advantages it provides: security, caching etc. However, manipulating the database is done at an abstract level via the Ebean persistence library. Using this had an effect on our previous UML diagram. All the building blocks of the server: Computations, Jobs, Devices and Data are now stored in the database. In order to make this possible, we had confine ourselves to the Ebean model, which involves simple fileds and no inheritance. 
+
+
 \subsection{Prime Computation Example}
 
 A simple example computation, it takes a single argument, a number $N$, and either finds that the number is prime or returns an example factor for that number.
@@ -96,7 +100,9 @@ This example was chosen because it is easy to understand and easy to split up in
 
 The method for finding a factor is very simplistic, checking every number from 2 to $N-1$. The jobs each have a range to check, split so there are about ten jobs per computation.
 Once the jobs have been completed the server checks through them and checks if any of them found a factor.
-\subsection{What happens $<$-- terrible section title}
+
+
+\subsection{Process of fetching a job}
 
 \subsubsection{Key}
 \begin{itemize}
@@ -176,7 +182,15 @@ Next we plan on making a more general form for Customers where they can generate
 
 \begin{itemize}
 \item Change the protocol to HTTPS, which is mostly handled by the Play! Framework.
-\item Allow the UI to see the result in realtime.
+\item Refector the Data class to allow efficient storage of larger data sizes.
+\end{itemize}
+
+\subsection{Upcoming features}
+
+\begin{itemize}
+\item Allow the UI to see the results of computations in realtime.
+\item Store data about customers and users  in the database and make them available to the relevant parties.
+\item Make the types of computations available to the app and the web UI.
 \end{itemize}
 
 \subsection{Deployment}
