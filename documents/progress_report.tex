@@ -79,7 +79,7 @@
 \section{Aims and Goals}
 \section{Server}
 
-The server is working with the prime example, fulfilling all the Must requirements of the requirements.
+The server is working with the prime example, fulfilling the Must portion of the requirements.
 Currently being hosted on an Amazon Web Services EC2 instance the server consists of 2356 lines of Java code, including tests,
 as well as configuration and HTML files.
 
@@ -90,7 +90,7 @@ All the communication with the devices is done via HTTP requests at this point. 
 
 
 \subsection{PostgreSQL and data storage}
-All the state is kept in a database. We used PostgreSQL due to the advantages it provides: security, caching etc. However, manipulating the database is done at an abstract level via the Ebean persistence library. Using this had an effect on our previous UML diagram. All the building blocks of the server: Computations, Jobs, Devices and Data are now stored in the database. In order to make this possible, we had confine ourselves to the Ebean model, which involves simple fileds and no inheritance. 
+All computation state is kept in a database. We used PostgreSQL due to the advantages it provides: security, caching etc. However, manipulating the database is done at an abstract level via the Ebean persistence library. Using this had an effect on our previous UML diagram. All the building blocks of the server: Computations, Jobs and Data are now stored in the database. In order to make this possible, we had confine ourselves to the Ebean model, which involves simple fields and no inheritance. 
 
 
 \subsection{Prime Computation Example}
@@ -172,7 +172,7 @@ The test runs a prime computation (on 4, which generates only one job) from star
 We are confident enough in these tests to say that the server is ready for integration.
 
 \subsection{Server side UI}
-We started building a UI for our whole application. This involves a quick About section, a section with a link for app downloading and form for performing the computation test. This should be a taster and shall produce statistics of the computation, such as the amount of time taken, the number of devices that was involved in this, number of failures etc. 
+We have started building a UI for our whole application. This involves a quick About section, a section with a link for app downloading and form for performing the computation test. This should be a taster and shall produce statistics of the computation, such as the amount of time taken, the number of devices that was involved in this, number of failures etc. 
 
 The UI is built using a free Bootstrap theme with various modifications to suit our own theme. The communication to the server is done either via jQuery, as it is the case of the Prime example, or using Scala and the helper functions available in the framework which provides easier file uploading methods. 
 
@@ -205,16 +205,17 @@ After integration, we plan on acquiring a domain name.
 
 We decided to keep the original layout and concentrate on adding functionality to the existing buttons and menus. The new components were added in the order shown below:
 
-\begin{itemize}
-    \item Local database: the database residing on the user's device, containing data about the running computations and jobs. Data between the UI and background service is passed through the database to ensure asynchronicity and persistence. The implementation uses SQLite, a popular SQL framework for Android. A helper class provides a clean interface for communicating with the database.
-    \item Computation service: actual computation in the app runs in a separate service, in a new thread. Android services provide persistent computation in the background which can run even if the application is not in view. Technically it is a foreground service, which ensures that the Android system does not kill the service prematurely -- in exchange, a notification must be displayed while the app is running. The service methods can be implemented in a single class and accessed via the UI, so the user can have some control over how and when computation is happening.
-    \item Facebook integration: the social features are one of our main incentives and reward systems in the app, so we needed seamless integration with social networks. The first step was Facebook integration, done through the Facebook API -- for now it's only possible to log in, sharing features can be added when there is something worth sharing.
-    \item Achievements: the in-app reward system comes in the form of achievements, accessible from a separate menu. We plan to have some generic, built-in achievements (like "You performed 20 hours of computation"), as well as let the customers provide their own, computation-specific achievements (e.g. "You have found 5 primes").
-    \item Setup: when the user launches the app for the first time, the device needs to connect to the server, set up the database, fetch computations and jobs and so on. To make this process explicit, a short, one-time setup activity was added where the user can select which computations they want to run and set a few preferences. Even though this process is short, implementing it took quite a long time, but it provided a better view into the workings of the UI system and a few of the new classes have already been reused in different components of the application.
-    \item Statistics: since we need statistics to give out achievements, we thought that the user might be interested to see them real-time, in a more visual way. We are using the MPAndroidChart library to create simple graphs and charts to show the user's progress.
-\end{itemize}
+\subsection{Local database} The database residing on the user's device, containing data about the running computations and jobs. Data between the UI and background service is passed through the database to ensure asynchronicity and persistence. The implementation uses SQLite, a popular SQL framework for Android. A helper class provides a clean interface for communicating with the database.
+\subsection{Computation service} Actual computation in the app runs in a separate service, in a new thread. Android services provide persistent computation in the background which can run even if the application is not in view. Technically it is a foreground service, which ensures that the Android system does not kill the service prematurely -- in exchange, a notification must be displayed while the app is running. The service methods can be implemented in a single class and accessed via the UI, so the user can have some control over how and when computation is happening.
+\subsection{Facebook integration} The social features are one of our main incentives and reward systems in the app, so we needed seamless integration with social networks. The first step was Facebook integration, done through the Facebook API -- for now it's only possible to log in, sharing features can be added when there is something worth sharing.
+\subsection{Achievements} The in-app reward system comes in the form of achievements, accessible from a separate menu. We plan to have some generic, built-in achievements (like "You performed 20 hours of computation"), as well as let the customers provide their own, computation-specific achievements (e.g. "You have found 5 primes").
+\subsection{Setup}When the user launches the app for the first time, the device needs to connect to the server, set up the database, fetch computations and jobs and so on. To make this process explicit, a short, one-time setup activity was added where the user can select which computations they want to run and set a few preferences. Even though this process is short, implementing it took quite a long time, but it provided a better view into the workings of the UI system and a few of the new classes have already been reused in different components of the application.
+\subsection{Statistics}Since we need statistics to give out achievements, we thought that the user might be interested to see them real-time, in a more visual way. We are using the MPAndroidChart library to create simple graphs and charts to show the user's progress.
 
-The major components of the application are now implemented, but they have to be fully integrated and tested. Other features left to build are:
+
+\subsection{Plans for new features}
+
+The major components of the application are now implemented, but still they have to be fully integrated and tested. Other features left to build are:
 
 \begin{itemize}
     \item Managing battery, mobile data and location services
