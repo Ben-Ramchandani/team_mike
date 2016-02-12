@@ -223,7 +223,7 @@ public class ApplicationTest {
 					
 					
 					
-					ShittyURLClassLoader loader = new ShittyURLClassLoader(new URL(urlString + "code/"));
+					TerribleURLClassLoader loader = new TerribleURLClassLoader(new URL(urlString + "test/code/"));
 					Class<?> codeClass = loader.loadClass(functionName);
 					Object o = codeClass.newInstance();
 					Method codeToRun = codeClass.getDeclaredMethod("run", new Class<?>[] {InputStream.class, OutputStream.class});

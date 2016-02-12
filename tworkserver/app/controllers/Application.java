@@ -220,14 +220,27 @@ public class Application extends Controller {
 		
 	}
 	
-	public Result getCode(String functionName) {
+public Result getDexCode(String functionName) {
 		
-		byte[] b = FunctionManager.getInstance().getCodeClassDefinition(functionName);
+		byte[] b = FunctionManager.getInstance().getCodeDexDefinition(functionName);
 		if(b == null) {
-			MyLogger.log("getCode, job requested has no code.");
+			MyLogger.log("Application.getDexCode, no file matching class name.");
 			return notFound("Class not found (404 - Not Found).");
 		}
 		
+		MyLogger.log("Sending .dex code file with name: " + functionName);
+		return ok(b);
+	}
+	
+	public Result getClassCode(String functionName) {
+		
+		byte[] b = FunctionManager.getInstance().getCodeClassDefinition(functionName);
+		if(b == null) {
+			MyLogger.log("Application.getCode, no file matching class name.");
+			return notFound("Class not found (404 - Not Found).");
+		}
+		
+		MyLogger.log("Sending .class code file with name: " + functionName);
 		return ok(b);
 	}
 }

@@ -38,7 +38,9 @@ GET		/data/:jobID				controllers.Application.data(jobID: Long)
 
 #Code request
 #Returns .class file as raw bytes
-GET		/code/:functionName			controllers.Application.getCode(functionName: String)
+GET		/code/:functionName					controllers.Application.getDexCode(functionName: String)
+
+GET		/test/code/:functionName			controllers.Application.getClassCode(functionName: String)
 
 # Send result
 #
