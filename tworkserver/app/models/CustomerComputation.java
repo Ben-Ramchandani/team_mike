@@ -100,6 +100,8 @@ public class CustomerComputation extends Model implements Comparable<CustomerCom
 		this.save();
 	}
 	
+	
+	
 	public String toString() {
 		return "Customer Computation:\nCustomer Name: \"" + customerName + "\", input: \"" + input + "\", output: \"" + output + "\".";
 	}
