@@ -174,6 +174,11 @@ public class ComputationManager {
 		return list;
 	}
 	
+	public CustomerComputation getCustomerComputation(UUID cid) {
+		CustomerComputation c = Ebean.find(CustomerComputation.class,cid);
+		return c;
+	}
+	
 	
 	//Computations by name.
 	//may return empty list.
@@ -211,6 +216,7 @@ public class ComputationManager {
 
 			cc.addResult(result);
 			cc.update();
+			ComputationNotifier.getInstance().finished(cc.CustomerComputationID);
 			comp.delete();
 			
 			
