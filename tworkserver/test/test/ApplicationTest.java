@@ -176,7 +176,7 @@ public class ApplicationTest {
 					jobCon2.setRequestProperty("Cookie", cookie);
 					jobCon2.connect();
 
-					assertEquals("GET /job with cookie returns 555 - No Job", 555, jobCon2.getResponseCode());
+					assertEquals("GET /job with cookie returns 204 - No Content", 204, jobCon2.getResponseCode());
 
 
 					//Add a job

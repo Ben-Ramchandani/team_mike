@@ -180,7 +180,7 @@ public class Application extends Controller {
 		
 		Job j = JobScheduler.getInstance().getJob(d);
 		if (j == null) {
-			return status(201, "NO JOB");
+			return status(204, "NO JOB");
 		}
 		
 		
