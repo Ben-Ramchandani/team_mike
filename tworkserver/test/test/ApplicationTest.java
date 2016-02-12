@@ -14,11 +14,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
@@ -38,13 +37,11 @@ import twork.JobScheduler;
 import twork.MyLogger;
 
 import com.avaje.ebean.Ebean;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import computations.ComputationCode;
 import computations.PrimeComputation;
 import computations.PrimeComputationCodeInternal;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.lang.reflect.Method;
 
 
 public class ApplicationTest {
@@ -210,6 +207,7 @@ public class ApplicationTest {
 					String functionName = jn.get("function-class").asText();
 					assertNotNull("/job reply has funciton-class", functionName);
 
+					
 					//Send GET /code/:jobID
 					URL codeURL = new URL(urlString + "code/" + functionName);
 					HttpURLConnection codeCon = (HttpURLConnection) codeURL.openConnection();
@@ -218,12 +216,17 @@ public class ApplicationTest {
 					
 					assertEquals("GET /code/:functionName returns 200 - OK", 200, codeCon.getResponseCode());
 					
+					/*
 					//Fetch and instantiate the class
 					URLClassLoader loader = new URLClassLoader(new URL[] {new URL(urlString + "code/")});
+					*/
+					
+					
+					
+					ShittyURLClassLoader loader = new ShittyURLClassLoader(new URL(urlString + "code/"));
 					Class<?> codeClass = loader.loadClass(functionName);
 					Object o = codeClass.newInstance();
 					Method codeToRun = codeClass.getDeclaredMethod("run", new Class<?>[] {InputStream.class, OutputStream.class});
-					
 					
 					//Get data
 					URL dataURL = new URL(urlString + "data/" + Long.toString(jobID));
@@ -262,7 +265,7 @@ public class ApplicationTest {
 					List<CustomerComputation> comps = cm.getComputationsByCustomerName("John_Smith");
 					assertEquals("One customer computation for John Smith", 1, comps.size());
 					assertEquals("Correct output from full test", comps.get(0).output, "Found factor for 4: 2.");
-					loader.close();
+					
 					MyLogger.log("End full test.");
 				} catch (Exception e) {
 					e.printStackTrace();
