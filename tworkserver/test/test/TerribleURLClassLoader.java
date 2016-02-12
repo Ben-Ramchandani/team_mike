@@ -1,6 +1,7 @@
 package test;
 
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -9,12 +10,12 @@ import java.net.URL;
 import org.apache.commons.io.IOUtils;
 
 
-public class ShittyURLClassLoader extends ClassLoader {
+public class TerribleURLClassLoader extends ClassLoader {
 
 	
 	private URL url;
 
-	public ShittyURLClassLoader(URL u) {
+	public TerribleURLClassLoader(URL u) {
 		url = u;
 	}
 
@@ -35,6 +36,7 @@ public class ShittyURLClassLoader extends ClassLoader {
 
 			result = defineClass(name, bytes, 0, bytes.length);
 		} catch(IOException e) {
+			e.printStackTrace();
 			throw new ClassNotFoundException("IOException when trying to fetch code.");
 		}
 

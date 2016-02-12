@@ -11,7 +11,8 @@ libraryDependencies ++= Seq(
   cache,
   //javaWs,
   "org.postgresql" % "postgresql" % "9.4.1207.jre7",
-  "org.hibernate" % "hibernate-entitymanager" % "4.3.9.Final"
+  "org.hibernate" % "hibernate-entitymanager" % "4.3.9.Final",
+  "org.json"%"org.json"%"chargebee-1.0"
 )
 
 
