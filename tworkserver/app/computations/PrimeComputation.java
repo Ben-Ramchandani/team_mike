@@ -126,7 +126,11 @@ public class PrimeComputation implements BasicComputationGenerator {
 					} finally {
 						scan.close();
 					}
+				} else {
+					MyLogger.warn("PrimeComputation: Output data for job does not exist (not in database).");
 				}
+			} else {
+				MyLogger.warn("PrimeComputation: Output data for job does not exist (NULL_UUID).");
 			}
 		}
 		return "No factor found for " + Long.toString(prime) + ".";

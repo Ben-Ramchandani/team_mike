@@ -19,3 +19,4 @@ project/target
 LICENCE
 .sbtserver
 tworkserver/conf/evolutions/default/1.sql
+tworkserver/project/.sbtserver

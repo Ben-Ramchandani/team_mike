@@ -19,7 +19,6 @@ import computations.BasicComputationGenerator;
 public class ComputationManager {
 
 	//Singleton
-	//TODO:
 	public static ComputationManager instance;
 	
 	
@@ -33,7 +32,9 @@ public class ComputationManager {
 	//Jobs remaining for running computations
 	Map<UUID, Integer> jobsRemaining;
 
-	//Could keep a in memory map from jobID to ComputationID
+	//Could keep an in memory map from jobID to ComputationID
+	
+	//TODO: Add map CustCompID -> CustComp
 
 	private ComputationManager() {
 		rebuild_TEST();
@@ -68,7 +69,6 @@ public class ComputationManager {
 			} else {
 				completeComputation(c.computationID);
 			}
-
 		}
 	}
 
@@ -147,6 +147,7 @@ public class ComputationManager {
 		}
 	}
 
+	//Used only for testing
 	@Deprecated
 	public synchronized void addBasicComputation(BasicComputationGenerator g, String input) {
 		//TODO: This shouldn't be synchronized in the manager
@@ -200,28 +201,24 @@ public class ComputationManager {
 			MyLogger.log("Non existent computation completed, ignoring.");
 		} else {
 
-			//BAD
-			comp.jobsLeft = 0;
-			comp.update();
 			/*
 			 * Have different cases for the different types of computations.
 			 * Just have this one for now.
 			 */
 			BasicComputationGenerator gen = FunctionManager.getInstance().getBasicComputationGenerator(comp.functionName);
-			//This should be in a different thread really.
+			
+			
+			//TODO: This should all be in a different thread really.
 			String result = gen.getResult(computationID);
-			CustomerComputation cc;
-
-			cc = getCustomerComputation(comp);
+			
+			CustomerComputation cc = getCustomerComputation(comp);
 
 			cc.addResult(result);
 			cc.update();
-			ComputationNotifier.getInstance().finished(cc.CustomerComputationID);
 			comp.delete();
 			
-			
-			//Add notification here
-			
+			//Notify
+			ComputationNotifier.getInstance().finished(cc.CustomerComputationID);
 			
 			MyLogger.log("Computation completed.");
 			MyLogger.log(cc.toString());
@@ -233,6 +230,7 @@ public class ComputationManager {
 		jobsRemaining.remove(c.computationID);
 		try {
 			c.delete();
+			JobScheduler.getInstance().update();
 			MyLogger.warn("Computation aborted");
 		} catch(Throwable e) {
 			MyLogger.critical("An attempt was made to abort an invalid computation, but it failed.");

@@ -12,6 +12,15 @@ public class ComputationNotifier {
 	public static ComputationNotifier instance;
 	
 	
+	/*
+	 * The class doesn't need to be a singleton when all the methods are static
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	
+	
 	public static ComputationNotifier getInstance() {
 		if(instance == null) {
 			instance = new ComputationNotifier();

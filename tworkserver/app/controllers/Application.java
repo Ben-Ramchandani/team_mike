@@ -1,6 +1,5 @@
 package controllers;
 
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import models.Computation;
@@ -17,8 +16,6 @@ import twork.JobScheduler;
 import twork.MyLogger;
 
 import com.avaje.ebean.Ebean;
-
-import play.mvc.Http.RequestBody;
 
 public class Application extends Controller {
 
@@ -44,8 +41,10 @@ public class Application extends Controller {
 		return ok();
 	}
 	
-	public boolean hasRun = false;
-	public void runOnStart() {
+	
+	//A hack to have start-up code
+	public static boolean hasRun = false;
+	public static synchronized void runOnStart() {
 		if(hasRun) {
 			return;
 		}
@@ -80,8 +79,8 @@ public class Application extends Controller {
 		Device d; 
 
 		if (session("sessionID") == null) {
-			d = new Device(Devices.getInstance().generateID());
-			session("sessionID", d.getSessionID()); 
+			//d = new Device(Devices.getInstance().generateID());
+			session("sessionID", Devices.getInstance().generateID()); 
 			MyLogger.log("Creating new session");
 		}
 

@@ -19,6 +19,7 @@ import twork.ComputationNotifier;
 public class Web extends Controller{
 
 	public Result index() {
+		Application.runOnStart();
 		List<String> l = (List) Arrays.asList("Prime Computation","Image Processing");
 		return ok(views.html.main.render("test", l, new play.twirl.api.Html("something")));
 	}

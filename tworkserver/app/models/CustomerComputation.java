@@ -76,6 +76,17 @@ public class CustomerComputation extends Model implements Comparable<CustomerCom
 		this.save();
 	}
 	
+	public String toString() {
+		return "Customer Computation:\nCustomer Name: \"" + customerName + "\", input: \"" + input + "\", output: \"" + output + "\".";
+	}
+	
+	
+	/*
+	 * IMPORTANT:
+	 * None of the following methods should be called outside of the computation manager,
+	 * it may leave the database in an inconsistent state.
+	 */
+	
 	public void runComputation(Computation c) {
 		computationID = c.computationID;
 		totalJobs = c.jobs.size();
@@ -100,11 +111,6 @@ public class CustomerComputation extends Model implements Comparable<CustomerCom
 		this.save();
 	}
 	
-	
-	
-	public String toString() {
-		return "Customer Computation:\nCustomer Name: \"" + customerName + "\", input: \"" + input + "\", output: \"" + output + "\".";
-	}
 	
 	public void addResult(String result) {
 		output = result;
