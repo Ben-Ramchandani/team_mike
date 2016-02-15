@@ -10,6 +10,10 @@ public class MyLogger {
 		}
 	}
 	
+	public static void alwaysLog(String s) {
+		System.out.println(s);
+	}
+	
 	public static void info(String s) {
 		log("[info] " + s);
 	}
@@ -19,10 +23,10 @@ public class MyLogger {
 	}
 	
 	public static void fatal(String s) {
-		log("[FATAL] " + s);
+		alwaysLog("[FATAL] " + s);
 	}
 	
 	public static void critical(String s) {
-		log("[CRITICAL] - The database may be in an invalid state - " + s);
+		alwaysLog("[CRITICAL] - The database may be in an invalid state - " + s);
 	}
 }

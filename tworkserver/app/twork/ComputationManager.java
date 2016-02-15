@@ -1,5 +1,6 @@
 package twork;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -7,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import models.CustomerComputation;
 import models.Computation;
@@ -34,15 +36,33 @@ public class ComputationManager {
 
 	//Could keep an in memory map from jobID to ComputationID
 	
-	//TODO: Add map CustCompID -> CustComp
+	//Map CustCompID -> CustComp
+	Map<UUID, CustomerComputation> customerComputations;
 
 	private ComputationManager() {
 		rebuild_TEST();
 	}
 
+	private void rebuildCustomerComputationMap() {
+		Map<UUID, CustomerComputation> newCustomerComputations = new ConcurrentHashMap<UUID, CustomerComputation>();
+		List<CustomerComputation> ccs = Ebean.find(CustomerComputation.class).findList();
+		Iterator<CustomerComputation> it = ccs.iterator();
+		
+		while(it.hasNext()) {
+			CustomerComputation current = it.next();
+			newCustomerComputations.put(current.customerComputationID, current);
+			
+			//TODO: build map from customer name to computation list
+		}
+		
+		synchronized(this) {
+			customerComputations = newCustomerComputations;
+		}
+	}
 
-	//Rebuild from the database
+	//Complete rebuild from the database (slow)
 	public synchronized void rebuild_TEST() {
+		rebuildCustomerComputationMap();
 		jobsRemaining = new HashMap<UUID, Integer>();
 		List<Computation> computations = Ebean.find(Computation.class).findList();
 		Iterator<Computation> it = computations.iterator();
@@ -114,10 +134,24 @@ public class ComputationManager {
 			failComputation(computationID);
 		}
 	}
+	
 
+	
 	public synchronized void runCustomerComputation(CustomerComputation cc) {
+		runCustomerComputation(cc.customerComputationID);
+	}
+
+	public synchronized void runCustomerComputation(UUID customerComputationID) {
 		//TODO: This shouldn't be synchronized in the manager
 		//TODO: should all be in try/catch
+		
+		CustomerComputation cc = getCustomerComputation(customerComputationID);
+		
+		if(cc == null) {
+			MyLogger.warn("ComputationManager.runCustomerComputation: Customer computation with this ID does not exist in manager");
+			return;
+		}
+		
 		BasicComputationGenerator g = FunctionManager.getInstance().getBasicComputationGenerator(cc.functionName);
 		if(g == null) {
 			MyLogger.warn("No generator for added customer computation, failing.");
@@ -126,6 +160,7 @@ public class ComputationManager {
 		}
 
 		//TODO: Move transaction round whole thing
+		MyLogger.log("New computation added.");
 		UUID id = g.generateComputation(cc.input);
 
 
@@ -169,20 +204,28 @@ public class ComputationManager {
 		}
 	}
 
+	
+	//DO NOT USE
+	//Called only by the CustomerComputation constructor
+	public void addCustomerComputation(CustomerComputation c) {
+		customerComputations.put(c.customerComputationID, c);
+	}
+	
+	
 	public List<CustomerComputation> getCustomerComputations() {
-		List<CustomerComputation> list = Ebean.find(CustomerComputation.class).findList();
-		Collections.sort(list);
+		List<CustomerComputation> list = new ArrayList<CustomerComputation>(customerComputations.values());
 		return list;
 	}
 	
+	
 	public CustomerComputation getCustomerComputation(UUID cid) {
-		CustomerComputation c = Ebean.find(CustomerComputation.class,cid);
+		CustomerComputation c = customerComputations.get(cid);
 		return c;
 	}
 	
 	
 	//Computations by name.
-	//may return empty list.
+	//May return an empty list.
 	public List<CustomerComputation> getComputationsByCustomerName(String name) {
 		List<CustomerComputation> all = getCustomerComputations();
 		List<CustomerComputation> ret = new LinkedList<CustomerComputation>();
@@ -191,6 +234,7 @@ public class ComputationManager {
 				ret.add(cc);
 			}
 		}
+		Collections.sort(ret);
 		return ret;
 	}
 
@@ -214,43 +258,37 @@ public class ComputationManager {
 			CustomerComputation cc = getCustomerComputation(comp);
 
 			cc.addResult(result);
-			cc.update();
 			comp.delete();
 			
 			//Notify
-			ComputationNotifier.getInstance().finished(cc.CustomerComputationID);
+			ComputationNotifier.getInstance().finished(cc.customerComputationID);
 			
 			MyLogger.log("Computation completed.");
 			MyLogger.log(cc.toString());
 		}
 	}
 
-	@SuppressWarnings("unused")
-	private synchronized void abortComputation(Computation c) {
-		jobsRemaining.remove(c.computationID);
-		try {
-			c.delete();
-			JobScheduler.getInstance().update();
-			MyLogger.warn("Computation aborted");
-		} catch(Throwable e) {
-			MyLogger.critical("An attempt was made to abort an invalid computation, but it failed.");
-			e.printStackTrace();
-		}
-	}
+	
 
 	private CustomerComputation getCustomerComputation(Computation c) {
 		CustomerComputation cc;
+		
 		if(c.customerComputationID == null) {
 			MyLogger.warn("No customer computation found for computation (UUID was null). Will generate one.");
-			cc = new CustomerComputation(c, "");
-			c.customerComputationID = cc.CustomerComputationID;
+			cc = new CustomerComputation(c, "Automatically generated by ComputationManager");
 		}
 
-		cc = Ebean.find(CustomerComputation.class, c.customerComputationID);
+		cc = getCustomerComputation(c.customerComputationID);
 
 		if(cc == null) {
-			MyLogger.warn("No customer computation found for completing computation (not in database). Will generate one.");
-			cc = new CustomerComputation(c, "");
+			cc = Ebean.find(CustomerComputation.class, c.customerComputationID);
+			if(cc == null) {
+				MyLogger.warn("No customer computation found for completing computation (not in database). Will generate one.");
+				cc = new CustomerComputation(c, "Automatically generated by ComputationManager");
+			} else {
+				MyLogger.critical("Customer computation was in database but not manager.");
+				addCustomerComputation(cc);
+			}
 		}
 
 		return cc;
