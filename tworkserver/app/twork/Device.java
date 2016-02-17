@@ -4,25 +4,38 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+import javax.persistence.Entity;
+import javax.persistence.Transient;
+
+@Entity
 public class Device {
 
+	@Transient
 	public static final UUID NULL_UUID = new UUID( 0L , 0L );
 	//5 minutes (in milliseconds).
+	@Transient
 	public static final int WAITING_TIME = 300000;
-	public String sessionID;
 	
-	public int batteryLife;
-	public boolean onCharge;
+	
+	public String sessionID;
 	public String deviceID;
-
+	
 	public int jobsDone;
 	public int jobsFailed;
 	
+	//These change too much to be worth storing perfectly
+	@Transient
 	public UUID currentJob;
+	@Transient
+	public int batteryLife;
+	@Transient
+	public boolean onCharge;
+	@Transient
 	public boolean onWiFi;
 	
 	
 	//A better performing solution would be to have a single timer for all devices.
+	@Transient
 	public Timer t;
 	
 	public Device(String sessionID) {
