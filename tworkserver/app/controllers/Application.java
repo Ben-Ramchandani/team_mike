@@ -45,22 +45,7 @@ public class Application extends Controller {
 	//A hack to have start-up code
 	public static boolean hasRun = false;
 	public static synchronized void runOnStart() {
-		if(hasRun) {
-			return;
-		}
-		hasRun = true;
-		//MyLogger.enable = true;
-		MyLogger.log("Start up code running");
-		MyLogger.log("Clearing database");
-		Ebean.delete(Ebean.find(Computation.class).findList());
-		Ebean.delete(Ebean.find(CustomerComputation.class).findList());
-		Ebean.delete(Ebean.find(Job.class).findList());
 		
-		MyLogger.log("Initializing Managers and Scheduler");
-		ComputationManager.getInstance();
-		JobScheduler.getInstance();
-		FunctionManager.getInstance();
-		MyLogger.log("Start up code finished");
 	}
 	
 	public Result available() {

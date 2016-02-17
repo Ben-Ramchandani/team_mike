@@ -1,6 +1,5 @@
 package models;
 
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -33,8 +32,6 @@ public class Device extends Model {
 	
 	//These change too much to be worth storing
 	@Transient
-	private String sessionID;
-	@Transient
 	public UUID currentJob;
 	@Transient
 	public int batteryLife;
@@ -43,8 +40,6 @@ public class Device extends Model {
 	@Transient
 	public boolean onWiFi;
 	
-	@Transient
-	public long lastAccessTimestamp;
 	
 	
 	//A better performing solution would be to have a single timer for all devices.
@@ -52,26 +47,25 @@ public class Device extends Model {
 	public Timer t;
 	
 	
-	public Device(String sessionID) {
+	public Device(String phoneID) {
 		//Tests pass in "1" if they are not concerned with the workings of this class.
-		if(sessionID == "1") {
-			sessionID = Long.toString(UUID.randomUUID().getLeastSignificantBits());
+		if(phoneID == "1") {
+			phoneID = Long.toString(UUID.randomUUID().getLeastSignificantBits());
 		}
 		
 		
-		this.sessionID = sessionID;
-		deviceID = Long.parseLong(sessionID);
+		deviceID = Long.parseLong(phoneID);
 		currentJob = NULL_UUID;
-		updateTimestamp();
 		this.save();
 	}
 	
-	private void updateTimestamp() {
-		lastAccessTimestamp = (new Date()).getTime();
+	//When taken out of the database
+	public void onReload() {
+		currentJob = NULL_UUID;
 	}
+
 	
 	public synchronized void registerJob(UUID jobID) {
-		updateTimestamp();
 		
 		if(currentJob.equals(NULL_UUID)) {
 			currentJob = jobID;
@@ -97,7 +91,7 @@ public class Device extends Model {
 	}
 
 	public String getSessionID() {
-		return sessionID;
+		return Long.toString(deviceID);
 	}
 	
 	public synchronized void jobComplete() {
@@ -108,16 +102,9 @@ public class Device extends Model {
 	}
 	
 	private void cancelTimer() {
-		updateTimestamp();
 		if(t != null) {
 			t.cancel();
 		}
-	}
-	
-	@Override
-	public void update() {
-		updateTimestamp();
-		super.update();
 	}
 	
 	private void startTimer() {
