@@ -6,8 +6,8 @@ import java.util.UUID;
 
 import models.Computation;
 import models.Data;
+import models.Device;
 import models.Job;
-import twork.Device;
 import twork.Jobs;
 import twork.MyLogger;
 

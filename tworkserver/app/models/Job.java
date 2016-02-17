@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import javax.persistence.*;
 
-import twork.Device;
 import twork.MyLogger;
 
 import com.avaje.ebean.Model;

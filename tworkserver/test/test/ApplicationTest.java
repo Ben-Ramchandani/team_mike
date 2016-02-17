@@ -25,14 +25,14 @@ import java.util.UUID;
 import models.Computation;
 import models.CustomerComputation;
 import models.Data;
+import models.Device;
 import models.Job;
+import models.Device.TimeoutJob;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import twork.ComputationManager;
-import twork.Device;
-import twork.Device.TimeoutJob;
 import twork.JobScheduler;
 import twork.MyLogger;
 

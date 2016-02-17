@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import models.CustomerComputation;
 import models.Computation;
+import models.Device;
 import models.Job;
 
 import com.avaje.ebean.Ebean;

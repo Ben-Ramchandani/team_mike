@@ -3,6 +3,8 @@ package twork;
 import java.util.HashMap;
 import java.util.UUID;
 
+import models.Device;
+
 public class Devices {
 	
 	private Devices() {	}
@@ -24,9 +26,9 @@ public class Devices {
 	
 	public Device getDevice(String sessionID) {
 		
-		if(sessionID == null) {
-			sessionID = generateID();
-		}
+		//if(sessionID == null) {
+		//	sessionID = generateID();
+		//}
 		
 		Device d = devices.get(sessionID);
 		

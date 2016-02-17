@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import models.Data;
+import models.Device;
 import models.Job;
 
 import com.avaje.ebean.Ebean;
