@@ -80,10 +80,10 @@ public class CustomerComputation extends Model implements Comparable<CustomerCom
 		ComputationManager.getInstance().addCustomerComputation(this);
 	}
 	
+	
 	public String toString() {
 		return "Customer Computation:\nCustomer Name: \"" + customerName + "\", input: \"" + input + "\", output: \"" + output + "\".";
 	}
-	
 	
 	/*
 	 * IMPORTANT:
@@ -119,11 +119,6 @@ public class CustomerComputation extends Model implements Comparable<CustomerCom
 		c.customerComputationID = this.customerComputationID;
 	}
 	
-	
-	
-	public String toString() {
-		return "Customer Computation:\nCustomer Name: \"" + customerName + "\", input: \"" + input + "\", output: \"" + output + "\".";
-	}
 	
 	public void addResult(String result) {
 		output = result;
