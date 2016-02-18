@@ -12,6 +12,15 @@ public class ComputationNotifier {
 	public static ComputationNotifier instance;
 	
 	
+	/*
+	 * The class doesn't need to be a singleton when all the methods are static
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	
+	
 	public static ComputationNotifier getInstance() {
 		if(instance == null) {
 			instance = new ComputationNotifier();
@@ -26,8 +35,8 @@ public class ComputationNotifier {
 		if (c.status == CustomerComputation.COMPLETE) 
 			return c.output;
 		
-		computations.put(c.CustomerComputationID,c);
-		pollingFlags.put(c.CustomerComputationID,true);
+		computations.put(c.customerComputationID,c);
+		pollingFlags.put(c.customerComputationID,true);
 		/* This does not work
 		try {
 			c.wait();
@@ -36,11 +45,11 @@ public class ComputationNotifier {
 			return null;
 		}*/
 		int i = 0;
-		while (pollingFlags.get(c.CustomerComputationID) == true){
+		while (pollingFlags.get(c.customerComputationID) == true){
 			i++;
 		}
 		
-		c = ComputationManager.getInstance().getCustomerComputation(c.CustomerComputationID);
+		c = ComputationManager.getInstance().getCustomerComputation(c.customerComputationID);
         return c.output;
 	}
 	

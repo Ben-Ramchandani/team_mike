@@ -33,6 +33,9 @@ public class FunctionManager {
 		return instance;
 	}
 
+
+
+
 	public byte[] getCodeClassDefinition(String name) {
 		//Remove ".class" from the name if it is there
 		String filePrefix = name;

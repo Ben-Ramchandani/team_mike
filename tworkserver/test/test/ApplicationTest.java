@@ -71,14 +71,16 @@ public class ApplicationTest {
 	public void customer_computation_order_test() {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
-				new CustomerComputation("Example James", "name", "desc", "function", "input");
+				new CustomerComputation("Example James", "firstName", "desc", "function", "input");
 				try {
 					Thread.sleep(1);
 				} catch (InterruptedException e) {}
-				new CustomerComputation("Example James", "name1", "desc", "function", "input");
-				CustomerComputation c = ComputationManager.getInstance().getComputationsByCustomerName("Example James").get(0);
+				new CustomerComputation("Example James", "secondName", "desc", "function", "input");
+				List<CustomerComputation> ccs = ComputationManager.getInstance().getComputationsByCustomerName("Example James");
+				assertEquals("There are two customerComputations under \"Example James\".", 2, ccs.size());
+				CustomerComputation c = ccs.get(0);
 				//Should have most recent first
-				assertEquals(c.computationName, "name");
+				assertEquals("Most recent CustomerComputation is returned first", "firstName", c.computationName);
 			}
 		});
 	}
