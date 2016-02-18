@@ -67,5 +67,4 @@ public class Job extends Model {
     	return result;
     }
 	
-	 public static Finder<UUID, Job> find = new Finder<UUID,Job>(Job.class);    
 }

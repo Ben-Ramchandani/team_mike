@@ -110,7 +110,7 @@ public class JobScheduler {
 		}
 
 		public void save() {
-			Job j = Job.find.byId(jobID);
+			Job j = Ebean.find(Job.class, jobID);
 			if(j == null) {
 				System.out.println("Job save failed: unable to locate job.");
 				failed = true;
@@ -314,7 +314,7 @@ public class JobScheduler {
 			return null;
 		} else {
 			ScheduleJob j = waitingJobs.remove(0);
-			Job job = Job.find.byId(j.getJobID());
+			Job job = Ebean.find(Job.class, j.getJobID());
 			if(job == null) {
 				MyLogger.log("Job in scheduler is not in database");
 				return null;
