@@ -1,6 +1,7 @@
 package models;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,15 +33,12 @@ public class Data extends Model{
 	public static final String TYPE_FILE = "file"; //extend on this to allow more types
 	public static final String TYPE_IMMEDIATE = "imediate";
 	public static final int    MAX_IMMEDIATE_LENGTH = 512;
+	
 	@Id
 	public UUID dataID;
 
-
-
 	@Constraints.Required
 	public String type;
-	//Can either be immediate or file.
-	//If it is file, will open the file on the file system and send that
 
 	@Constraints.Required
 	public String data;
@@ -56,22 +54,14 @@ public class Data extends Model{
 				return new String(encoded);
 			}
 			catch (IOException e) {
-				//arbitrary choice of returning empty string.
-				//this is actually a very big problem.
 				return new String("");
 			}
 		}
-
-		//I don't see why it needs this to compile, all the branches return something.
-		return null;
+	return null;
 	}
 	
 	
-	//This needs to return the Data instance it makes
-	//Does the data actually need an ID, or can we just reference it?
 	public static Data store(String s, UUID dataID, UUID computationID) throws IOException {
-		
-		
 		/* Try to store string s at location dataID.
 		 * If s is small enough, will be immediate data; otherwise a file is created;
 		 * If the file cannot be created it raises and exception.
@@ -95,6 +85,17 @@ public class Data extends Model{
 				d.data = file.toString(); //TODO test this
 			}
 		}
+		d.save();
+		return d;
+	}
+	
+	public static Data store(File file, UUID dataID, UUID computationID) {
+		Data d = new Data();
+		d.dataID = dataID;
+		d.type = TYPE_FILE;
+		file.renameTo(new File("/computationID/",dataID.toString()));
+		d.data = file.getPath();
+		d.save();
 		return d;
 	}
 

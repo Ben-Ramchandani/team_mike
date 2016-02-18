@@ -3,12 +3,20 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Web.index()
-POST	/page/upload	          			controllers.Web.upload()
-GET     /prime/:number              controllers.Web.primeTest(number: Long)
+GET     /                          controllers.Web.index()
+POST	/page/upload	               controllers.Web.mapFile()
+GET    /prime/:number              controllers.Web.primeTest(number: Long)
+
+# Real-Time response page;
+
+GET     /rt/:computationID           controllers.Display.index(computationID: String)
+GET     /rt/socket/:computationID    controllers.Display.socket(computationID: String)
+GET		/assets/js/display.js    	controllers.Display.script()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET     /assets/*file             controllers.Assets.versioned(path="/public", file: Asset)
+
+
 
 # Availability request
 # JSON:

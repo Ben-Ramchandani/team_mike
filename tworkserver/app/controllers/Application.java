@@ -115,15 +115,6 @@ public class Application extends Controller {
 		return notFound();
 	}
 
-	public void addTestData(Long jobID) {
-		Data d = new Data();
-		d.dataID = UUID.randomUUID();
-		d.type = Data.TYPE_IMMEDIATE;
-		d.data = "test data";
-
-		Ebean.save(d);
-	}
-
 	public Result function(String functionID) {
 		return notFound();
 	}
@@ -214,8 +205,9 @@ public class Application extends Controller {
 		
 		//Notify device
 		d.jobComplete();
-
 		
+		//Notify CostumerComputation for Partial Results.
+	    	
 		return ok();
 		
 	}

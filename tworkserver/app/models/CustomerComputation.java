@@ -81,8 +81,10 @@ public class CustomerComputation extends Model implements Comparable<CustomerCom
 		totalJobs = c.jobs.size();
 		status = RUNNING;
 		c.customerComputationID = this.CustomerComputationID;
-		c.update();
+	    c.update();
 		this.update();
+		System.out.printf("%s\n%d\n",c.computationID,c.jobsLeft);
+		
 	}
 	
 	//To allow generation for compatibility

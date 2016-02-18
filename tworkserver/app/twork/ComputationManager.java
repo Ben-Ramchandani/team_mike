@@ -126,17 +126,19 @@ public class ComputationManager {
 		}
 
 		//TODO: Move transaction round whole thing
-		UUID id = g.generateComputation(cc.input);
-
-
+		//TODO: change this back to returning UUID.
+		UUID id  = g.generateComputation(cc.input);
+	
 		//Do some checks and add to the job count map
 		Computation c = Ebean.find(Computation.class, id);
+		
 		if(c == null) {
 			MyLogger.log("Computation generator failed.");
 		} else {
 			cc.runComputation(c);
-			
 			int jobsLeft = c.jobsLeft;
+			
+			System.out.printf("computation id: %s\nnumber of jobs: %d\nfunction : %s\n",c.computationID,c.jobsLeft,c.functionName);
 			if(jobsLeft > 0) {
 				jobsRemaining.put(id, c.jobsLeft);
 				JobScheduler.getInstance().update();

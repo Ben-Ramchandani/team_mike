@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,8 +44,7 @@ public class Computation extends Model {
 	//Has the result of this computation been collected?
 	//public boolean completed;
 
-	
-	public int jobsLeft;
+	public Integer jobsLeft;
 	
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy="parentComputation")
 	public List<Job> jobs;
@@ -65,6 +65,7 @@ public class Computation extends Model {
 	public Computation(String function, String name) {
 		functionName = function;
 		computationName = name;
+		jobs = new ArrayList<Job>();
 	}
 	
 	

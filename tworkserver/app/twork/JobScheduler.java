@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import models.Data;
 import models.Job;
+import sitehelper.ImageFactory;
 
 import com.avaje.ebean.Ebean;
 
@@ -291,6 +292,7 @@ public class JobScheduler {
 
 	//The device  contains the job ID, check they're correct then hand over to here.
 	public synchronized void submitJob(Device d, String result) {
+		
 		ScheduleJob j = jobMap.get(d.currentJob);
 		if(j == null) {
 			System.out.println("Submitted job is not in scheduler, ignoring.");
@@ -302,6 +304,12 @@ public class JobScheduler {
 		}
 
 		j.addResult(result);
+		
+		//Notify the webclient.
+		Job job = Ebean.find(Job.class,d.currentJob);
+		ImageFactory.notify(job.computationID.toString(), result);
+		
+		
 		activeJobs.remove(j);
 		processJob(j);
 	}
