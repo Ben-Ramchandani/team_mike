@@ -7,26 +7,7 @@ import java.util.UUID;
 
 import models.CustomerComputation;
 
-public class ComputationNotifier {
-
-	public static ComputationNotifier instance;
-	
-	
-	/*
-	 * The class doesn't need to be a singleton when all the methods are static
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
-	
-	
-	public static ComputationNotifier getInstance() {
-		if(instance == null) {
-			instance = new ComputationNotifier();
-		}
-		return instance;
-	}
+public abstract class ComputationNotifier {
 	
 	public static Map<UUID, CustomerComputation> computations = Collections.synchronizedMap(new HashMap<UUID, CustomerComputation>());
 	public static Map<UUID, Boolean> pollingFlags = Collections.synchronizedMap(new HashMap<UUID, Boolean>());
@@ -37,13 +18,7 @@ public class ComputationNotifier {
 		
 		computations.put(c.customerComputationID,c);
 		pollingFlags.put(c.customerComputationID,true);
-		/* This does not work
-		try {
-			c.wait();
-		} catch (InterruptedException e) {
-			System.err.println("failed to sleep controller thread");
-			return null;
-		}*/
+	
 		int i = 0;
 		while (pollingFlags.get(c.customerComputationID) == true){
 			i++;

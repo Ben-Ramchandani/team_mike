@@ -10,7 +10,6 @@ create table all_computation (
   failed                    boolean,
   running                   boolean,
   completed                 boolean,
-  state                     integer,
   customer_computation_id   varchar(40),
   jobs_left                 integer,
   input                     varchar(255),

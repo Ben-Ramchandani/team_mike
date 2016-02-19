@@ -17,9 +17,9 @@ public abstract class ImageFactory {
 	}
 	
 	public static void notify(String computationID, String s) {
-		ImageWriter iwriter;
-		if ((iwriter = instances.get(computationID))!=null)
-			iwriter.notify(s);
+		ImageWriter imageWriter;
+		if ((imageWriter = instances.get(computationID))!=null)
+			imageWriter.notify(s);
 	}
 
 	public static void remove(String computationID) {

@@ -35,7 +35,8 @@ public class ImageWriter implements Runnable {
 		//this.notify();
 		Data d = null; 
 		try {
-			d = Data.store(s, UUID.randomUUID(), null);
+			//TODO bring computation id here.
+			d = Data.store(s, UUID.randomUUID(), UUID.randomUUID());
 			System.out.println(s.length());
 		} catch (IOException e) {
 			System.out.println("Failed");

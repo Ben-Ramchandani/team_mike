@@ -204,9 +204,7 @@ public class Application extends Controller {
 		
 		//Notify device
 		d.jobComplete();
-		
-		//Notify CostumerComputation for Partial Results.
-	    	
+
 		return ok();
 		
 	}

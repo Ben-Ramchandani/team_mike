@@ -264,7 +264,7 @@ public class ComputationManager {
 			comp.delete();
 			
 			//Notify
-			ComputationNotifier.getInstance().finished(cc.customerComputationID);
+			ComputationNotifier.finished(cc.customerComputationID);
 			
 			MyLogger.log("Computation completed.");
 			MyLogger.log(cc.toString());

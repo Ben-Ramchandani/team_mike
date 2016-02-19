@@ -26,18 +26,9 @@ import play.data.validation.Constraints;
 @Table(name = "all_data")
 public class Data extends Model{
 
-
-	//TODO:
-
-	/*
-	 * This needs serious refactoring.
-	 * Maybe getting rid of it altogether
-	 * Better to use a file system and find a smart way to reference and move data around
-	 */
-	
 	public static final String TYPE_FILE = "file"; //extend on this to allow more types
 	public static final String TYPE_IMMEDIATE = "imediate";
-	public static final int    MAX_IMMEDIATE_LENGTH = 20;
+	public static final int    MAX_IMMEDIATE_LENGTH = 512;
 	
 	@Id
 	public UUID dataID;
@@ -100,7 +91,7 @@ public class Data extends Model{
 					e.printStackTrace();
 				}
 				d.type = TYPE_FILE;
-				d.data = file.toString(); //TODO test this
+				d.data = file.toString();
 			}
 		}
 		d.save();
@@ -112,7 +103,7 @@ public class Data extends Model{
 		d.dataID = dataID;
 		d.type = TYPE_FILE;
 		
-		Path dest = Paths.get(computationID.toString() + "/f" + dataID.toString());
+		Path dest = Paths.get(computationID.toString() + "/f" + dataID.toString() + ".png");
 		
 		try {
 			Files.createDirectories(dest.getParent());

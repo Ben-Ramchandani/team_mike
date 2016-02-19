@@ -94,7 +94,7 @@ public class Web extends Controller{
 		
 		ComputationManager.getInstance().runCustomerComputation(custComputation);
 	
-		return ok(ComputationNotifier.getInstance().track(custComputation));
+		return ok(ComputationNotifier.track(custComputation));
 	}
 	
 	public Result retrieve(String dataID) {
@@ -104,8 +104,9 @@ public class Web extends Controller{
 		if (d == null) 
 			return badRequest();
 		
-		if (d.type.equals(Data.TYPE_FILE)) 
-			return ok(new File(d.data));
+		if (d.type.equals(Data.TYPE_FILE)) {
+			return ok(new File(d.data),true);
+		}
 		else 
 			return badRequest();
 	}
