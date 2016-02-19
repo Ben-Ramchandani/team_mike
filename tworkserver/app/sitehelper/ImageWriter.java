@@ -1,8 +1,11 @@
 package sitehelper;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
+import models.Data;
 import play.mvc.WebSocket;
 
 public class ImageWriter implements Runnable {
@@ -28,8 +31,18 @@ public class ImageWriter implements Runnable {
 	}
 
 	public void notify(String s) {
-		this.notify();
-		out.write(s);
+		//Need to create a file here
+		//this.notify();
+		Data d = null; 
+		try {
+			d = Data.store(s, UUID.randomUUID(), null);
+			System.out.println(s.length());
+		} catch (IOException e) {
+			System.out.println("Failed");
+			e.printStackTrace();
+		}
+		d.update();
+		out.write("http://localhost:9000/page/retrieve/" + d.data);
 	}
 
 }

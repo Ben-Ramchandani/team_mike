@@ -303,11 +303,23 @@ public class JobScheduler {
 			return;
 		}
 
+		Job job = Ebean.find(Job.class,d.currentJob);
+		
 		j.addResult(result);
 		
+		Data data = null;
+		
+		try {
+			data = Data.store(result, UUID.randomUUID(), job.computationID);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.printf("data stored at location: %s\n", data.data);
 		//Notify the webclient.
-		Job job = Ebean.find(Job.class,d.currentJob);
-		ImageFactory.notify(job.computationID.toString(), result);
+		
+		
+		ImageFactory.notify(job.computationID.toString(), data.data);
 		
 		
 		activeJobs.remove(j);

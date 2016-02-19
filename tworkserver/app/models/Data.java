@@ -2,20 +2,25 @@ package models;
 
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import play.data.validation.Constraints;
-
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Model;
+
+import play.data.validation.Constraints;
 
 @Entity
 @Table(name = "all_data")
@@ -32,11 +37,10 @@ public class Data extends Model{
 	
 	public static final String TYPE_FILE = "file"; //extend on this to allow more types
 	public static final String TYPE_IMMEDIATE = "imediate";
-	public static final int    MAX_IMMEDIATE_LENGTH = 512;
+	public static final int    MAX_IMMEDIATE_LENGTH = 20;
 	
 	@Id
 	public UUID dataID;
-
 
 
 	@Constraints.Required
@@ -55,8 +59,8 @@ public class Data extends Model{
 				byte[] encoded = Files.readAllBytes(Paths.get(data));
 				return new String(encoded);
 			}
-			catch (IOException e) {
-				return new String("");
+			catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	return null;
@@ -85,8 +89,16 @@ public class Data extends Model{
 				d.type = TYPE_IMMEDIATE;
 				d.data = s;
 			} else {
-				Path file = Paths.get(computationID.toString() + '/' + dataID.toString());
-				Files.write(file, s.getBytes());
+				Path file = Paths.get(computationID.toString() + "/s" + dataID.toString());
+				
+				try {
+					Files.createDirectories(file.getParent());
+					Files.write(file, s.getBytes());
+				}
+				
+				catch(IOException e) {
+					e.printStackTrace();
+				}
 				d.type = TYPE_FILE;
 				d.data = file.toString(); //TODO test this
 			}
@@ -99,11 +111,26 @@ public class Data extends Model{
 		Data d = new Data();
 		d.dataID = dataID;
 		d.type = TYPE_FILE;
-		file.renameTo(new File("/computationID/",dataID.toString()));
-		d.data = file.getPath();
+		
+		Path dest = Paths.get(computationID.toString() + "/f" + dataID.toString());
+		
+		try {
+			Files.createDirectories(dest.getParent());
+			Files.move(file.toPath(), dest, StandardCopyOption.REPLACE_EXISTING);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		d.data = dest.toString();
+		
 		d.save();
+		System.out.printf("File Location: %s\n",d.data);
 		return d;
 	}
+
+
+	
 
 
 }

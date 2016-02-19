@@ -69,14 +69,15 @@ public class Web extends Controller{
 		
 		UUID dataID = UUID.randomUUID();
 		
+		Data d = null;
 		try {
-			//TODO Data might be file!!
-			Data.store(sb.toString(),dataID,computationID);
+			d = Data.store(sb.toString(),dataID,computationID);
 		} catch (IOException e) {
 			 	flash("error", "Cannot store files");
+			 	e.printStackTrace();
 		}
 
-		String input = Ebean.find(Data.class,dataID).getContent();
+		String input = d.getContent();
 		
 		CustomerComputation computation = new CustomerComputation(request().remoteAddress(),"Image Processing Test","test",function,input);
 		
@@ -94,6 +95,19 @@ public class Web extends Controller{
 		ComputationManager.getInstance().runCustomerComputation(custComputation);
 	
 		return ok(ComputationNotifier.getInstance().track(custComputation));
+	}
+	
+	public Result retrieve(String dataID) {
+		
+		Data d = Ebean.find(Data.class,UUID.fromString(dataID));
+		
+		if (d == null) 
+			return badRequest();
+		
+		if (d.type.equals(Data.TYPE_FILE)) 
+			return ok(new File(d.data));
+		else 
+			return badRequest();
 	}
 	
 		
