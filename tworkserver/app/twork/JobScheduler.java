@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import models.Data;
+import models.Device;
 import models.Job;
 import sitehelper.ImageFactory;
 
@@ -319,7 +320,7 @@ public class JobScheduler {
 			return null;
 		} else {
 			ScheduleJob j = waitingJobs.remove(0);
-			Job job = Job.find.byId(j.getJobID());
+			Job job = Ebean.find(Job.class, j.getJobID());
 			if(job == null) {
 				MyLogger.log("Job in scheduler is not in database");
 				return null;

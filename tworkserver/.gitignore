@@ -18,5 +18,4 @@ project/target
 *.bat
 LICENCE
 .sbtserver
-tworkserver/conf/evolutions/default/1.sql
-tworkserver/project/.sbtserver
+project/.sbtserver

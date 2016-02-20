@@ -1,39 +1,76 @@
-package twork;
+package models;
 
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-public class Device {
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import twork.JobScheduler;
+import twork.MyLogger;
+
+import com.avaje.ebean.Model;
+
+@Entity
+@Table(name = "all_device")
+public class Device extends Model {
+
+	@Transient
 	public static final UUID NULL_UUID = new UUID( 0L , 0L );
 	//5 minutes (in milliseconds).
+	@Transient
 	public static final int WAITING_TIME = 300000;
-	public String sessionID;
 	
-	public int batteryLife;
-	public boolean onCharge;
-	public String deviceID;
-
+	@Id
+	public long deviceID;
+	
 	public int jobsDone;
 	public int jobsFailed;
 	
+	//These change too much to be worth storing
+	@Transient
 	public UUID currentJob;
+	@Transient
+	public int batteryLife;
+	@Transient
+	public boolean onCharge;
+	@Transient
 	public boolean onWiFi;
 	
 	
+	
 	//A better performing solution would be to have a single timer for all devices.
+	@Transient
 	public Timer t;
 	
-	public Device(String sessionID) {
-		this.sessionID = sessionID;
+	
+	public Device(String phoneID) {
+		//Tests pass in "1" if they are not concerned with the workings of this class.
+		if(phoneID == "1") {
+			phoneID = Long.toString(UUID.randomUUID().getLeastSignificantBits());
+		}
+		
+		
+		deviceID = Long.parseLong(phoneID);
 		currentJob = NULL_UUID;
+		this.save();
 	}
 	
+	//When taken out of the database
+	public void onReload() {
+		currentJob = NULL_UUID;
+	}
+
+	
 	public synchronized void registerJob(UUID jobID) {
+		
 		if(currentJob.equals(NULL_UUID)) {
 			currentJob = jobID;
 			startTimer();
+			
 		} else if(currentJob.equals(jobID)) {
 			return;
 		} else {
@@ -54,13 +91,14 @@ public class Device {
 	}
 
 	public String getSessionID() {
-		return sessionID;
+		return Long.toString(deviceID);
 	}
 	
 	public synchronized void jobComplete() {
 		currentJob = NULL_UUID;
 		cancelTimer();
 		jobsDone++;
+		this.update();
 	}
 	
 	private void cancelTimer() {
@@ -90,6 +128,7 @@ public class Device {
 				//The job timed out.
 				MyLogger.log("Device: Job has been timed out");
 				trigger.jobsFailed++;
+				trigger.update();
 				trigger.currentJob = NULL_UUID;
 			}
 			JobScheduler.getInstance().timeoutJob(jobID);

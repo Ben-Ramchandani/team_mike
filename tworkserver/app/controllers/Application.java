@@ -6,11 +6,11 @@ import java.util.UUID;
 import models.Computation;
 import models.CustomerComputation;
 import models.Data;
+import models.Device;
 import models.Job;
 import play.mvc.Controller;
 import play.mvc.Result;
 import twork.ComputationManager;
-import twork.Device;
 import twork.Devices;
 import twork.FunctionManager;
 import twork.JobScheduler;
@@ -46,22 +46,7 @@ public class Application extends Controller {
 	//A hack to have start-up code
 	public static boolean hasRun = false;
 	public static synchronized void runOnStart() {
-		if(hasRun) {
-			return;
-		}
-		hasRun = true;
-		//MyLogger.enable = true;
-		MyLogger.log("Start up code running");
-		MyLogger.log("Clearing database");
-		Ebean.delete(Ebean.find(Computation.class).findList());
-		Ebean.delete(Ebean.find(CustomerComputation.class).findList());
-		Ebean.delete(Ebean.find(Job.class).findList());
 		
-		MyLogger.log("Initializing Managers and Scheduler");
-		ComputationManager.getInstance();
-		JobScheduler.getInstance();
-		FunctionManager.getInstance();
-		MyLogger.log("Start up code finished");
 	}
 	
 	public Result available() {
@@ -77,11 +62,12 @@ public class Application extends Controller {
 		//We could change this to give the device the full UUID and have them send it to us each time,
 		//rather than only storing it server side.
 
-		Device d; 
-
+		Device d;
+		
 		if (session("sessionID") == null) {
-			//d = new Device(Devices.getInstance().generateID());
-			session("sessionID", Devices.getInstance().generateID()); 
+			//TODO: Should get the actual ID from the JSON
+			long phoneID = UUID.randomUUID().getMostSignificantBits();
+			session("sessionID", Long.toString(phoneID));
 			MyLogger.log("Creating new session");
 		}
 
@@ -104,7 +90,7 @@ public class Application extends Controller {
 		}
 		*/
 		
-		return ok(d.sessionID);
+		return ok();
 	}
 
 	public Result subscribe(Long jobID) { 
@@ -133,6 +119,7 @@ public class Application extends Controller {
 
 
 		Job j = Ebean.find(Job.class, jobID);
+		
 		if(j == null) {
 			MyLogger.warn("Request for data: non-existent job");
 			return notFound("Request for data: Server has no record of job (404 Not Found).");
@@ -165,8 +152,10 @@ public class Application extends Controller {
 		
 		Device d = Devices.getInstance().getDevice(session("sessionID"));
 		
+		
+		//We could just cancel the current Job instead...
 		if (!d.currentJob.equals(Device.NULL_UUID))  {
-			return forbidden("Already have incomplete job.");//TODO: cancel current job.
+			return forbidden("Already have incomplete job.");
 		}
 		
 		Job j = JobScheduler.getInstance().getJob(d);

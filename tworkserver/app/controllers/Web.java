@@ -13,6 +13,7 @@ import com.avaje.ebean.Ebean;
 import models.Computation;
 import models.CustomerComputation;
 import models.Data;
+import models.Device;
 import play.api.libs.concurrent.Promise;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData.FilePart;
@@ -21,7 +22,6 @@ import play.mvc.Result;
 import play.mvc.Results;
 import twork.ComputationManager;
 import twork.ComputationNotifier;
-import twork.Device;
 import twork.MyLogger;
 
 import akka.actor.*;

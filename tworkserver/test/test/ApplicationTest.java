@@ -33,14 +33,16 @@ import javax.imageio.ImageIO;
 import models.Computation;
 import models.CustomerComputation;
 import models.Data;
+import models.Device;
 import models.Job;
+import models.Device.TimeoutJob;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
+import play.Play;
+
 import twork.ComputationManager;
-import twork.Device;
-import twork.Device.TimeoutJob;
 import twork.JobScheduler;
 import twork.MyLogger;
 
@@ -248,10 +250,11 @@ public class ApplicationTest {
 
 	@Test
 	public void full_test() {
+		MyLogger.enable = false;
 		running(testServer(9001, fakeApplication(inMemoryDatabase())), new Runnable() {
 			public void run() {
 				try {
-					MyLogger.enable = false;
+					
 					MyLogger.log("Starting full test.");
 
 					String urlString = "http://localhost:9001/";
@@ -592,6 +595,7 @@ public class ApplicationTest {
 	public void JS_FullTest() {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
+				
 				MyLogger.enable = false;
 				MyLogger.log("Starting JS_FullTest");
 				JobScheduler js = JobScheduler.getInstance();

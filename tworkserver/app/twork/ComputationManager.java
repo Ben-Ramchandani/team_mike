@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import models.CustomerComputation;
 import models.Computation;
+import models.Device;
 import models.Job;
 
 import com.avaje.ebean.Ebean;
@@ -123,13 +124,23 @@ public class ComputationManager {
 	public synchronized void jobFailed(UUID jID) {
 		Job j = Ebean.find(Job.class, jID);
 		if(j == null) {
-			MyLogger.log("Job failed that does not exist.");
+			MyLogger.warn("Job failed that does not exist.");
 			return;
 		}
 
 		UUID computationID = j.computationID;
 		if(jobsRemaining.get(computationID) == null) {
-			MyLogger.log("Job failed for computation that is not in manager.");
+			MyLogger.warn("Job failed for computation that is not in manager, will attempt to load computation.");
+			Computation c = Ebean.find(Computation.class, computationID);
+			if(c == null) {
+				MyLogger.critical("Job has no parent computation, will attempt to delete.");
+				j.delete();
+				return;
+			} else {
+				MyLogger.warn("Computation was not in manager, will attempt to delete.");
+				c.delete();
+				return;
+			}
 		} else {
 			failComputation(computationID);
 		}
