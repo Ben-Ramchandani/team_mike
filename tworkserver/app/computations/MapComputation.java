@@ -1,17 +1,12 @@
 package computations;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Scanner;
 import java.util.UUID;
 
-import com.avaje.ebean.Ebean;
-
 import models.Computation;
-import models.Data;
 import models.Job;
-import twork.Device;
 import twork.MyLogger;
+
+import com.avaje.ebean.Ebean;
 
 public class MapComputation implements BasicComputationGenerator {
 
@@ -63,6 +58,7 @@ public class MapComputation implements BasicComputationGenerator {
 	@Override
 	//TODO
 	public String getResult(UUID computationID) {
+		/*
 		Computation c = Ebean.find(Computation.class, computationID);
 
 		for(Job j : c.jobs) {
@@ -72,15 +68,13 @@ public class MapComputation implements BasicComputationGenerator {
 				//TODO: dependent on the data class.
 				Data d = Ebean.find(Data.class, dataID);
 
-				if(!(d == null)) {
-					if (d.type == Data.TYPE_UTF8_FILE) {
-
-					}
+				if(d != null) {
+					
 				}
 			}
 		}
-		return "How am I supposed to return this?";
-
+		*/
+		return "MapComputation completed";
 	}
 
 }

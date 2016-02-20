@@ -43,7 +43,6 @@ public class JobScheduler {
 	public class ScheduleJob {
 		private UUID jobID;
 
-
 		//What phone has this job?
 		private boolean hasPhone;
 
@@ -51,7 +50,7 @@ public class JobScheduler {
 		private boolean complete;
 
 		private int failCount;
-		private String result;
+		private byte[] result;
 
 		public ScheduleJob(UUID jID) {
 			jobID = jID;
@@ -100,7 +99,7 @@ public class JobScheduler {
 			}
 		}
 
-		public void addResult(String r) {
+		public void addResult(byte[] r) {
 			if(!complete && !failed) {
 				//Validate here
 				result = r;
@@ -110,29 +109,17 @@ public class JobScheduler {
 		}
 
 		public void save() {
-			Job j = Job.find.byId(jobID);
+			Job j = Ebean.find(Job.class, jobID);
 			if(j == null) {
 				System.out.println("Job save failed: unable to locate job.");
 				failed = true;
 				throw new RuntimeException();
-			}
-
-			Data d;
-			UUID dataID = UUID.randomUUID();
-			try {
-				//TODO: uses data class
-				d = Data.storeString(result, dataID, j.computationID);
-			} catch (IOException e) {
-				System.out.println("Job save failed: unable to store data.");
-				e.printStackTrace();
-				failed = true;
-				throw new RuntimeException();
-			}
-			j.outputDataID = dataID;
+			}		
+			
 
 			Ebean.beginTransaction();
 			try {
-				d.save();
+				j.outputDataID = Data.store(result);
 				j.update();
 				Ebean.commitTransaction();
 			} finally {
@@ -294,7 +281,7 @@ public class JobScheduler {
 
 
 	//The device  contains the job ID, check they're correct then hand over to here.
-	public synchronized void submitJob(Device d, String result) {
+	public synchronized void submitJob(Device d, byte[] result) {
 
 		ScheduleJob j = jobMap.get(d.currentJob);
 		if(j == null) {
@@ -305,25 +292,14 @@ public class JobScheduler {
 			System.out.println("Submitted job is not in scheduler, ignoring.");
 			return;
 		}
-		
+
 		j.addResult(result);
 
-		
+
 		//Notify the webclient.
 		try {
-			Job job = Ebean.find(Job.class,d.currentJob);
-			Data data = null;
-			try {
-				//You do this again in the ImageNotifier call...
-				//It doesn't need to be written to the database again
-				//The result is in memory anyway so just send it
-				data = Data.storeString(result, UUID.randomUUID(), job.computationID);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			ImageFactory.notify(job.computationID.toString(), data.getRawContent());
+			Job job = Ebean.find(Job.class, j.jobID);
+			ImageFactory.notify(job.computationID.toString(), result);
 		} catch(Exception e) {
 			System.out.println("JobScheduler: Error calling notify code. Will continue.");
 			e.printStackTrace();
@@ -333,8 +309,8 @@ public class JobScheduler {
 		activeJobs.remove(j);
 		processJob(j);
 	}
-	
-	
+
+
 
 
 	//Returns null if no jobs are available

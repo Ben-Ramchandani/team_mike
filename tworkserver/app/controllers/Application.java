@@ -1,5 +1,6 @@
 package controllers;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import models.Computation;
@@ -151,7 +152,7 @@ public class Application extends Controller {
 			return internalServerError("Request for data: Data id in job does not map to anything (500 Internal Server Error).");
 		}
 		
-		return ok(myData.getStringContent());
+		return ok(myData.getContent());
 	}
 
 
@@ -191,23 +192,23 @@ public class Application extends Controller {
 		if (d.currentJob.getLeastSignificantBits() != jobID) 
 			return forbidden("Submission for incorrect job");
 			
-		
+		byte[] r;
 		String result = request().body().asText();
 		
 		if(result == null) {
-			byte[] res = request().body().asRaw().asBytes();
-			if(res == null) {
-			return badRequest("No data found in result request");//TODO: this should fail the job.
-			} else {
-				return badRequest("Raw data received");
+			r = request().body().asRaw().asBytes();
+			if(r == null) {
+				return badRequest("No data found in result request");//TODO: this should fail the job.
 			}
+		} else {
+			r = result.getBytes(StandardCharsets.UTF_8);
 		}
 		
 		
 		MyLogger.log("Recieved completed job, ID: " + d.currentJob);
 		
 		//Just pass the data straight to the Job scheduler.
-		JobScheduler.getInstance().submitJob(d, result);
+		JobScheduler.getInstance().submitJob(d, r);
 		
 		//Notify device
 		d.jobComplete();

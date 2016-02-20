@@ -88,7 +88,8 @@ public class ApplicationTest {
 			public void run() {
 				try {
 					MyLogger.enable = true;
-
+					MyLogger.log("Starting image_test");
+					
 					Device d = new Device("1");
 					ComputationManager cm = ComputationManager.getInstance();
 					JobScheduler js = JobScheduler.getInstance();
@@ -107,7 +108,7 @@ public class ApplicationTest {
 						throw new RuntimeException();
 					}
 
-					UUID dataID = Data.storeRaw(newPath);
+					UUID dataID = Data.store(newPath);
 
 					//Make new computation
 					CustomerComputation custComputation = new CustomerComputation("Example Jones", "image test", "", "EdgeDetect", dataID.toString());
@@ -126,14 +127,13 @@ public class ApplicationTest {
 					assertNotNull("Image job has associated data", inData);
 
 
-					InputStream in = new ByteArrayInputStream(inData.getRawContent());
+					InputStream in = new ByteArrayInputStream(inData.getContent());
 					byte[] data = IOUtils.toByteArray(in);
 					assertTrue("Image does not change going through conversion", Arrays.equals(data, rawImage));
 
 					
-
 					ByteArrayOutputStream out = new ByteArrayOutputStream();
-					in = new ByteArrayInputStream(inData.getRawContent());
+					in = new ByteArrayInputStream(inData.getContent());
 					cc.run(in, out);
 					
 					//ByteArrayInputStream res = new ByteArrayInputStream(out);
@@ -387,6 +387,7 @@ public class ApplicationTest {
 			public void run() {
 				//Set up a job as normal.
 				MyLogger.enable = false;
+				MyLogger.log("Starting timeout_test");
 				Device d = new Device("1");
 				ComputationManager cm = ComputationManager.getInstance();
 				JobScheduler js = JobScheduler.getInstance();
@@ -482,12 +483,11 @@ public class ApplicationTest {
 			ComputationCode cc = new PrimeComputationCodeInternal();
 			//TODO: Data dependence
 			Data inData = Ebean.find(Data.class, primeJob.inputDataID);
-			String jobInput = inData.getStringContent();
+			String jobInput = inData.getContentAsString();
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			InputStream in = new ByteArrayInputStream(jobInput.getBytes(StandardCharsets.UTF_8));
 			cc.run(in, out);
-			String outString = new String(out.toByteArray(), StandardCharsets.UTF_8);
-			js.submitJob(d, outString);
+			js.submitJob(d, out.toByteArray());
 		}
 		result = cm.getComputationsByCustomerName(name).get(0).output;
 
@@ -500,6 +500,7 @@ public class ApplicationTest {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
 				MyLogger.enable = false;
+				MyLogger.log("Prime_CorrectnessTest");
 				Ebean.delete(Ebean.find(CustomerComputation.class).findList());
 				//5 is prime
 				String output = genericPrimeTest(5, "Ben");
@@ -531,6 +532,7 @@ public class ApplicationTest {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
 				MyLogger.enable = false;
+				MyLogger.log("Starting Prime_DetailedTest");
 
 				Device d = new Device("1");
 				ComputationManager cm = ComputationManager.getInstance();
@@ -557,7 +559,7 @@ public class ApplicationTest {
 				Data inData = Ebean.find(Data.class, primeJob.inputDataID);
 				assertNotNull("Prime job has associated data", inData);
 
-				String jobInput = inData.getStringContent();
+				String jobInput = inData.getContentAsString();
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				InputStream in = new ByteArrayInputStream(jobInput.getBytes(StandardCharsets.UTF_8));
 
@@ -569,7 +571,7 @@ public class ApplicationTest {
 
 
 				//Submit it
-				js.submitJob(d, outString);
+				js.submitJob(d, out.toByteArray());
 				assertEquals("JS has removed completed job", 0, js.getNumberOfActiveJobs());
 
 				//Get result				
@@ -678,7 +680,7 @@ public class ApplicationTest {
 				assertTrue("JS Handling multiple jobs", l.jobID.equals(j.jobID) || l.jobID.equals(o.jobID));
 				assertTrue("JS Handling multiple jobs", m.jobID.equals(j.jobID) || m.jobID.equals(o.jobID));
 				assertFalse("JS Handling multiple jobs", l.jobID.equals(m.jobID));
-				js.submitJob(d, "result");
+				js.submitJob(d, "result".getBytes(StandardCharsets.UTF_8));
 				l = Ebean.find(Job.class, j.jobID);
 				m = Ebean.find(Job.class, o.jobID);
 				assertTrue("JS Adding data to jobs", m.outputDataID != Device.NULL_UUID);

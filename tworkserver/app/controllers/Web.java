@@ -50,6 +50,7 @@ public class Web extends Controller{
 
 		StringBuilder sb = new StringBuilder();
 
+		UUID dataID = null;
 		for (FilePart filePart : files) {
 
 			if (filePart != null) {
@@ -57,9 +58,8 @@ public class Web extends Controller{
 				String contentType = filePart.getContentType();
 				File file = filePart.getFile();
 
-				UUID dataID = UUID.randomUUID();
+				dataID = Data.store(file);
 				sb.append(dataID).append("\n");
-				Data.store(file, dataID, computationID);
 				MyLogger.log("File uploaded at " + dataID);
 			}
 			else {
@@ -68,6 +68,12 @@ public class Web extends Controller{
 			}
 		}
 
+		if(dataID == null) {
+			return badRequest();
+		}
+
+		//Why is this stored as well?
+		/*
 		UUID dataID = UUID.randomUUID();
 
 		Data d = null;
@@ -79,8 +85,9 @@ public class Web extends Controller{
 		}
 
 		String input = d.getStringContent();
+		 */
 
-		CustomerComputation computation = new CustomerComputation(request().remoteAddress(),"Image Processing Test","test",function,input);
+		CustomerComputation computation = new CustomerComputation(request().remoteAddress(),"Image Processing Test","test",function,dataID.toString());
 
 		ComputationManager.getInstance().runCustomerComputation(computation);
 
@@ -102,15 +109,11 @@ public class Web extends Controller{
 
 		Data d = Ebean.find(Data.class,UUID.fromString(dataID));
 
-		if (d == null) 
+		if (d == null) {
 			return badRequest();
-
-		if (d.type.equals(Data.TYPE_UTF8_FILE)) {
-			return ok(new File(d.getStringContent()),true);
 		}
-		else 
-			return badRequest();
-	}
 
+		return ok(d.getContent());
+	}
 
 }

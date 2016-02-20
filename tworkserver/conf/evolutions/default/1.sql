@@ -34,7 +34,7 @@ create table all_completed_computation (
 
 create table all_data (
   data_id                   varchar(40) not null,
-  type                      varchar(255),
+  is_file                   boolean,
   data                      varbinary(255),
   constraint pk_all_data primary key (data_id))
 ;

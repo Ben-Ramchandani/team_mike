@@ -19,65 +19,38 @@ import play.Logger;
 import play.data.validation.Constraints;
 import twork.MyLogger;
 
-import com.avaje.ebean.Ebean;
 import com.avaje.ebean.Model;
 
 @Entity
 @Table(name = "all_data")
 public class Data extends Model{
 
-	//Constants
-	@Transient
-	public static final String TYPE_UTF8_FILE = "file"; //extend on this to allow more types
-	@Transient
-	public static final String TYPE_UTF8_IMMEDIATE = "imediate";
-	@Transient
-	public static final String TYPE_RAW_IMMEDIATE = "raw_i";
-	@Transient
-	public static final String TYPE_RAW_FILE = "raw_f";
 	@Transient
 	public static final int    MAX_IMMEDIATE_LENGTH = 512;
 
-	
+
 	@Id
 	public UUID dataID;
 
 
 	@Constraints.Required
-	public String type;
+	public Boolean isFile;
 
-	
+
 	//We just use byte[]. Strings are UTF-8 encoded.
+	//Files have their name UTF-8 encoded here.
 	@Constraints.Required
 	public byte[] data;
-	
 
-	public String getStringContent() {
-		if (type.equals(TYPE_UTF8_IMMEDIATE)) {
-			return new String(data, StandardCharsets.UTF_8);
-		} 
-		else if (type.equals(TYPE_UTF8_FILE)) {
-			try {
-				
-				byte[] encoded = Files.readAllBytes(Paths.get(new String(data, StandardCharsets.UTF_8)));
-				return new String(encoded, StandardCharsets.UTF_8);
-			}
-			catch (Exception e) {
-				MyLogger.warn("Exception reading data file.");
-				e.printStackTrace();
-				return null;
-			}
-			
-		} else {
-			MyLogger.warn("Tried to read raw data as string. Returning null.");
-			return null;
-		}
+
+	public String getContentAsString() {
+		return new String(getContent(), StandardCharsets.UTF_8);
 	}
 
-	public byte[] getRawContent() {
-		if (type.equals(TYPE_RAW_IMMEDIATE)) {
+	public byte[] getContent() {
+		if (!isFile) {
 			return data;
-		} else if(type.equals(TYPE_RAW_FILE)){
+		} else {
 			try {
 				return Files.readAllBytes(Paths.get(new String(data, StandardCharsets.UTF_8)));
 			} catch(IOException e) {
@@ -85,83 +58,49 @@ public class Data extends Model{
 				e.printStackTrace();
 				return null;
 			}
-		} else {
-			MyLogger.warn("Tried to read string data as raw. Returning null.");
-			return null;
 		}
 	}
 
 
-	//This needs to return the Data instance it makes
-	//Does the data actually need an ID, or can we just reference it?
-	public static Data storeString(String s, UUID dataID, UUID computationID) throws IOException {
+	public static UUID storeString(String s) {
+		return store(s.getBytes(StandardCharsets.UTF_8));
+	}
 
 
-		/* Try to store string s at location dataID.
-		 * If s is small enough, will be immediate data; otherwise a file is created;
-		 * If the file cannot be created it raises and exception.
-		 * 
-		 * If the dataID is already taken, returns false
-		 * If it succeeds, returns true
-		 */
-		Data d;
-		if (Ebean.find(Data.class, dataID) != null) {
-			return null;
+	public static UUID store(byte[] data) {
+		Data d = new Data();
+		d.save();
+
+		if(data.length < MAX_IMMEDIATE_LENGTH) {
+			d.data = data;
+			d.isFile = false;
 		} else {
-			d = new Data();
-			d.dataID = dataID;
-			if (s.length() < MAX_IMMEDIATE_LENGTH) {
-				d.type = TYPE_UTF8_IMMEDIATE;
-				d.data = s.getBytes(StandardCharsets.UTF_8);
-			} else {
-				
-				Path file = Paths.get("data/" + "s/" + dataID.toString());
+			try {
+				MyLogger.log("New file Location (due to immediate overflow): " + new String(d.data, StandardCharsets.UTF_8));
+				Path dest = Paths.get("data/" + d.dataID.toString());
+				Files.createDirectories(dest.getParent());
+				Files.write(dest, data);
 
-				try {
-					Files.createDirectories(file.getParent());
-					Files.write(file, s.getBytes());
-				}
+				d.data = dest.toString().getBytes(StandardCharsets.UTF_8);
+				d.isFile = true;
 
-				catch(IOException e) {
-					e.printStackTrace();
-				}
-				d.type = TYPE_UTF8_FILE;
-				d.data = file.toString().getBytes(StandardCharsets.UTF_8);
+			} catch (IOException e) {
+				Logger.warn("Failed to raw write file");
+				e.printStackTrace();
+				return null;
 			}
 		}
-		d.save();
-		return d;
+
+		d.update();
+		return d.dataID;
 	}
 
-	public static Data store(File file, UUID dataID, UUID computationID) {
-		Data d = new Data();
-		d.dataID = dataID;
-		d.type = TYPE_UTF8_FILE;
-
-		//Path dest = Paths.get("data/" + computationID.toString() + "/f" + dataID.toString() + ".png");
-		Path dest = Paths.get("data/" + "f/" + dataID.toString());
-
-		try {
-			Files.createDirectories(dest.getParent());
-			Files.move(file.toPath(), dest, StandardCopyOption.REPLACE_EXISTING);
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		d.data = dest.toString().getBytes(StandardCharsets.UTF_8);
-
-		d.save();
-		System.out.printf("File Location: %s\n",d.data);
-		return d;
-	}
-
-	public static UUID storeRaw(File file) {
+	public static UUID store(File file) {
 		Data d = new Data();
 		d.save();
-		
+
 		//Move the file to a new location
-		Path dest = Paths.get("data/" + "f/" + d.dataID.toString());
+		Path dest = Paths.get("data/" + d.dataID.toString());
 
 		try {
 			Files.createDirectories(dest.getParent());
@@ -172,11 +111,11 @@ public class Data extends Model{
 			e.printStackTrace();
 			return null;
 		}
-		d.type = TYPE_RAW_FILE;
+		d.isFile = true;
 		d.data = dest.toString().getBytes(StandardCharsets.UTF_8);
 
 		d.update();
-		System.out.printf("Raw file Location: %s\n",d.data);
+		MyLogger.log("New file Location (file store requested): " + new String(d.data, StandardCharsets.UTF_8));
 		return d.dataID;
 	}
 

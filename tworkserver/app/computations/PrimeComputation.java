@@ -51,18 +51,10 @@ public class PrimeComputation implements BasicComputationGenerator {
 			long stopAt = prime - 1;
 
 			while((currentEnd) <= stopAt) {
-
 				String jobInput = primeString + " " + Long.toString(currentStart) + " " + Long.toString(currentEnd);
-				UUID dataID = UUID.randomUUID();
+				
+				UUID dataID = Data.storeString(jobInput);
 
-				try {
-					Data d = Data.storeString(jobInput, dataID, c.computationID);
-					d.save();
-				} catch (IOException e) {
-					System.err.println("Data store failed with IOException");
-					e.printStackTrace();
-					throw new RuntimeException("generateComputation failed");
-				}
 				Job j = new Job(c, "Prime job", dataID, functionName);
 				j.save();
 				c.jobs.add(j);
@@ -109,11 +101,10 @@ public class PrimeComputation implements BasicComputationGenerator {
 			UUID dataID = j.outputDataID;
 			
 			if(!dataID.equals(Device.NULL_UUID)) {
-				//TODO: dependent on the data class.
 				Data d = Ebean.find(Data.class, dataID);
 				
 				if(!(d == null)) {
-					Scanner scan = new Scanner(d.getStringContent());
+					Scanner scan = new Scanner(d.getContentAsString());
 					
 					try {
 						factor = scan.nextLong();
