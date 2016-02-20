@@ -30,6 +30,7 @@ GET		/page/retrieve/:dataID		controllers.Web.retrieve(dataID: String)
 # set cookie in the header; all the other requests should have that cookie set.
 # also initialise session -> send ok().
 GET    /available                  controllers.Application.available()
+POST   /available                  controllers.Application.available()
 
 # Job request
 # just include the cookie
@@ -47,16 +48,17 @@ GET     /job                        controllers.Application.job()
 #  This will return a raw file and a 200 code.
 GET		/data/:jobID				controllers.Application.data(jobID: Long)
 
+
 #Code request
-#Returns .class file as raw bytes
+#Returns .dex file as raw bytes
 GET		/code/:functionName					controllers.Application.getDexCode(functionName: String)
 
+
 GET		/test/code/:functionName			controllers.Application.getClassCode(functionName: String)
+
+
 # Send result
-#
-#	Send the raw file -> empty is failed
-#
-#
+# Send the raw file -> empty is failed
 POST    /result/:jobID              controllers.Application.result(jobID: Long)
 
 #TODO: Customer login properly
@@ -67,7 +69,7 @@ POST /test/add/:custName/:prime		controllers.Application.addComputation(custName
 GET /test/clear_db					controllers.Application.clear_db()
 
 
-# That is for later
+# These are for later
 
 # Computation subscription
 GET     /computation/:id            controllers.Application.subscribe(id: Long)
