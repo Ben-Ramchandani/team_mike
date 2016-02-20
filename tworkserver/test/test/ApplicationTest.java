@@ -87,7 +87,7 @@ public class ApplicationTest {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
 				try {
-					MyLogger.enable = true;
+					MyLogger.enable = false;
 					MyLogger.log("Starting image_test");
 					
 					Device d = new Device("1");
@@ -136,9 +136,10 @@ public class ApplicationTest {
 					in = new ByteArrayInputStream(inData.getContent());
 					cc.run(in, out);
 					
-					//ByteArrayInputStream res = new ByteArrayInputStream(out);
+					ByteArrayInputStream res = new ByteArrayInputStream(out.toByteArray());
+					BufferedImage i = ImageIO.read(res);
+					assertNotNull("Data is still image after job code", i);
 					
-					//ImageIO.read
 					
 				} catch (Exception e) {
 					System.out.println("Exception caught in image_test.");
