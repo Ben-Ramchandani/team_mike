@@ -18,13 +18,12 @@ import models.Job;
 import com.avaje.ebean.Ebean;
 import computations.BasicComputationGenerator;
 
-//Stores a list of active computation IDs in memory.
+
 public class ComputationManager {
 
 	//Singleton
 	public static ComputationManager instance;
-	
-	
+
 	public static ComputationManager getInstance() {
 		if(instance == null) {
 			instance = new ComputationManager();
@@ -32,72 +31,33 @@ public class ComputationManager {
 		return instance;
 	}
 
+	/*
+	 * Member variables
+	 */
 	//Jobs remaining for running computations
 	Map<UUID, Integer> jobsRemaining;
-
-	//Could keep an in memory map from jobID to ComputationID
 	
 	//Map CustCompID -> CustComp
 	Map<UUID, CustomerComputation> customerComputations;
 
-	private ComputationManager() {
-		rebuild_TEST();
-	}
-
-	private void rebuildCustomerComputationMap() {
-		Map<UUID, CustomerComputation> newCustomerComputations = new ConcurrentHashMap<UUID, CustomerComputation>();
-		List<CustomerComputation> ccs = Ebean.find(CustomerComputation.class).findList();
-		Iterator<CustomerComputation> it = ccs.iterator();
-		
-		while(it.hasNext()) {
-			CustomerComputation current = it.next();
-			newCustomerComputations.put(current.customerComputationID, current);
-			
-			//TODO: build map from customer name to computation list
-		}
-		
-		synchronized(this) {
-			customerComputations = newCustomerComputations;
-		}
-	}
-
-	//Complete rebuild from the database (slow)
-	public synchronized void rebuild_TEST() {
-		rebuildCustomerComputationMap();
-		jobsRemaining = new HashMap<UUID, Integer>();
-		List<Computation> computations = Ebean.find(Computation.class).findList();
-		Iterator<Computation> it = computations.iterator();
-
-		while(it.hasNext()) {
-			Computation c = it.next();
-			//Count the number of jobs the computation have that aren't complete.
-
-			c.jobsLeft = 0;
-			Iterator<Job> jobs = c.jobs.iterator();
-
-			//TODO: interaction with Data()
-			while(jobs.hasNext()) {
-				Job j = jobs.next();
-				if(j.outputDataID.equals(Device.NULL_UUID)) {
-					c.jobsLeft++;
-				}
-			}
-
-			c.update();
-
-			if(c.jobsLeft > 0) {
-				jobsRemaining.put(c.computationID, c.jobsLeft);
-			} else {
-				completeComputation(c.computationID);
-			}
-		}
-	}
-
+	
+	
+	
+	/*
+	 * info functions
+	 */
+	
 	public int getNumberOfComputations() {
 		return jobsRemaining.size();
 	}
 
 
+	
+	
+	/*
+	 * Job management
+	 */
+	
 	public synchronized void jobCompleted(UUID jID) {
 		Job j = Ebean.find(Job.class, jID);
 		if(j == null) {
@@ -146,7 +106,11 @@ public class ComputationManager {
 		}
 	}
 	
-
+	
+	
+	/*
+	 * Adding computations
+	 */
 	
 	public synchronized void runCustomerComputation(CustomerComputation cc) {
 		runCustomerComputation(cc.customerComputationID);
@@ -193,7 +157,105 @@ public class ComputationManager {
 			}
 		}
 	}
+	
+	
+	
+	/*
+	 * Helper functions for Customer computations
+	 */
+	
+	public List<CustomerComputation> getCustomerComputations() {
+		List<CustomerComputation> list = new ArrayList<CustomerComputation>(customerComputations.values());
+		return list;
+	}
+	
+	
+	public CustomerComputation getCustomerComputation(UUID cid) {
+		CustomerComputation c = customerComputations.get(cid);
+		return c;
+	}
+	
+	
+	//Computations by name.
+	//May return an empty list.
+	public List<CustomerComputation> getComputationsByCustomerName(String name) {
+		List<CustomerComputation> all = getCustomerComputations();
+		List<CustomerComputation> ret = new LinkedList<CustomerComputation>();
+		for(CustomerComputation cc : all) {
+			if(cc.customerName.equals(name)) {
+				ret.add(cc);
+			}
+		}
+		Collections.sort(ret);
+		return ret;
+	}
+	
+	
+	
+	
+	
+	/*
+	 * Private helper methods
+	 * 
+	 * 
+	 */
+	
+	private ComputationManager() {
+		rebuild_TEST();
+	}
 
+	private void rebuildCustomerComputationMap() {
+		Map<UUID, CustomerComputation> newCustomerComputations = new ConcurrentHashMap<UUID, CustomerComputation>();
+		List<CustomerComputation> ccs = Ebean.find(CustomerComputation.class).findList();
+		Iterator<CustomerComputation> it = ccs.iterator();
+		
+		while(it.hasNext()) {
+			CustomerComputation current = it.next();
+			newCustomerComputations.put(current.customerComputationID, current);
+			
+			//TODO: build map from customer name to computation list
+		}
+		
+		synchronized(this) {
+			customerComputations = newCustomerComputations;
+		}
+	}
+
+
+	
+	//Complete rebuild from the database (slow)
+	public synchronized void rebuild_TEST() {
+		rebuildCustomerComputationMap();
+		jobsRemaining = new HashMap<UUID, Integer>();
+		List<Computation> computations = Ebean.find(Computation.class).findList();
+		Iterator<Computation> it = computations.iterator();
+
+		while(it.hasNext()) {
+			Computation c = it.next();
+			//Count the number of jobs the computation have that aren't complete.
+
+			c.jobsLeft = 0;
+			Iterator<Job> jobs = c.jobs.iterator();
+
+			//TODO: interaction with Data()
+			while(jobs.hasNext()) {
+				Job j = jobs.next();
+				if(j.outputDataID.equals(Device.NULL_UUID)) {
+					c.jobsLeft++;
+				}
+			}
+
+			c.update();
+
+			if(c.jobsLeft > 0) {
+				jobsRemaining.put(c.computationID, c.jobsLeft);
+			} else {
+				completeComputation(c.computationID);
+			}
+		}
+	}
+
+	
 	//Used only for testing
 	@Deprecated
 	public synchronized void addBasicComputation(BasicComputationGenerator g, String input) {
@@ -224,31 +286,7 @@ public class ComputationManager {
 	}
 	
 	
-	public List<CustomerComputation> getCustomerComputations() {
-		List<CustomerComputation> list = new ArrayList<CustomerComputation>(customerComputations.values());
-		return list;
-	}
 	
-	
-	public CustomerComputation getCustomerComputation(UUID cid) {
-		CustomerComputation c = customerComputations.get(cid);
-		return c;
-	}
-	
-	
-	//Computations by name.
-	//May return an empty list.
-	public List<CustomerComputation> getComputationsByCustomerName(String name) {
-		List<CustomerComputation> all = getCustomerComputations();
-		List<CustomerComputation> ret = new LinkedList<CustomerComputation>();
-		for(CustomerComputation cc : all) {
-			if(cc.customerName.equals(name)) {
-				ret.add(cc);
-			}
-		}
-		Collections.sort(ret);
-		return ret;
-	}
 
 	private synchronized void completeComputation(UUID computationID) {
 		jobsRemaining.remove(computationID);
