@@ -168,13 +168,11 @@ public class ComputationManager {
 		Computation c = Ebean.find(Computation.class, id);
 		
 		if(c == null) {
-			MyLogger.log("Computation generator failed.");
+			MyLogger.warn("Computation generator failed.");
 		} else {
 			cc.runComputation(c);
 			
 			int jobsLeft = c.jobsLeft;
-			
-			System.out.printf("computation id: %s\nnumber of jobs: %d\nfunction : %s\n",c.computationID,c.jobsLeft,c.functionName);
 			if(jobsLeft > 0) {
 				jobsRemaining.put(id, c.jobsLeft);
 				JobScheduler.getInstance().update();

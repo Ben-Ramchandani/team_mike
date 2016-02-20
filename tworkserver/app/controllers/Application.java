@@ -151,7 +151,7 @@ public class Application extends Controller {
 			return internalServerError("Request for data: Data id in job does not map to anything (500 Internal Server Error).");
 		}
 		
-		return ok(myData.getContent());
+		return ok(myData.getStringContent());
 	}
 
 
@@ -195,8 +195,15 @@ public class Application extends Controller {
 		String result = request().body().asText();
 		
 		if(result == null) {
+			byte[] res = request().body().asRaw().asBytes();
+			if(res == null) {
 			return badRequest("No data found in result request");//TODO: this should fail the job.
+			} else {
+				return badRequest("Raw data received");
+			}
 		}
+		
+		
 		MyLogger.log("Recieved completed job, ID: " + d.currentJob);
 		
 		//Just pass the data straight to the Job scheduler.

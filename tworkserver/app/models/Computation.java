@@ -17,10 +17,6 @@ import com.avaje.ebean.Model;
 @Table(name = "all_computation")
 public class Computation extends Model {
 
-	public static final int STATE_FAILED = 1;
-	public static final int STATE_RUNNING = 2;
-	public static final int STATE_COMPLETED = 3;
-
 	@Id
 	public UUID computationID;
 	public int getJobsLeft() {
@@ -45,15 +41,15 @@ public class Computation extends Model {
 	
 
 	
-	public boolean failed;
-	public boolean running;
+	public Boolean failed;
+	public Boolean running;
 	//Has the result of this computation been collected?
-	public boolean completed;
+	public Boolean completed;
 	
 	//UUID of the customer computation that spawned this (can be NULL_UUID).
 	public UUID customerComputationID;
 	
-	public int jobsLeft;
+	public Integer jobsLeft;
 	
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy="parentComputation")
 	public List<Job> jobs;

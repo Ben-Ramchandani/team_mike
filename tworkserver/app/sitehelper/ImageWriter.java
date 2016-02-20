@@ -30,20 +30,20 @@ public class ImageWriter implements Runnable {
 		}
 	}
 
-	public void notify(String s) {
+	public void notify(byte[] s) {
 		//Need to create a file here
 		//this.notify();
 		Data d = null; 
-		try {
+		//try {
 			//TODO bring computation id here.
-			d = Data.store(s, UUID.randomUUID(), UUID.randomUUID());
-			System.out.println(s.length());
-		} catch (IOException e) {
-			System.out.println("Failed");
-			e.printStackTrace();
-		}
-		d.update();
-		out.write("http://localhost:9000/page/retrieve/" + d.data);
+			//d = Data.store(s, UUID.randomUUID(), UUID.randomUUID());
+			//System.out.println(s.length());
+		//} catch (IOException e) {
+			//System.out.println("Failed");
+			//e.printStackTrace();
+		//}
+		//d.update();
+		//out.write("http://localhost:9000/page/retrieve/" + d.data);
 	}
 
 }

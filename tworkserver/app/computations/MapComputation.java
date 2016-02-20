@@ -16,30 +16,37 @@ import twork.MyLogger;
 public class MapComputation implements BasicComputationGenerator {
 
 	private String functionName = "EdgeDetect";
-	
+
 	public MapComputation(String name) {
 		functionName = name;
 	}
-	
+
 	@Override
 	public UUID generateComputation(String input) {
-		
+
 		String[] data = input.split("\n");
-		
+
 		Computation c = new Computation(functionName, "Image Processing");
-		
+
 		Ebean.beginTransaction();
-		
+
 		try {
 			c.save(); //Generate UUID
-			System.out.printf("computation id in map: %s\n",c.computationID);
+			
 			long jobs = data.length;
-				for (int i = 0; i < jobs; i++) {
-				Job j = new Job(c,"Image Processing",UUID.fromString(data[i]),functionName);
+			for (int i = 0; i < jobs; i++) {
+				UUID dataID;
+				try {
+					dataID = UUID.fromString(data[i]);
+				} catch(IllegalArgumentException e) {
+					MyLogger.warn("MapComputation.generateComputation: Unable to parse UUID from input");
+					continue;
+				}
+				Job j = new Job(c, "Image Processing", dataID, functionName);
 				j.save();
 				c.jobs.add(j);
 			}
-		
+
 			c.setJobsLeft(c.jobs.size());
 			c.setInput(input);
 			c.update();
@@ -48,31 +55,32 @@ public class MapComputation implements BasicComputationGenerator {
 			Ebean.endTransaction();
 		}
 		// ### End transaction ###
-		System.out.printf("Number of jobs in map: %d\n%s\n",c.jobsLeft,c.functionName);
+		MyLogger.log("New MapComputation generated.");
+		MyLogger.log("Number of jobs in map: " + c.jobsLeft);
 		return c.computationID;
 	}
-	
+
 	@Override
 	//TODO
 	public String getResult(UUID computationID) {
 		Computation c = Ebean.find(Computation.class, computationID);
-		
+
 		for(Job j : c.jobs) {
 			UUID dataID = j.outputDataID;
-			
+
 			if(!dataID.equals(Device.NULL_UUID)) {
 				//TODO: dependent on the data class.
 				Data d = Ebean.find(Data.class, dataID);
-				
+
 				if(!(d == null)) {
-					if (d.type == Data.TYPE_FILE) {
-						
+					if (d.type == Data.TYPE_UTF8_FILE) {
+
 					}
 				}
 			}
 		}
 		return "How am I supposed to return this?";
-		
+
 	}
 
 }

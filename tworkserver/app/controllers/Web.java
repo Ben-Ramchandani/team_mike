@@ -21,6 +21,7 @@ import play.mvc.Result;
 import play.mvc.Results;
 import twork.ComputationManager;
 import twork.ComputationNotifier;
+import twork.Device;
 import twork.MyLogger;
 
 import akka.actor.*;
@@ -38,24 +39,24 @@ public class Web extends Controller{
 
 	public Result mapFile() {
 		RequestBody body = request().body();
-		
+
 		play.mvc.Http.MultipartFormData fileBody = body.asMultipartFormData();
-		
+
 		String function = "EdgeDetect";
-		
-		UUID computationID = UUID.randomUUID();
+
+		UUID computationID = Device.NULL_UUID;
 
 		List<FilePart> files = fileBody.getFiles();
-		
+
 		StringBuilder sb = new StringBuilder();
 
 		for (FilePart filePart : files) {
-			
+
 			if (filePart != null) {
 				String filename = filePart.getFilename();
 				String contentType = filePart.getContentType();
 				File file = filePart.getFile();
-				
+
 				UUID dataID = UUID.randomUUID();
 				sb.append(dataID).append("\n");
 				Data.store(file, dataID, computationID);
@@ -66,50 +67,50 @@ public class Web extends Controller{
 				return ok();
 			}
 		}
-		
+
 		UUID dataID = UUID.randomUUID();
-		
+
 		Data d = null;
 		try {
-			d = Data.store(sb.toString(),dataID,computationID);
+			d = Data.storeString(sb.toString(),dataID,computationID);
 		} catch (IOException e) {
-			 	flash("error", "Cannot store files");
-			 	e.printStackTrace();
+			flash("error", "Cannot store files");
+			e.printStackTrace();
 		}
 
-		String input = d.getContent();
-		
+		String input = d.getStringContent();
+
 		CustomerComputation computation = new CustomerComputation(request().remoteAddress(),"Image Processing Test","test",function,input);
-		
+
 		ComputationManager.getInstance().runCustomerComputation(computation);
-		
+
 		return redirect("/rt/" + computation.computationID.toString());
-		
+
 	}
 
 
 	public Result primeTest(Long input) {
-		
+
 		CustomerComputation custComputation = new CustomerComputation(request().remoteAddress(), "Prime Computation Test", "Prime Computation Test", "PrimeComputation", input.toString());
-		
+
 		ComputationManager.getInstance().runCustomerComputation(custComputation);
-	
+
 		return ok(ComputationNotifier.track(custComputation));
 	}
-	
+
 	public Result retrieve(String dataID) {
-		
+
 		Data d = Ebean.find(Data.class,UUID.fromString(dataID));
-		
+
 		if (d == null) 
 			return badRequest();
-		
-		if (d.type.equals(Data.TYPE_FILE)) {
-			return ok(new File(d.data),true);
+
+		if (d.type.equals(Data.TYPE_UTF8_FILE)) {
+			return ok(new File(d.getStringContent()),true);
 		}
 		else 
 			return badRequest();
 	}
-	
-		
+
+
 }

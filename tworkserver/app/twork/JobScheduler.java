@@ -121,7 +121,7 @@ public class JobScheduler {
 			UUID dataID = UUID.randomUUID();
 			try {
 				//TODO: uses data class
-				d = Data.store(result, dataID, j.computationID);
+				d = Data.storeString(result, dataID, j.computationID);
 			} catch (IOException e) {
 				System.out.println("Job save failed: unable to store data.");
 				e.printStackTrace();
@@ -218,6 +218,9 @@ public class JobScheduler {
 			} else {
 				deadJobCount++;
 			}
+
+
+
 		}
 
 
@@ -292,7 +295,7 @@ public class JobScheduler {
 
 	//The device  contains the job ID, check they're correct then hand over to here.
 	public synchronized void submitJob(Device d, String result) {
-		
+
 		ScheduleJob j = jobMap.get(d.currentJob);
 		if(j == null) {
 			System.out.println("Submitted job is not in scheduler, ignoring.");
@@ -302,29 +305,36 @@ public class JobScheduler {
 			System.out.println("Submitted job is not in scheduler, ignoring.");
 			return;
 		}
-
-		Job job = Ebean.find(Job.class,d.currentJob);
 		
 		j.addResult(result);
+
 		
-		Data data = null;
-		
+		//Notify the webclient.
 		try {
-			data = Data.store(result, UUID.randomUUID(), job.computationID);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			Job job = Ebean.find(Job.class,d.currentJob);
+			Data data = null;
+			try {
+				//You do this again in the ImageNotifier call...
+				//It doesn't need to be written to the database again
+				//The result is in memory anyway so just send it
+				data = Data.storeString(result, UUID.randomUUID(), job.computationID);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			ImageFactory.notify(job.computationID.toString(), data.getRawContent());
+		} catch(Exception e) {
+			System.out.println("JobScheduler: Error calling notify code. Will continue.");
 			e.printStackTrace();
 		}
-		System.out.printf("data stored at location: %s\n", data.data);
-		//Notify the webclient.
-		
-		
-		ImageFactory.notify(job.computationID.toString(), data.data);
-		
-		
+
+
 		activeJobs.remove(j);
 		processJob(j);
 	}
+	
+	
 
 
 	//Returns null if no jobs are available

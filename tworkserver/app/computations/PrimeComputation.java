@@ -8,7 +8,6 @@ import models.Computation;
 import models.Data;
 import models.Job;
 import twork.Device;
-import twork.Jobs;
 import twork.MyLogger;
 
 import com.avaje.ebean.Ebean;
@@ -34,7 +33,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 			throw new RuntimeException("PrimeComputation: generation input invalid, expected \"long\"");
 		}
 
-		//TODO: this constructor
+		
 		Computation c = new Computation(functionName, "Prime computation");
 
 
@@ -57,7 +56,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 				UUID dataID = UUID.randomUUID();
 
 				try {
-					Data d = Data.store(jobInput, dataID, c.computationID);
+					Data d = Data.storeString(jobInput, dataID, c.computationID);
 					d.save();
 				} catch (IOException e) {
 					System.err.println("Data store failed with IOException");
@@ -73,8 +72,8 @@ public class PrimeComputation implements BasicComputationGenerator {
 			}
 
 
-			c.jobsLeft = c.jobs.size();
-			c.input = input;
+			c.setJobsLeft(c.jobs.size());
+			c.setInput(input);
 			c.update();
 
 
@@ -82,6 +81,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 		} finally {
 			Ebean.endTransaction();
 		}
+		c = Ebean.find(Computation.class, c.computationID);
 		// ### End transaction ###
 		return c.computationID;
 	}
@@ -94,7 +94,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 		}
 
 		try {
-			Scanner s = new Scanner(c.input);
+			Scanner s = new Scanner(c.getInput());
 			prime = s.nextLong();
 			s.close();
 		} catch(Exception e) {
@@ -113,7 +113,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 				Data d = Ebean.find(Data.class, dataID);
 				
 				if(!(d == null)) {
-					Scanner scan = new Scanner(d.data);
+					Scanner scan = new Scanner(d.getStringContent());
 					
 					try {
 						factor = scan.nextLong();

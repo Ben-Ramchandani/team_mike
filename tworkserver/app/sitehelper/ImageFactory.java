@@ -16,7 +16,7 @@ public abstract class ImageFactory {
 		return i;
 	}
 	
-	public static void notify(String computationID, String s) {
+	public static void notify(String computationID, byte[] s) {
 		ImageWriter imageWriter;
 		if ((imageWriter = instances.get(computationID))!=null)
 			imageWriter.notify(s);

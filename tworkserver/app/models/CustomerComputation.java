@@ -97,9 +97,7 @@ public class CustomerComputation extends Model implements Comparable<CustomerCom
 		status = RUNNING;
 		c.customerComputationID = this.customerComputationID;
 		c.update();
-		this.update();
-		System.out.printf("%s\n%d\n",c.computationID,c.jobsLeft);
-		
+		this.update();		
 	}
 	
 	//To allow generation for compatibility
