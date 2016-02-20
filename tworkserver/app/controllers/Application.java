@@ -1,7 +1,12 @@
 package controllers;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
 import java.util.UUID;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import models.Computation;
 import models.CustomerComputation;
@@ -193,6 +198,38 @@ public class Application extends Controller {
 
 		MyLogger.log("Sending .dex code file with name: " + functionName);
 		return ok(b);
+	}
+
+
+	/*
+	 * New: get a list of computations
+	 */
+	public Result getFunctions() {
+		JSONObject result = new JSONObject();
+		
+		try {
+			
+			JSONObject p = new JSONObject();
+			p.put("id", "PrimeComputationCode");
+			p.put("name", "Prime checking");
+			p.put("description", "Work out if a given number is prime.");
+			
+			//TODO: change this to be correct
+			JSONObject i = new JSONObject();
+			i.put("id", "EdgeDetect");
+			i.put("name", "Image manipulation");
+			i.put("description", "Do something to images.");
+			
+			JSONArray a = new JSONArray();
+			a.put(p);
+			a.put(i);
+			result.put("computations", a);
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return internalServerError("Failed to prepare JSON for sending (500 - Internal Server Error).");
+		}
+		return ok(result.toString());
 	}
 
 

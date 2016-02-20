@@ -50,6 +50,11 @@ public class ComputationManager {
 	public int getNumberOfComputations() {
 		return jobsRemaining.size();
 	}
+	
+	@Deprecated
+	public List<UUID> getComputationIDs() {
+		return new ArrayList<UUID>(jobsRemaining.keySet());
+	}
 
 
 	

@@ -1,14 +1,8 @@
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import models.Computation;
 import models.CustomerComputation;
 import models.Job;
-
-import com.avaje.ebean.Ebean;
-
 import play.Application;
 import play.GlobalSettings;
 import play.Play;
@@ -16,6 +10,8 @@ import twork.ComputationManager;
 import twork.FunctionManager;
 import twork.JobScheduler;
 import twork.MyLogger;
+
+import com.avaje.ebean.Ebean;
 public class Global extends GlobalSettings {
 
 	

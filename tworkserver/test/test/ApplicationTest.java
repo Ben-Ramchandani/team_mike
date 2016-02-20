@@ -91,7 +91,7 @@ public class ApplicationTest {
 				try {
 					MyLogger.enable = false;
 					MyLogger.log("Starting image_test");
-					
+
 					Device d = new Device("1");
 					ComputationManager cm = ComputationManager.getInstance();
 					JobScheduler js = JobScheduler.getInstance();
@@ -133,16 +133,16 @@ public class ApplicationTest {
 					byte[] data = IOUtils.toByteArray(in);
 					assertTrue("Image does not change going through conversion", Arrays.equals(data, rawImage));
 
-					
+
 					ByteArrayOutputStream out = new ByteArrayOutputStream();
 					in = new ByteArrayInputStream(inData.getContent());
 					cc.run(in, out);
-					
+
 					ByteArrayInputStream res = new ByteArrayInputStream(out.toByteArray());
 					BufferedImage i = ImageIO.read(res);
 					assertNotNull("Data is still image after job code", i);
-					
-					
+
+
 				} catch (Exception e) {
 					System.out.println("Exception caught in image_test.");
 					e.printStackTrace();
@@ -254,7 +254,7 @@ public class ApplicationTest {
 		running(testServer(9001, fakeApplication(inMemoryDatabase())), new Runnable() {
 			public void run() {
 				try {
-					
+
 					MyLogger.log("Starting full test.");
 
 					String urlString = "http://localhost:9001/";
@@ -454,6 +454,38 @@ public class ApplicationTest {
 
 
 	@Test
+	public void function_list_test() {
+		MyLogger.enable = false;
+		running(testServer(9001, fakeApplication(inMemoryDatabase())), new Runnable() {
+			public void run() {
+				try {
+					MyLogger.log("Starting function list test.");
+					String urlString = "http://localhost:9001/";
+					
+					String expectedString = "{\"computations\":[{\"name\":\"Prime checking\",\"description\":\"Work out if a given number is prime.\",\"id\":\"PrimeComputationCode\"}," + 
+								"{\"name\":\"Image manipulation\",\"description\":\"Do something to images.\",\"id\":\"EdgeDetect\"}]}";
+
+					//Send GET /computations
+					URL computationsURL = new URL(urlString + "computations");
+					HttpURLConnection con = (HttpURLConnection) computationsURL.openConnection();
+					con.connect();
+
+					//Check the response
+					assertEquals("Available gives 200 response code", 200, con.getResponseCode());
+					
+					assertEquals("Function list is correct", expectedString, IOUtils.toString(con.getInputStream(), StandardCharsets.UTF_8));
+					
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+					assertTrue("Exception", false);
+					return;
+				}
+			}
+		});
+	}
+
+	@Test
 	public void CM_Test() {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			@SuppressWarnings("deprecation")
@@ -595,7 +627,7 @@ public class ApplicationTest {
 	public void JS_FullTest() {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
-				
+
 				MyLogger.enable = false;
 				MyLogger.log("Starting JS_FullTest");
 				JobScheduler js = JobScheduler.getInstance();

@@ -69,6 +69,10 @@ POST /test/add/:custName/:prime		controllers.Application.addComputation(custName
 GET /test/clear_db					controllers.Application.clear_db()
 
 
+#Get a list of available functions
+GET /computations					controllers.Application.getFunctions()
+
+
 # These are for later
 
 # Computation subscription

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import models.Computation;
 import models.Data;
 import models.Device;
 import models.Job;
@@ -122,17 +123,45 @@ public class JobScheduler {
 			return null;
 		} else {
 			ScheduleJob j = waitingJobs.remove(0);
+			
+			//Check it's in the DB
 			Job job = Ebean.find(Job.class, j.getJobID());
 			if(job == null) {
 				MyLogger.log("Job in scheduler is not in database");
 				return null;
 			}
 			j.addPhone();
-			//Dependent on job only being out once at a time.
+			//Dependent on jobs only being out once at a time.
 			activeJobs.add(j);
 			d.registerJob(j.getJobID());
 			return job;
 		}
+	}
+	
+	//Get a job from certain computations
+	@Deprecated
+	public synchronized Job getJob(Device d, List<Computation> c) {
+		Iterator<ScheduleJob> it = waitingJobs.iterator();
+		while(it.hasNext()) {
+			ScheduleJob currentJob = it.next();
+			if(c.contains(currentJob.computationID)) {
+				
+				//Check it's in the DB
+				Job job = Ebean.find(Job.class, currentJob.getJobID());
+				if(job == null) {
+					MyLogger.log("Job in scheduler is not in database");
+					return null;
+				}
+				
+				currentJob.addPhone();
+				//Dependent on jobs only being out once at a time.
+				it.remove();
+				activeJobs.add(currentJob);
+				d.registerJob(currentJob.getJobID());
+				return job;
+			}
+		}
+		return null;
 	}
 
 
@@ -173,6 +202,7 @@ public class JobScheduler {
 	//Stored in memory
 	public class ScheduleJob {
 		private UUID jobID;
+		private UUID computationID;
 
 		//What phone has this job?
 		private boolean hasPhone;
@@ -183,8 +213,9 @@ public class JobScheduler {
 		private int failCount;
 		private byte[] result;
 
-		public ScheduleJob(UUID jID) {
+		public ScheduleJob(UUID jID, UUID cID) {
 			jobID = jID;
+			computationID = cID;
 			failed = false;
 			complete = false;
 			hasPhone = false;
@@ -283,7 +314,7 @@ public class JobScheduler {
 		while(it.hasNext()) {
 			Job currentJob = it.next();
 			if(!currentJob.failed && currentJob.outputDataID.equals(Device.NULL_UUID)) {
-				ScheduleJob sj = new ScheduleJob(currentJob.jobID);
+				ScheduleJob sj = new ScheduleJob(currentJob.jobID, currentJob.computationID);
 				UUID currentJobID = currentJob.jobID;
 				jobMap.put(currentJobID, sj);
 				waitingJobs.add(sj);
@@ -339,7 +370,7 @@ public class JobScheduler {
 		List<UUID> removedJobIDs = currentJobIDs;
 		List<ScheduleJob> newScheduleJobs = new LinkedList<ScheduleJob>();
 		for(Job j : newJobs) {
-			newScheduleJobs.add(new ScheduleJob(j.jobID));
+			newScheduleJobs.add(new ScheduleJob(j.jobID, j.computationID));
 		}
 		synchronized(this) {
 			//Remove jobs as necessary.
