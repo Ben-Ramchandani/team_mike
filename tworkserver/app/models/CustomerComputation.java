@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import twork.ComputationManager;
+
 import com.avaje.ebean.Model;
 
 /*
@@ -20,7 +22,7 @@ import com.avaje.ebean.Model;
 @Table(name = "all_completed_computation")
 public class CustomerComputation extends Model implements Comparable<CustomerComputation> {
 	@Id
-	public UUID CustomerComputationID;
+	public UUID customerComputationID;
 	//Name of the function
 	public String functionName;
 	//Purely descriptive names
@@ -73,16 +75,29 @@ public class CustomerComputation extends Model implements Comparable<CustomerCom
 		output = "";
 		status = WAITING;
 		timeStamp = (new Date()).getTime();
+		//Generate ID
 		this.save();
+		ComputationManager.getInstance().addCustomerComputation(this);
 	}
+	
+	
+	public String toString() {
+		return "Customer Computation:\nCustomer Name: \"" + customerName + "\", input: \"" + input + "\", output: \"" + output + "\".";
+	}
+	
+	/*
+	 * IMPORTANT:
+	 * None of the following methods should be called outside of the computation manager,
+	 * it may leave the database in an inconsistent state.
+	 */
 	
 	public void runComputation(Computation c) {
 		computationID = c.computationID;
 		totalJobs = c.jobs.size();
 		status = RUNNING;
-		c.customerComputationID = this.CustomerComputationID;
+		c.customerComputationID = this.customerComputationID;
 		c.update();
-		this.update();
+		this.update();		
 	}
 	
 	//To allow generation for compatibility
@@ -98,13 +113,10 @@ public class CustomerComputation extends Model implements Comparable<CustomerCom
 		status = RUNNING;
 		timeStamp = (new Date()).getTime();
 		this.save();
+		ComputationManager.getInstance().addCustomerComputation(this);
+		c.customerComputationID = this.customerComputationID;
 	}
 	
-	
-	
-	public String toString() {
-		return "Customer Computation:\nCustomer Name: \"" + customerName + "\", input: \"" + input + "\", output: \"" + output + "\".";
-	}
 	
 	public void addResult(String result) {
 		output = result;

@@ -6,11 +6,16 @@ import java.util.UUID;
 import models.Computation;
 import models.CustomerComputation;
 import models.Data;
+import models.Device;
 import models.Job;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import play.mvc.Controller;
 import play.mvc.Result;
 import twork.ComputationManager;
-import twork.Device;
 import twork.Devices;
 import twork.FunctionManager;
 import twork.JobScheduler;
@@ -18,80 +23,62 @@ import twork.MyLogger;
 
 import com.avaje.ebean.Ebean;
 
-import play.mvc.Http.RequestBody;
-
 public class Application extends Controller {
 
-	public Result addComputation(String custName, long prime) {
-		ComputationManager cm = ComputationManager.getInstance();
-		CustomerComputation custComputation = new CustomerComputation(custName, "Prime(4) example for full test", "", "PrimeComputation", Long.toString(prime));
-		cm.runCustomerComputation(custComputation);
-		return ok();
-	}
-	
-	public Result clear_db() {
-		//Check request is from localHost
-		if(!(request().remoteAddress().equals("127.0.0.1") || request().remoteAddress().equals("0:0:0:0:0:0:0:1"))) {
-			return forbidden("Your address is " + request().remoteAddress());
-		}
-		
-		MyLogger.log("Clearing database");
-		Ebean.delete(Ebean.find(Computation.class).findList());
-		Ebean.delete(Ebean.find(CustomerComputation.class).findList());
-		Ebean.delete(Ebean.find(Job.class).findList());
-		ComputationManager.getInstance().rebuild_TEST();
-		JobScheduler.getInstance().rebuild_TEST();
-		return ok();
-	}
-	
-	public boolean hasRun = false;
-	public void runOnStart() {
-		if(hasRun) {
-			return;
-		}
-		hasRun = true;
-		//MyLogger.enable = true;
-		MyLogger.log("Start up code running");
-		MyLogger.log("Clearing database");
-		Ebean.delete(Ebean.find(Computation.class).findList());
-		Ebean.delete(Ebean.find(CustomerComputation.class).findList());
-		Ebean.delete(Ebean.find(Job.class).findList());
-		
-		MyLogger.log("Initializing Managers and Scheduler");
-		ComputationManager.getInstance();
-		JobScheduler.getInstance();
-		FunctionManager.getInstance();
-		MyLogger.log("Start up code finished");
-	}
-	
+
+	/*
+	 * Available POST/GET
+	 */
 	public Result available() {
-		
-		runOnStart();
-		
-		
+
 		/*
 		 * gives the phone a UUID 
 		 * starts a session
 		 */
-		
-		//We could change this to give the device the full UUID and have them send it to us each time,
-		//rather than only storing it server side.
 
-		Device d; 
 
-		if (session("sessionID") == null) {
-			d = new Device(Devices.getInstance().generateID());
-			session("sessionID", d.getSessionID()); 
-			MyLogger.log("Creating new session");
+		long phoneID;
+		String body = request().body().asText();
+		//Attempt to parse the phone ID from the body
+		if(body == null) {
+			MyLogger.warn("No body found in /available request");
+			if (session("sessionID") == null) {
+				MyLogger.warn("No phoneID found, will generate one at random.");
+				phoneID = UUID.randomUUID().getLeastSignificantBits();
+			} else {
+				phoneID = Long.parseLong(session("sessionID"));
+			}
+		} else {
+			try {
+				JSONObject json = new JSONObject(body);
+				phoneID = Long.parseLong(json.getString("phone-id"));
+			} catch (Exception e) {
+				MyLogger.log("Failed to parse JSON from /available request.");
+				e.printStackTrace();
+				return badRequest("Failed to parse JSON (400 - Bad Request).");
+			}
 		}
 
-		
+		if(session("sessionID") != null) {
+			//Check session and parsed ID agree
+			if( !( Long.toString(phoneID).equals(session("sessionID")) ) ) {
+				MyLogger.critical("Session ID disagrees with claimed phone ID.");
+				return badRequest("Session ID disagrees with phone ID (400 - Bad Request).");
+			}
+		} else {
+			session("sessionID", Long.toString(phoneID));
+			MyLogger.log("Creating new session with ID: " + session("sessionID"));
+		}
+
+		Device d;
+
+
 		d = Devices.getInstance().getDevice(session("sessionID"));
 		//We'll worry about this later - nothing on the server depends on this.
 		/*
 		RequestBody body = request().body();
 
-		
+
 		try {
 			JsonNode jn = body.asJson();
 			d.deviceID = jn.get("phone-id").asText("");
@@ -102,32 +89,46 @@ public class Application extends Controller {
 			session().clear();
 			return badRequest("Could not parse JSON.");
 		}
-		*/
-		
-		return ok(d.sessionID);
-	}
-
-	public Result subscribe(Long jobID) { 
-		/*
-		 * feature to be added
-		 * need to implement log-in features for dima's app
 		 */
-		return notFound();
+
+		return ok();
 	}
 
-	public void addTestData(Long jobID) {
-		Data d = new Data();
-		d.dataID = UUID.randomUUID();
-		d.type = Data.TYPE_IMMEDIATE;
-		d.data = "test data";
 
-		Ebean.save(d);
+	/*
+	 * getJob() (GET)
+	 */
+	public Result job() {
+
+		if (session("sessionID") == null) {
+			return unauthorized("No session.");
+		}
+
+		Device d = Devices.getInstance().getDevice(session("sessionID"));
+
+
+		//We could just cancel the current Job instead...
+		if (!d.currentJob.equals(Device.NULL_UUID))  {
+			return forbidden("Already have incomplete job.");
+		}
+
+		Job j = JobScheduler.getInstance().getJob(d);
+		if (j == null) {
+			return status(204, "NO JOB");
+		}
+
+
+		d.registerJob(j.jobID);
+		String s = j.export();
+		MyLogger.log("Handing out job with ID: " + j.jobID);
+		return ok(s);
 	}
 
-	public Result function(String functionID) {
-		return notFound();
-	}
 
+
+	/*
+	 * Data (GET)
+	 */
 	public Result data(Long longJobID) {
 
 		if (session("sessionID") == null) 
@@ -142,57 +143,38 @@ public class Application extends Controller {
 
 
 		Job j = Ebean.find(Job.class, jobID);
+
 		if(j == null) {
 			MyLogger.warn("Request for data: non-existent job");
 			return notFound("Request for data: Server has no record of job (404 Not Found).");
-			
+
 		}
-		
-		//TODO: data dependence
+
+
 		UUID dataID = j.inputDataID;
 		if(dataID == null) {
 			MyLogger.warn("Request for data: no data in job");
 			return internalServerError("Request for data: No data is attached to job (500 Internal Server Error).");
 		}
-		
+
 		Data myData = Ebean.find(Data.class, dataID);
 		if(myData == null) {
 			MyLogger.warn("Request for data: data id in job does not exist");
 			return internalServerError("Request for data: Data id in job does not map to anything (500 Internal Server Error).");
 		}
-		
+
 		return ok(myData.getContent());
 	}
 
 
 
-	public Result job() {
-		
-		if (session("sessionID") == null) {
-			return unauthorized("No session.");
-		}
-		
-		Device d = Devices.getInstance().getDevice(session("sessionID"));
-		
-		if (!d.currentJob.equals(Device.NULL_UUID))  {
-			return forbidden("Already have incomplete job.");//TODO: cancel current job.
-		}
-		
-		Job j = JobScheduler.getInstance().getJob(d);
-		if (j == null) {
-			return status(204, "NO JOB");
-		}
-		
-		
-		d.registerJob(j.jobID);
-		String s = j.export();
-		MyLogger.log("Handing out job with ID: " + j.jobID);
-		return ok(s);
-	}
 
-	
+
+	/*
+	 * submit result (POST)
+	 */
 	public Result result(Long jobID) {
-		
+
 		if (session("sessionID") == null) 
 			return unauthorized("No session.");
 
@@ -200,47 +182,132 @@ public class Application extends Controller {
 
 		if (d.currentJob.getLeastSignificantBits() != jobID) 
 			return forbidden("Submission for incorrect job");
-			
-		
+
+		byte[] r;
 		String result = request().body().asText();
-		
+
 		if(result == null) {
-			return badRequest("No data found in result request");//TODO: this should fail the job.
+			r = request().body().asRaw().asBytes();
+			if(r == null) {
+				return badRequest("No data found in result request");//TODO: this should fail the job.
+			}
+		} else {
+			r = result.getBytes(StandardCharsets.UTF_8);
 		}
+
+
 		MyLogger.log("Recieved completed job, ID: " + d.currentJob);
-		
+
 		//Just pass the data straight to the Job scheduler.
-		JobScheduler.getInstance().submitJob(d, result);
-		
+		JobScheduler.getInstance().submitJob(d, r);
+
 		//Notify device
 		d.jobComplete();
 
-		
 		return ok();
-		
+
 	}
-	
-public Result getDexCode(String functionName) {
-		
+
+
+	/*
+	 * Get Android code as .dex (GET)
+	 */
+	public Result getDexCode(String functionName) {
+
 		byte[] b = FunctionManager.getInstance().getCodeDexDefinition(functionName);
 		if(b == null) {
 			MyLogger.log("Application.getDexCode, no file matching class name.");
 			return notFound("Class not found (404 - Not Found).");
 		}
-		
+
 		MyLogger.log("Sending .dex code file with name: " + functionName);
 		return ok(b);
 	}
-	
+
+
+	/*
+	 * New: get a list of computations
+	 */
+	public Result getFunctions() {
+		JSONObject result = new JSONObject();
+
+		try {
+
+			JSONObject p = new JSONObject();
+			p.put("id", "PrimeComputationCode");
+			p.put("name", "Prime checking");
+			p.put("description", "Work out if a given number is prime.");
+
+			//TODO: change this to be correct
+			JSONObject i = new JSONObject();
+			i.put("id", "EdgeDetect");
+			i.put("name", "Image manipulation");
+			i.put("description", "Do something to images.");
+
+			JSONArray a = new JSONArray();
+			a.put(p);
+			a.put(i);
+			result.put("computations", a);
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return internalServerError("Failed to prepare JSON for sending (500 - Internal Server Error).");
+		}
+		return ok(result.toString());
+	}
+
+
+
+	/*
+	 * Not implemented
+	 */
+	public Result subscribe(String funId) { 
+		/*
+		 * feature to be added
+		 * need to implement log-in features for dima's app
+		 */
+		return ok();
+	}
+
+	public Result function(String functionID) {
+		return notFound();
+	}
+
+
+	/*
+	 * Test targets
+	 */
 	public Result getClassCode(String functionName) {
-		
+
 		byte[] b = FunctionManager.getInstance().getCodeClassDefinition(functionName);
 		if(b == null) {
 			MyLogger.log("Application.getCode, no file matching class name.");
 			return notFound("Class not found (404 - Not Found).");
 		}
-		
+
 		MyLogger.log("Sending .class code file with name: " + functionName);
 		return ok(b);
+	}
+
+	public Result addComputation(String custName, long prime) {
+		ComputationManager cm = ComputationManager.getInstance();
+		CustomerComputation custComputation = new CustomerComputation(custName, "Prime(4) example for full test", "", "PrimeComputation", Long.toString(prime));
+		cm.runCustomerComputation(custComputation);
+		return ok();
+	}
+
+	public Result clear_db() {
+		//Check request is from localHost
+		if(!(request().remoteAddress().equals("127.0.0.1") || request().remoteAddress().equals("0:0:0:0:0:0:0:1"))) {
+			return forbidden("Your address is " + request().remoteAddress());
+		}
+
+		MyLogger.log("Clearing database");
+		Ebean.delete(Ebean.find(Computation.class).findList());
+		Ebean.delete(Ebean.find(CustomerComputation.class).findList());
+		Ebean.delete(Ebean.find(Job.class).findList());
+		ComputationManager.getInstance().rebuild_TEST();
+		JobScheduler.getInstance().rebuild_TEST();
+		return ok();
 	}
 }

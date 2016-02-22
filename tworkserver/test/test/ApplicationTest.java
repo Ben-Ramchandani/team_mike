@@ -10,8 +10,11 @@ import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
 import static play.test.Helpers.testServer;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
@@ -19,20 +22,28 @@ import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+
+import javax.imageio.ImageIO;
 
 import models.Computation;
 import models.CustomerComputation;
 import models.Data;
+import models.Device;
 import models.Job;
+import models.Device.TimeoutJob;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
+import play.Play;
+
 import twork.ComputationManager;
-import twork.Device;
-import twork.Device.TimeoutJob;
+import twork.Devices;
 import twork.JobScheduler;
 import twork.MyLogger;
 
@@ -40,13 +51,108 @@ import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import computations.ComputationCode;
+import computations.EdgeDetect;
 import computations.PrimeComputation;
 import computations.PrimeComputationCodeInternal;
 
 
 public class ApplicationTest {
-	
-	
+
+	@Test
+	public void web_test() {
+		running(testServer(9001, fakeApplication(inMemoryDatabase())), new Runnable() {
+			public void run() {
+				try {
+					MyLogger.enable = false;
+					MyLogger.log("Checking web connection");
+
+					String urlString = "http://localhost:9001/";
+
+					//Send GET /available
+					URL webURL = new URL(urlString);
+
+					HttpURLConnection con = (HttpURLConnection) webURL.openConnection();
+					con.connect();
+
+					//Check the response
+					assertEquals("Website gives 200 response code", 200, con.getResponseCode());
+				} catch (Exception e) {
+					System.out.println("Exceptio caught in web_test.");
+					e.printStackTrace();
+					throw new RuntimeException();
+				}
+			}
+		});
+	}
+
+	@Test
+	public void image_test() {
+		running(fakeApplication(inMemoryDatabase()), new Runnable() {
+			public void run() {
+				try {
+					MyLogger.enable = false;
+					MyLogger.log("Starting image_test");
+
+					Device d = new Device("1");
+					ComputationManager cm = ComputationManager.getInstance();
+					JobScheduler js = JobScheduler.getInstance();
+					assertEquals("No jobs in scheduler.", 0, js.getNumberOfJobs());
+
+
+					File f = new File("test/example_image.png");
+					byte[] rawImage = Files.readAllBytes(f.toPath());
+					File newPath = new File("test/tmp.png");
+
+					try {
+						Files.copy(f.toPath(), newPath.toPath(), StandardCopyOption.REPLACE_EXISTING);
+					} catch (IOException e) {
+						System.out.println("Failed to copy example image.");
+						e.printStackTrace();
+						throw new RuntimeException();
+					}
+
+					UUID dataID = Data.store(newPath);
+
+					//Make new computation
+					CustomerComputation custComputation = new CustomerComputation("Example Jones", "image test", "", "EdgeDetect", dataID.toString());
+
+					cm.runCustomerComputation(custComputation.customerComputationID);
+
+					assertEquals("One job in scheduler.", 1, js.getNumberOfJobs());
+
+					Job imageJob = js.getJob(d);
+					assertNotNull("Job is not null", imageJob);
+
+					//Run it
+					ComputationCode cc = new EdgeDetect();
+					//TODO: Data dependence
+					Data inData = Ebean.find(Data.class, imageJob.inputDataID);
+					assertNotNull("Image job has associated data", inData);
+
+
+					InputStream in = new ByteArrayInputStream(inData.getContent());
+					byte[] data = IOUtils.toByteArray(in);
+					assertTrue("Image does not change going through conversion", Arrays.equals(data, rawImage));
+
+
+					ByteArrayOutputStream out = new ByteArrayOutputStream();
+					in = new ByteArrayInputStream(inData.getContent());
+					cc.run(in, out);
+
+					ByteArrayInputStream res = new ByteArrayInputStream(out.toByteArray());
+					BufferedImage i = ImageIO.read(res);
+					assertNotNull("Data is still image after job code", i);
+
+
+				} catch (Exception e) {
+					System.out.println("Exception caught in image_test.");
+					e.printStackTrace();
+					throw new RuntimeException();
+				}
+			}
+		});
+	}
+
 	@Test
 	public void deletion_test() {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
@@ -66,32 +172,34 @@ public class ApplicationTest {
 			}
 		});
 	}
-	
+
 	@Test
 	public void customer_computation_order_test() {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
-				new CustomerComputation("Example James", "name", "desc", "function", "input");
+				new CustomerComputation("Example James", "firstName", "desc", "function", "input");
 				try {
 					Thread.sleep(1);
 				} catch (InterruptedException e) {}
-				new CustomerComputation("Example James", "name1", "desc", "function", "input");
-				CustomerComputation c = ComputationManager.getInstance().getComputationsByCustomerName("Example James").get(0);
+				new CustomerComputation("Example James", "secondName", "desc", "function", "input");
+				List<CustomerComputation> ccs = ComputationManager.getInstance().getComputationsByCustomerName("Example James");
+				assertEquals("There are two customerComputations under \"Example James\".", 2, ccs.size());
+				CustomerComputation c = ccs.get(0);
 				//Should have most recent first
-				assertEquals(c.computationName, "name");
+				assertEquals("Most recent CustomerComputation is returned first", "firstName", c.computationName);
 			}
 		});
 	}
 
 
-	
+
 	public void clear_db() {
 		Ebean.delete(Ebean.find(Computation.class).findList());
 		Ebean.delete(Ebean.find(CustomerComputation.class).findList());
 		Ebean.delete(Ebean.find(Job.class).findList());
 	}
 
-	
+
 	//Test disabled because it takes ages
 	/*
 	@Test
@@ -108,11 +216,11 @@ public class ApplicationTest {
 				assertEquals("Available gives 200 response code", 200, con.getResponseCode());
 				String cookie = con.getHeaderField("Set-Cookie");
 				assertNotNull("Available returns a cookie", cookie);
-				
+
 				//Sleep for a bit
 				Thread.sleep(1000);
-				
-				
+
+
 				//Send GET /job with cookie - expect NO JOB
 				URL jobURL = new URL(urlString + "job");
 				HttpURLConnection jobCon1 = (HttpURLConnection) jobURL.openConnection();
@@ -120,8 +228,8 @@ public class ApplicationTest {
 				jobCon1.connect();
 
 				assertEquals("GET /job with cookie after 1 second returns 555 - No Job", 555, jobCon1.getResponseCode());
-				
-				
+
+
 				//Sleep for a bit more
 				Thread.sleep(60000);
 				//Send GET /job with cookie - expect NO JOB
@@ -130,7 +238,7 @@ public class ApplicationTest {
 				jobCon2.connect();
 
 				assertEquals("GET /job with cookie after 1 minute returns 555 - No Job", 555, jobCon2.getResponseCode());
-				
+
 				} catch(Throwable t) {
 					t.printStackTrace();
 					assertTrue("Exception", false);
@@ -139,14 +247,88 @@ public class ApplicationTest {
 			}
 		});
 	}
-	*/
+	 */
 	
 	@Test
-	public void full_test() {
+	public void available_test() {
+		MyLogger.enable = false;
 		running(testServer(9001, fakeApplication(inMemoryDatabase())), new Runnable() {
 			public void run() {
 				try {
-					MyLogger.enable = false;
+					MyLogger.log("Starting available test.");
+
+					String urlString = "http://localhost:9001/";
+					
+					int n = Devices.getInstance().getNumberOfActiveDevices();
+
+					//Send POST /available with ID given
+					URL availableURL = new URL(urlString + "available");
+					HttpURLConnection con = (HttpURLConnection) availableURL.openConnection();
+					con.setRequestMethod("POST");
+					con.setRequestProperty("content-type", "text/plain");
+					con.setDoOutput(true);
+					OutputStream osw = con.getOutputStream();
+					osw.write("{phone-id: \"5\"}".getBytes(StandardCharsets.UTF_8));
+					osw.close();
+					
+					assertEquals("Available with a phone-id returns 200 - OK", 200, con.getResponseCode());
+					
+					//Send POST /available with same ID (no cookie)
+					con = (HttpURLConnection) availableURL.openConnection();
+					con.setRequestMethod("POST");
+					con.setRequestProperty("content-type", "text/plain");
+					con.setDoOutput(true);
+					osw = con.getOutputStream();
+					osw.write("{phone-id: \"5\"}".getBytes(StandardCharsets.UTF_8));
+					osw.close();
+					String cookie = con.getHeaderField("Set-Cookie");
+					
+					
+					assertEquals("Available with a phone-id returns 200 - OK", 200, con.getResponseCode());
+					assertEquals("Only one device has been created for two available requests with the same ID but no cookie",
+									n+1, Devices.getInstance().getNumberOfActiveDevices());
+					
+					//Send POST /available with same ID and cookie
+					con = (HttpURLConnection) availableURL.openConnection();
+					con.setRequestMethod("POST");
+					con.setRequestProperty("content-type", "text/plain");
+					con.setRequestProperty("Cookie", cookie);
+					con.setDoOutput(true);
+					osw = con.getOutputStream();
+					osw.write("{phone-id: \"5\"}".getBytes(StandardCharsets.UTF_8));
+					osw.close();
+					
+					assertEquals("Available with a phone-id and cookie returns 200 - OK", 200, con.getResponseCode());
+					assertEquals("Only one device has been created after available requests with the same ID and cookie",
+									n+1, Devices.getInstance().getNumberOfActiveDevices());
+					
+					//Send POST /available with only cookie
+					con = (HttpURLConnection) availableURL.openConnection();
+					con.setRequestMethod("POST");
+					con.setRequestProperty("Cookie", cookie);
+					con.connect();
+					
+					assertEquals("Available with a cookie returns 200 - OK", 200, con.getResponseCode());
+					assertEquals("Only one device has been created after available requests with just the cookie",
+									n+1, Devices.getInstance().getNumberOfActiveDevices());
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+					assertTrue("Exception", false);
+					return;
+				}
+			}
+		});
+	}
+	
+	
+	@Test
+	public void full_test() {
+		MyLogger.enable = false;
+		running(testServer(9001, fakeApplication(inMemoryDatabase())), new Runnable() {
+			public void run() {
+				try {
+
 					MyLogger.log("Starting full test.");
 
 					String urlString = "http://localhost:9001/";
@@ -185,7 +367,7 @@ public class ApplicationTest {
 					addCon.setRequestMethod("POST");
 					addCon.connect();
 					assertEquals("POST /test/add... returns 200 - OK", 200, addCon.getResponseCode());
-					
+
 
 
 					//Send GET /job with cookie - expect a job
@@ -203,49 +385,49 @@ public class ApplicationTest {
 					JsonNode jn = (new ObjectMapper()).readTree(str);
 
 					long jobID = jn.get("job-id").asLong();			
-					
+
 					String functionName = jn.get("function-class").asText();
 					assertNotNull("/job reply has funciton-class", functionName);
 
-					
+
 					//Send GET /code/:jobID
 					URL codeURL = new URL(urlString + "code/" + functionName);
 					HttpURLConnection codeCon = (HttpURLConnection) codeURL.openConnection();
 					codeCon.setRequestProperty("Cookie", cookie);
 					codeCon.connect();
-					
+
 					assertEquals("GET /code/:functionName returns 200 - OK", 200, codeCon.getResponseCode());
-					
+
 					/*
 					//Fetch and instantiate the class
 					URLClassLoader loader = new URLClassLoader(new URL[] {new URL(urlString + "code/")});
-					*/
-					
-					
-					
+					 */
+
+
+
 					TerribleURLClassLoader loader = new TerribleURLClassLoader(new URL(urlString + "test/code/"));
 					Class<?> codeClass = loader.loadClass(functionName);
 					Object o = codeClass.newInstance();
 					Method codeToRun = codeClass.getDeclaredMethod("run", new Class<?>[] {InputStream.class, OutputStream.class});
-					
+
 					//Get data
 					URL dataURL = new URL(urlString + "data/" + Long.toString(jobID));
 					HttpURLConnection dataCon = (HttpURLConnection) dataURL.openConnection();
 					dataCon.setRequestProperty("Cookie", cookie);
 					dataCon.connect();
-					
+
 					assertEquals("GET /data/:jobID returns 200 - OK", 200, dataCon.getResponseCode());
 					InputStream jobInput = dataCon.getInputStream();
 					ByteArrayOutputStream jobOutput = new ByteArrayOutputStream();
-					
+
 					//Run the job
 					codeToRun.invoke(o, jobInput, jobOutput);
-					
+
 					//Check output
 					String outStr = new String(jobOutput.toByteArray(), StandardCharsets.UTF_8);
 					assertEquals("Output of Prime(4) job is \"2\"", "2", outStr);
-					
-					
+
+
 					//Send result back
 					URL resultURL = new URL(urlString + "result/" + Long.toString(jobID));
 					HttpURLConnection resultCon = (HttpURLConnection) resultURL.openConnection();
@@ -253,19 +435,19 @@ public class ApplicationTest {
 					resultCon.setRequestMethod("POST");
 					resultCon.setRequestProperty("content-type", "text/plain");
 					resultCon.setDoOutput(true);
-					
+
 					OutputStream osw = resultCon.getOutputStream();
 					osw.write(outStr.getBytes(StandardCharsets.UTF_8));
 					osw.close();
-					
+
 					assertEquals("POST /result/:jobID returns 200 - OK", 200, resultCon.getResponseCode());
-					
-					
+
+
 					ComputationManager cm = ComputationManager.getInstance();
 					List<CustomerComputation> comps = cm.getComputationsByCustomerName("John_Smith");
 					assertEquals("One customer computation for John Smith", 1, comps.size());
 					assertEquals("Correct output from full test", comps.get(0).output, "Found factor for 4: 2.");
-					
+
 					MyLogger.log("End full test.");
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -283,6 +465,7 @@ public class ApplicationTest {
 			public void run() {
 				//Set up a job as normal.
 				MyLogger.enable = false;
+				MyLogger.log("Starting timeout_test");
 				Device d = new Device("1");
 				ComputationManager cm = ComputationManager.getInstance();
 				JobScheduler js = JobScheduler.getInstance();
@@ -345,6 +528,38 @@ public class ApplicationTest {
 
 
 	@Test
+	public void function_list_test() {
+		MyLogger.enable = false;
+		running(testServer(9001, fakeApplication(inMemoryDatabase())), new Runnable() {
+			public void run() {
+				try {
+					MyLogger.log("Starting function list test.");
+					String urlString = "http://localhost:9001/";
+					
+					String expectedString = "{\"computations\":[{\"name\":\"Prime checking\",\"description\":\"Work out if a given number is prime.\",\"id\":\"PrimeComputationCode\"}," + 
+								"{\"name\":\"Image manipulation\",\"description\":\"Do something to images.\",\"id\":\"EdgeDetect\"}]}";
+
+					//Send GET /computations
+					URL computationsURL = new URL(urlString + "computations");
+					HttpURLConnection con = (HttpURLConnection) computationsURL.openConnection();
+					con.connect();
+
+					//Check the response
+					assertEquals("Available gives 200 response code", 200, con.getResponseCode());
+					
+					assertEquals("Function list is correct", expectedString, IOUtils.toString(con.getInputStream(), StandardCharsets.UTF_8));
+					
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+					assertTrue("Exception", false);
+					return;
+				}
+			}
+		});
+	}
+
+	@Test
 	public void CM_Test() {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			@SuppressWarnings("deprecation")
@@ -378,12 +593,11 @@ public class ApplicationTest {
 			ComputationCode cc = new PrimeComputationCodeInternal();
 			//TODO: Data dependence
 			Data inData = Ebean.find(Data.class, primeJob.inputDataID);
-			String jobInput = inData.getContent();
+			String jobInput = inData.getContentAsString();
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			InputStream in = new ByteArrayInputStream(jobInput.getBytes(StandardCharsets.UTF_8));
 			cc.run(in, out);
-			String outString = new String(out.toByteArray(), StandardCharsets.UTF_8);
-			js.submitJob(d, outString);
+			js.submitJob(d, out.toByteArray());
 		}
 		result = cm.getComputationsByCustomerName(name).get(0).output;
 
@@ -396,6 +610,7 @@ public class ApplicationTest {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
 				MyLogger.enable = false;
+				MyLogger.log("Prime_CorrectnessTest");
 				Ebean.delete(Ebean.find(CustomerComputation.class).findList());
 				//5 is prime
 				String output = genericPrimeTest(5, "Ben");
@@ -427,14 +642,8 @@ public class ApplicationTest {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
 				MyLogger.enable = false;
-				
-				
-				
-				clear_db();
-				
-				
-				
-				
+				MyLogger.log("Starting Prime_DetailedTest");
+
 				Device d = new Device("1");
 				ComputationManager cm = ComputationManager.getInstance();
 				cm.rebuild_TEST();
@@ -460,7 +669,7 @@ public class ApplicationTest {
 				Data inData = Ebean.find(Data.class, primeJob.inputDataID);
 				assertNotNull("Prime job has associated data", inData);
 
-				String jobInput = inData.getContent();
+				String jobInput = inData.getContentAsString();
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				InputStream in = new ByteArrayInputStream(jobInput.getBytes(StandardCharsets.UTF_8));
 
@@ -472,7 +681,7 @@ public class ApplicationTest {
 
 
 				//Submit it
-				js.submitJob(d, outString);
+				js.submitJob(d, out.toByteArray());
 				assertEquals("JS has removed completed job", 0, js.getNumberOfActiveJobs());
 
 				//Get result				
@@ -492,6 +701,7 @@ public class ApplicationTest {
 	public void JS_FullTest() {
 		running(fakeApplication(inMemoryDatabase()), new Runnable() {
 			public void run() {
+
 				MyLogger.enable = false;
 				MyLogger.log("Starting JS_FullTest");
 				JobScheduler js = JobScheduler.getInstance();
@@ -581,7 +791,7 @@ public class ApplicationTest {
 				assertTrue("JS Handling multiple jobs", l.jobID.equals(j.jobID) || l.jobID.equals(o.jobID));
 				assertTrue("JS Handling multiple jobs", m.jobID.equals(j.jobID) || m.jobID.equals(o.jobID));
 				assertFalse("JS Handling multiple jobs", l.jobID.equals(m.jobID));
-				js.submitJob(d, "result");
+				js.submitJob(d, "result".getBytes(StandardCharsets.UTF_8));
 				l = Ebean.find(Job.class, j.jobID);
 				m = Ebean.find(Job.class, o.jobID);
 				assertTrue("JS Adding data to jobs", m.outputDataID != Device.NULL_UUID);

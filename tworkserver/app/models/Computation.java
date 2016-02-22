@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,35 +17,39 @@ import com.avaje.ebean.Model;
 @Table(name = "all_computation")
 public class Computation extends Model {
 
-	public static final int STATE_FAILED = 1;
-	public static final int STATE_RUNNING = 2;
-	public static final int STATE_COMPLETED = 3;
-
 	@Id
 	public UUID computationID;
+	public int getJobsLeft() {
+		return jobsLeft;
+	}
+
+	public void setJobsLeft(int jobsLeft) {
+		this.jobsLeft = jobsLeft;
+	}
+
+	public String getInput() {
+		return input;
+	}
+
+	public void setInput(String input) {
+		this.input = input;
+	}
+
 	public String functionName;
 	//Purely descriptive name
 	public String computationName;
 	
 
 	
-	public boolean failed;
-	public boolean running;
+	public Boolean failed;
+	public Boolean running;
 	//Has the result of this computation been collected?
-	public boolean completed;
-	//A single field should suffice here?
-	public int state;
-
+	public Boolean completed;
+	
 	//UUID of the customer computation that spawned this (can be NULL_UUID).
 	public UUID customerComputationID;
 	
-	//public boolean failed;
-	//public boolean running;
-	//Has the result of this computation been collected?
-	//public boolean completed;
-
-	
-	public int jobsLeft;
+	public Integer jobsLeft;
 	
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy="parentComputation")
 	public List<Job> jobs;
@@ -65,16 +70,8 @@ public class Computation extends Model {
 	public Computation(String function, String name) {
 		functionName = function;
 		computationName = name;
+		jobs = new ArrayList<Job>();
 	}
-	
-	
-	//I'll have a separate class with the parrallelize stuff in, it's too different between computations.
-
-	
-	public void getinput() {
-		//here I get the input from wherever the user adds it too (late feature)
-	}
-	
-	
+		
 	public Long logoImageID;
 }

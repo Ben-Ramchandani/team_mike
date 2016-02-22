@@ -7,17 +7,7 @@ import java.util.UUID;
 
 import models.CustomerComputation;
 
-public class ComputationNotifier {
-
-	public static ComputationNotifier instance;
-	
-	
-	public static ComputationNotifier getInstance() {
-		if(instance == null) {
-			instance = new ComputationNotifier();
-		}
-		return instance;
-	}
+public abstract class ComputationNotifier {
 	
 	public static Map<UUID, CustomerComputation> computations = Collections.synchronizedMap(new HashMap<UUID, CustomerComputation>());
 	public static Map<UUID, Boolean> pollingFlags = Collections.synchronizedMap(new HashMap<UUID, Boolean>());
@@ -26,21 +16,15 @@ public class ComputationNotifier {
 		if (c.status == CustomerComputation.COMPLETE) 
 			return c.output;
 		
-		computations.put(c.CustomerComputationID,c);
-		pollingFlags.put(c.CustomerComputationID,true);
-		/* This does not work
-		try {
-			c.wait();
-		} catch (InterruptedException e) {
-			System.err.println("failed to sleep controller thread");
-			return null;
-		}*/
+		computations.put(c.customerComputationID,c);
+		pollingFlags.put(c.customerComputationID,true);
+	
 		int i = 0;
-		while (pollingFlags.get(c.CustomerComputationID) == true){
+		while (pollingFlags.get(c.customerComputationID) == true){
 			i++;
 		}
 		
-		c = ComputationManager.getInstance().getCustomerComputation(c.CustomerComputationID);
+		c = ComputationManager.getInstance().getCustomerComputation(c.customerComputationID);
         return c.output;
 	}
 	

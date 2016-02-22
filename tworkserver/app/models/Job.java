@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import javax.persistence.*;
 
-import twork.Device;
 import twork.MyLogger;
 
 import com.avaje.ebean.Model;
@@ -68,5 +67,4 @@ public class Job extends Model {
     	return result;
     }
 	
-	 public static Finder<UUID, Job> find = new Finder<UUID,Job>(Job.class);    
 }

@@ -161,15 +161,23 @@
         <div class="row" id="submitform">
           <span id="primeinput">
 
-            <form>
-              <input name="comp" type="radio" id="radio1" value="1">
-                <label for="radio1" class="btn btn-default btn-lg" style="margin: 10px">Number1</label>
+            @helper.form(action = routes.Web.mapFile(), 'enctype -> "multipart/form-data") {
 
-              <input name="comp" type="radio" id="radio2" value="2">
-                <label for="radio2" class="btn btn-default btn-lg">Number2</label>
+                <input type="file" name="picture"  class ="fileinput" id="fileinput">
+                <label for="fileinput" class="btn btn-default btn-lg" id="fileinputoverlay">Browse</label>
+                <br>
+                <p>
+                    <input id="filesubmit" type="submit" multiple>
+                      <label for="filesubmit" class="btn btn-default btn-lg" style="margin: 10px">Submit</label>
+                </p>
 
-            </form>
+               <input name="comp" type="radio" id="radio1" value="1">
+                 <label for="radio1" class="btn btn-default btn-lg" style="margin: 10px">Number1</label>
 
+               <input name="comp" type="radio" id="radio2" value="2">
+                 <label for="radio2" class="btn btn-default btn-lg">Number2</label>
+
+            }
           </span>
         </div>
 

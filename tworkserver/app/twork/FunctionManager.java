@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import computations.BasicComputationGenerator;
+import computations.MapComputation;
 import computations.PrimeComputation;
 
 public class FunctionManager {
@@ -19,6 +20,7 @@ public class FunctionManager {
 		//TODO: dynamically load these
 		computationCodeNames = new ArrayList<String>();
 		computationCodeNames.add("PrimeComputationCode");
+		computationCodeNames.add("EdgeDetect");
 		computationCodeNames.add("ComputationCode");
 		//TODO:remove
 		computationCodeNames.add("tworkservertest");
@@ -88,6 +90,9 @@ public class FunctionManager {
 
 	//Placeholder
 	public BasicComputationGenerator getBasicComputationGenerator(String name) {
+		if (name == "EdgeDetect") {
+			return new MapComputation(name);
+		}
 		return new PrimeComputation();
 	}
 }

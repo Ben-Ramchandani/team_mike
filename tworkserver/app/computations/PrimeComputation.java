@@ -1,14 +1,12 @@
 package computations;
 
-import java.io.IOException;
 import java.util.Scanner;
 import java.util.UUID;
 
 import models.Computation;
 import models.Data;
+import models.Device;
 import models.Job;
-import twork.Device;
-import twork.Jobs;
 import twork.MyLogger;
 
 import com.avaje.ebean.Ebean;
@@ -34,7 +32,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 			throw new RuntimeException("PrimeComputation: generation input invalid, expected \"long\"");
 		}
 
-		//TODO: this constructor
+		
 		Computation c = new Computation(functionName, "Prime computation");
 
 
@@ -52,18 +50,10 @@ public class PrimeComputation implements BasicComputationGenerator {
 			long stopAt = prime - 1;
 
 			while((currentEnd) <= stopAt) {
-
 				String jobInput = primeString + " " + Long.toString(currentStart) + " " + Long.toString(currentEnd);
-				UUID dataID = UUID.randomUUID();
+				
+				UUID dataID = Data.storeString(jobInput);
 
-				try {
-					Data d = Data.store(jobInput, dataID, c.computationID);
-					d.save();
-				} catch (IOException e) {
-					System.err.println("Data store failed with IOException");
-					e.printStackTrace();
-					throw new RuntimeException("generateComputation failed");
-				}
 				Job j = new Job(c, "Prime job", dataID, functionName);
 				j.save();
 				c.jobs.add(j);
@@ -73,8 +63,8 @@ public class PrimeComputation implements BasicComputationGenerator {
 			}
 
 
-			c.jobsLeft = c.jobs.size();
-			c.input = input;
+			c.setJobsLeft(c.jobs.size());
+			c.setInput(input);
 			c.update();
 
 
@@ -82,6 +72,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 		} finally {
 			Ebean.endTransaction();
 		}
+		c = Ebean.find(Computation.class, c.computationID);
 		// ### End transaction ###
 		return c.computationID;
 	}
@@ -94,7 +85,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 		}
 
 		try {
-			Scanner s = new Scanner(c.input);
+			Scanner s = new Scanner(c.getInput());
 			prime = s.nextLong();
 			s.close();
 		} catch(Exception e) {
@@ -109,11 +100,10 @@ public class PrimeComputation implements BasicComputationGenerator {
 			UUID dataID = j.outputDataID;
 			
 			if(!dataID.equals(Device.NULL_UUID)) {
-				//TODO: dependent on the data class.
 				Data d = Ebean.find(Data.class, dataID);
 				
 				if(!(d == null)) {
-					Scanner scan = new Scanner(d.data);
+					Scanner scan = new Scanner(d.getContentAsString());
 					
 					try {
 						factor = scan.nextLong();
@@ -126,7 +116,11 @@ public class PrimeComputation implements BasicComputationGenerator {
 					} finally {
 						scan.close();
 					}
+				} else {
+					MyLogger.warn("PrimeComputation: Output data for job does not exist (not in database).");
 				}
+			} else {
+				MyLogger.warn("PrimeComputation: Output data for job does not exist (NULL_UUID).");
 			}
 		}
 		return "No factor found for " + Long.toString(prime) + ".";

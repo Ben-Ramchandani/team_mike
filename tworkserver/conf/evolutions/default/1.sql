@@ -10,7 +10,6 @@ create table all_computation (
   failed                    boolean,
   running                   boolean,
   completed                 boolean,
-  state                     integer,
   customer_computation_id   varchar(40),
   jobs_left                 integer,
   input                     varchar(255),
@@ -35,9 +34,16 @@ create table all_completed_computation (
 
 create table all_data (
   data_id                   varchar(40) not null,
-  type                      varchar(255),
-  data                      varchar(255),
+  is_file                   boolean,
+  data                      varbinary(255),
   constraint pk_all_data primary key (data_id))
+;
+
+create table all_device (
+  device_id                 bigint not null,
+  jobs_done                 integer,
+  jobs_failed               integer,
+  constraint pk_all_device primary key (device_id))
 ;
 
 create table all_jobs (
@@ -51,6 +57,8 @@ create table all_jobs (
   failed                    boolean,
   constraint pk_all_jobs primary key (job_id))
 ;
+
+create sequence all_device_seq;
 
 alter table all_jobs add constraint fk_all_jobs_parentComputation_1 foreign key (parent_computation_computation_id) references all_computation (computation_id) on delete restrict on update restrict;
 create index ix_all_jobs_parentComputation_1 on all_jobs (parent_computation_computation_id);
@@ -67,7 +75,11 @@ drop table if exists all_completed_computation;
 
 drop table if exists all_data;
 
+drop table if exists all_device;
+
 drop table if exists all_jobs;
 
 SET REFERENTIAL_INTEGRITY TRUE;
+
+drop sequence if exists all_device_seq;
 
