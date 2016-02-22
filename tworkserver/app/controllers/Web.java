@@ -42,6 +42,22 @@ public class Web extends Controller{
 		play.mvc.Http.MultipartFormData fileBody = body.asMultipartFormData();
 
 		String function = "EdgeDetect";
+		
+		
+		//Handling the radio button on the form
+		if (fileBody.asFormUrlEncoded().get("comp") == null) 
+			return badRequest();
+		switch (Integer.parseInt(fileBody.asFormUrlEncoded().get("comp")[0])) {
+		case 1: 
+			function = "GrayscaleConvertCode";
+			break;
+		case 2:
+			function = "SepiaConvertCode";
+			break;
+		default:
+			function = "EdgeDetect";
+			break;
+		}
 
 		UUID computationID = Device.NULL_UUID;
 
@@ -70,21 +86,6 @@ public class Web extends Controller{
 		if(dataID == null) {
 			return badRequest();
 		}
-
-		//Why is this stored as well?
-		/*
-		UUID dataID = UUID.randomUUID();
-
-		Data d = null;
-		try {
-			d = Data.storeString(sb.toString(),dataID,computationID);
-		} catch (IOException e) {
-			flash("error", "Cannot store files");
-			e.printStackTrace();
-		}
-
-		String input = d.getStringContent();
-		 */
 
 		CustomerComputation computation = new CustomerComputation(request().remoteAddress(),"Image Processing Test","test",function,dataID.toString());
 
