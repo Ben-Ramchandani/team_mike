@@ -76,7 +76,7 @@ GET /computations					controllers.Application.getFunctions()
 # These are for later
 
 # Computation subscription
-GET     /computation/:id            controllers.Application.subscribe(id: Long)
+GET     /computation/:funId            controllers.Application.subscribe(funId: String)
 
 
 
