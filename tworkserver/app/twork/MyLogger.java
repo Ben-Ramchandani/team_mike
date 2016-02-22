@@ -27,6 +27,6 @@ public class MyLogger {
 	}
 	
 	public static void critical(String s) {
-		alwaysLog("[CRITICAL] - The database may be in an invalid state - " + s);
+		alwaysLog("[CRITICAL] - The system may be in an invalid state - " + s);
 	}
 }
