@@ -22,6 +22,10 @@ public class Devices {
 		}
 		return instance;
 	}
+	
+	public int getNumberOfActiveDevices() {
+		return devices.size();
+	}
 
 	public Device getDevice(String sessionID) {
 
@@ -37,6 +41,7 @@ public class Devices {
 			//Look in the database
 			d = Ebean.find(Device.class, Long.parseLong(sessionID));
 			if(d != null) {
+				d.onReload();
 				devices.put(sessionID, d);
 			}
 		}

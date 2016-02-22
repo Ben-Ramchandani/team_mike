@@ -1,18 +1,18 @@
 package controllers;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
 import java.util.UUID;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import models.Computation;
 import models.CustomerComputation;
 import models.Data;
 import models.Device;
 import models.Job;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import play.mvc.Controller;
 import play.mvc.Result;
 import twork.ComputationManager;
@@ -36,17 +36,41 @@ public class Application extends Controller {
 		 * starts a session
 		 */
 
-		//We could change this to give the device the full UUID and have them send it to us each time,
-		//rather than only storing it server side.
+
+		long phoneID;
+		String body = request().body().asText();
+		//Attempt to parse the phone ID from the body
+		if(body == null) {
+			MyLogger.warn("No body found in /available request");
+			if (session("sessionID") == null) {
+				MyLogger.warn("No phoneID found, will generate one at random.");
+				phoneID = UUID.randomUUID().getLeastSignificantBits();
+			} else {
+				phoneID = Long.parseLong(session("sessionID"));
+			}
+		} else {
+			try {
+				JSONObject json = new JSONObject(body);
+				phoneID = Long.parseLong(json.getString("phone-id"));
+			} catch (Exception e) {
+				MyLogger.log("Failed to parse JSON from /available request.");
+				e.printStackTrace();
+				return badRequest("Failed to parse JSON (400 - Bad Request).");
+			}
+		}
+
+		if(session("sessionID") != null) {
+			//Check session and parsed ID agree
+			if( !( Long.toString(phoneID).equals(session("sessionID")) ) ) {
+				MyLogger.critical("Session ID disagrees with claimed phone ID.");
+				return badRequest("Session ID disagrees with phone ID (400 - Bad Request).");
+			}
+		} else {
+			session("sessionID", Long.toString(phoneID));
+			MyLogger.log("Creating new session with ID: " + session("sessionID"));
+		}
 
 		Device d;
-
-		if (session("sessionID") == null) {
-			//TODO: Should get the actual ID from the JSON
-			long phoneID = UUID.randomUUID().getMostSignificantBits();
-			session("sessionID", Long.toString(phoneID));
-			MyLogger.log("Creating new session");
-		}
 
 
 		d = Devices.getInstance().getDevice(session("sessionID"));
@@ -126,7 +150,7 @@ public class Application extends Controller {
 
 		}
 
-		//TODO: data dependence
+
 		UUID dataID = j.inputDataID;
 		if(dataID == null) {
 			MyLogger.warn("Request for data: no data in job");
@@ -206,20 +230,20 @@ public class Application extends Controller {
 	 */
 	public Result getFunctions() {
 		JSONObject result = new JSONObject();
-		
+
 		try {
-			
+
 			JSONObject p = new JSONObject();
 			p.put("id", "PrimeComputationCode");
 			p.put("name", "Prime checking");
 			p.put("description", "Work out if a given number is prime.");
-			
+
 			//TODO: change this to be correct
 			JSONObject i = new JSONObject();
 			i.put("id", "EdgeDetect");
 			i.put("name", "Image manipulation");
 			i.put("description", "Do something to images.");
-			
+
 			JSONArray a = new JSONArray();
 			a.put(p);
 			a.put(i);

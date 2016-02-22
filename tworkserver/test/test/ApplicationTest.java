@@ -43,6 +43,7 @@ import org.junit.Test;
 import play.Play;
 
 import twork.ComputationManager;
+import twork.Devices;
 import twork.JobScheduler;
 import twork.MyLogger;
 
@@ -247,7 +248,80 @@ public class ApplicationTest {
 		});
 	}
 	 */
+	
+	@Test
+	public void available_test() {
+		MyLogger.enable = false;
+		running(testServer(9001, fakeApplication(inMemoryDatabase())), new Runnable() {
+			public void run() {
+				try {
+					MyLogger.log("Starting available test.");
 
+					String urlString = "http://localhost:9001/";
+					
+					int n = Devices.getInstance().getNumberOfActiveDevices();
+
+					//Send POST /available with ID given
+					URL availableURL = new URL(urlString + "available");
+					HttpURLConnection con = (HttpURLConnection) availableURL.openConnection();
+					con.setRequestMethod("POST");
+					con.setRequestProperty("content-type", "text/plain");
+					con.setDoOutput(true);
+					OutputStream osw = con.getOutputStream();
+					osw.write("{phone-id: \"5\"}".getBytes(StandardCharsets.UTF_8));
+					osw.close();
+					
+					assertEquals("Available with a phone-id returns 200 - OK", 200, con.getResponseCode());
+					
+					//Send POST /available with same ID (no cookie)
+					con = (HttpURLConnection) availableURL.openConnection();
+					con.setRequestMethod("POST");
+					con.setRequestProperty("content-type", "text/plain");
+					con.setDoOutput(true);
+					osw = con.getOutputStream();
+					osw.write("{phone-id: \"5\"}".getBytes(StandardCharsets.UTF_8));
+					osw.close();
+					String cookie = con.getHeaderField("Set-Cookie");
+					
+					
+					assertEquals("Available with a phone-id returns 200 - OK", 200, con.getResponseCode());
+					assertEquals("Only one device has been created for two available requests with the same ID but no cookie",
+									n+1, Devices.getInstance().getNumberOfActiveDevices());
+					
+					//Send POST /available with same ID and cookie
+					con = (HttpURLConnection) availableURL.openConnection();
+					con.setRequestMethod("POST");
+					con.setRequestProperty("content-type", "text/plain");
+					con.setRequestProperty("Cookie", cookie);
+					con.setDoOutput(true);
+					osw = con.getOutputStream();
+					osw.write("{phone-id: \"5\"}".getBytes(StandardCharsets.UTF_8));
+					osw.close();
+					
+					assertEquals("Available with a phone-id and cookie returns 200 - OK", 200, con.getResponseCode());
+					assertEquals("Only one device has been created after available requests with the same ID and cookie",
+									n+1, Devices.getInstance().getNumberOfActiveDevices());
+					
+					//Send POST /available with only cookie
+					con = (HttpURLConnection) availableURL.openConnection();
+					con.setRequestMethod("POST");
+					con.setRequestProperty("Cookie", cookie);
+					con.connect();
+					
+					assertEquals("Available with a cookie returns 200 - OK", 200, con.getResponseCode());
+					assertEquals("Only one device has been created after available requests with just the cookie",
+									n+1, Devices.getInstance().getNumberOfActiveDevices());
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+					assertTrue("Exception", false);
+					return;
+				}
+			}
+		});
+	}
+	
+	
 	@Test
 	public void full_test() {
 		MyLogger.enable = false;
