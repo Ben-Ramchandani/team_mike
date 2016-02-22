@@ -24,15 +24,13 @@ public class Display extends Controller{
 	}
 
 	public WebSocket<String> socket(String computationID) {
-		System.out.printf("Entered socket with computationId: %s\n",computationID);
 		return new WebSocket<String>(){
 
 		
 			@Override
 			public void onReady(WebSocket.In<String> in, WebSocket.Out<String> out) {
-				System.out.printf("Entered onReady with computationId: %s\n",computationID);
-				Thread t = new Thread(new ImageWriter(out));
-				t.start();
+				
+				ImageFactory.newInstance(computationID, out);
 				
 				in.onClose(new Callback0(){
 					public void invoke() {
