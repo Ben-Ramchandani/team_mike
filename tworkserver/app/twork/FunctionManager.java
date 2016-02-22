@@ -90,7 +90,7 @@ public class FunctionManager {
 
 	//Placeholder
 	public BasicComputationGenerator getBasicComputationGenerator(String name) {
-		if (name == "EdgeDetect") {
+		if (name.equals("EdgeDetect") || name.equals("GrayscaleConvertCode") || name.equals("SepiaConvertCode")) {
 			return new MapComputation(name);
 		}
 		return new PrimeComputation();
