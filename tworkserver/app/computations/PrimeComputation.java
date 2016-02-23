@@ -17,7 +17,12 @@ public class PrimeComputation implements BasicComputationGenerator {
 
 	private final String functionName = "PrimeComputationCode";
 
-
+	
+	/*
+	 * Expect input of the form
+	 * "<prime>"
+	 * Where <prime> is a long.
+	 */
 	@Override
 	public UUID generateComputation(String input) {
 		long prime;
@@ -50,6 +55,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 			long stopAt = prime - 1;
 
 			while((currentEnd) <= stopAt) {
+				//Jobs have input "<prime> <start> <stop>" (all longs, space separated).
 				String jobInput = primeString + " " + Long.toString(currentStart) + " " + Long.toString(currentEnd);
 				
 				UUID dataID = Data.storeString(jobInput);
@@ -84,6 +90,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 			return "Error: computation not found";
 		}
 
+		//Recover the prime from the original input
 		try {
 			Scanner s = new Scanner(c.getInput());
 			prime = s.nextLong();
@@ -94,7 +101,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 		}
 
 
-
+		//Check through all the jobs to see if any of them have a factor
 		long factor;
 		for(Job j : c.jobs) {
 			UUID dataID = j.outputDataID;
@@ -107,6 +114,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 					
 					try {
 						factor = scan.nextLong();
+						//0 means no factor was found
 						if(factor != 0) {
 							return "Found factor for " + Long.toString(prime) + ": " + Long.toString(factor) + ".";
 						}
