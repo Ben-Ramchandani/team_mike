@@ -25,7 +25,7 @@ public class Device extends Model {
 	public static final int WAITING_TIME = 300000;
 	
 	@Id
-	public long deviceID;
+	public String deviceID;
 	
 	public int jobsDone;
 	public int jobsFailed;
@@ -50,11 +50,12 @@ public class Device extends Model {
 	public Device(String phoneID) {
 		//Tests pass in "1" if they are not concerned with the workings of this class.
 		if(phoneID == "1") {
-			phoneID = Long.toString(UUID.randomUUID().getLeastSignificantBits());
+			MyLogger.warn("phoneID is 1, generating new ID at random");
+			phoneID = UUID.randomUUID().toString();
 		}
 		
 		
-		deviceID = Long.parseLong(phoneID);
+		deviceID = phoneID;
 		currentJob = NULL_UUID;
 		this.save();
 	}
@@ -91,7 +92,7 @@ public class Device extends Model {
 	}
 
 	public String getSessionID() {
-		return Long.toString(deviceID);
+		return deviceID;
 	}
 	
 	public synchronized void jobComplete() {

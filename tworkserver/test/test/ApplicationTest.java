@@ -34,13 +34,11 @@ import models.Computation;
 import models.CustomerComputation;
 import models.Data;
 import models.Device;
-import models.Job;
 import models.Device.TimeoutJob;
+import models.Job;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-
-import play.Play;
 
 import twork.ComputationManager;
 import twork.Devices;
@@ -60,6 +58,7 @@ public class ApplicationTest {
 
 	@Test
 	public void web_test() {
+		
 		running(testServer(9001, fakeApplication(inMemoryDatabase())), new Runnable() {
 			public void run() {
 				try {

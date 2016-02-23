@@ -39,7 +39,7 @@ public class Devices {
 		//If the device isn't loaded
 		if(d == null) {
 			//Look in the database
-			d = Ebean.find(Device.class, Long.parseLong(sessionID));
+			d = Ebean.find(Device.class, sessionID);
 			if(d != null) {
 				d.onReload();
 				devices.put(sessionID, d);
