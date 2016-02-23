@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.UUID;
 
 import javax.persistence.Entity;
@@ -76,7 +77,7 @@ public class Data extends Model{
 			d.isFile = false;
 		} else {
 			try {
-				MyLogger.log("New file Location (due to immediate overflow): " + new String(d.data, StandardCharsets.UTF_8));
+				MyLogger.log("New file Location (due to immediate overflow)");
 				Path dest = Paths.get("data/" + d.dataID.toString());
 				Files.createDirectories(dest.getParent());
 				Files.write(dest, data);

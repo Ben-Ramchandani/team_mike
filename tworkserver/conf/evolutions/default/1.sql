@@ -27,7 +27,7 @@ create table all_completed_computation (
   customer_name             varchar(255),
   time_stamp                bigint,
   total_jobs                integer,
-  input                     varchar(255),
+  input                     varchar(1024),
   output                    varchar(255),
   constraint pk_all_completed_computation primary key (customer_computation_id))
 ;

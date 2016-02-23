@@ -87,7 +87,7 @@ public class Web extends Controller{
 			return badRequest();
 		}
 
-		CustomerComputation computation = new CustomerComputation(request().remoteAddress(),"Image Processing Test","test",function,dataID.toString());
+		CustomerComputation computation = new CustomerComputation(request().remoteAddress(),"Image Processing Test","test",function,sb.toString());
 
 		ComputationManager.getInstance().runCustomerComputation(computation);
 
@@ -107,12 +107,15 @@ public class Web extends Controller{
 
 	public Result retrieve(String dataID) {
 
+		if (dataID.endsWith(".png"))
+			dataID = dataID.replace(".png","");
+		
 		Data d = Ebean.find(Data.class,UUID.fromString(dataID));
 
 		if (d == null) {
 			return badRequest();
 		}
-
+		
 		return ok(d.getContent());
 	}
 

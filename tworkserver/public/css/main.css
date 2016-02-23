@@ -47,3 +47,7 @@ input[type=radio]:checked + label{
   margin-top: 20px;
   margin-bottom: 10px;
 }
+
+.instantimage{
+  width: 50%;
+}

@@ -3,6 +3,7 @@ package models;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -58,6 +59,7 @@ public class CustomerComputation extends Model implements Comparable<CustomerCom
 
 	public int totalJobs;
 
+	@Column(length=1024)
 	public String input;
 	
 	public String output;

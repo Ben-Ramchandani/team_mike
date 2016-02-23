@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 import twork.ComputationManager;
@@ -173,6 +174,7 @@ public class Application extends Controller {
 	/*
 	 * submit result (POST)
 	 */
+	@BodyParser.Of(value=BodyParser.Raw.class, maxLength=100*1024*1024)
 	public Result result(Long jobID) {
 
 		if (session("sessionID") == null) 
@@ -184,11 +186,15 @@ public class Application extends Controller {
 			return forbidden("Submission for incorrect job");
 
 		byte[] r;
+		
+		MyLogger.log("Received result. Length: " + request().getHeader(CONTENT_LENGTH) + ", type: " + request().getHeader(CONTENT_TYPE));
 		String result = request().body().asText();
 
 		if(result == null) {
-			r = request().body().asRaw().asBytes();
+
+			r = request().body().asRaw().asBytes(100*1024*1024);
 			if(r == null) {
+				MyLogger.alwaysLog("No data in result request.");
 				return badRequest("No data found in result request");//TODO: this should fail the job.
 			}
 		} else {
@@ -199,6 +205,7 @@ public class Application extends Controller {
 		MyLogger.log("Recieved completed job, ID: " + d.currentJob);
 
 		//Just pass the data straight to the Job scheduler.
+		
 		JobScheduler.getInstance().submitJob(d, r);
 
 		//Notify device

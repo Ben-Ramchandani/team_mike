@@ -2,8 +2,10 @@ package sitehelper;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import play.mvc.WebSocket;
+import twork.MyLogger;
 
 public abstract class ImageFactory {
 
@@ -16,10 +18,13 @@ public abstract class ImageFactory {
 		return i;
 	}
 	
-	public static void notify(String computationID, byte[] s) {
+	public static void notify(String computationID, UUID dataId) {
 		ImageWriter imageWriter;
 		if ((imageWriter = instances.get(computationID))!=null)
-			imageWriter.notify(s);
+		{ 	
+			MyLogger.log("Notifying browser of completed image job");
+			imageWriter.notify(dataId);
+		}
 	}
 
 	public static void remove(String computationID) {
