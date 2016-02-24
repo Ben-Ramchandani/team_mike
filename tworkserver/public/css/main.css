@@ -49,5 +49,6 @@ input[type=radio]:checked + label{
 }
 
 .instantimage{
-  width: 50%;
+  width: 20%;
+  margin: 10px;
 }
