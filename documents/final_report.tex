@@ -78,7 +78,40 @@
 \newpage
 \section{Summary}
 
-%What it does
+We have built a platform for performing distributed computation on idle mobile devices.
+
+On top of this we have built examples for the purpose of the demo.
+Via the web interface users may submit computations in the form of either prime number checking or one of several image manipulation tasks.
+These tasks are then split up into jobs which are sent out to run on multiple devices.
+Once the results have been collated, or even as they are coming in, they are returned in real time to the website.
+
+The system is split conceptually into three parts: the server that manages the jobs and hosts the website, the service running on the device that does the computation
+and the interface for the app that allows the end user to view information about and control the service.
+All the parts are built to allow any form of computation, we have built examples intended for the demo.
+
+
+\subsection{Server}
+
+The server is written almost entirely in Java using the Play! framework and the the Ebeans persistence plug-in.
+
+\subsubsection{Job management}
+%this is a bit brief and not that well written
+The server accepts new computations, splits them up into jobs each with their own bit of data, it manages handing out the jobs to the devices along with
+the data and code needed to complete them, it receives the results of completed jobs, handles jobs and hence computations failing, as well
+as data being returned when jobs or computations complete.
+Information about jobs and computations is stored in the database and can be recovered
+in case of a crash or restart.
+Information about devices using the system is also kept persistently, including the number of jobs they have completed and failed.
+
+\subsubsection{Website}
+
+%This is Razvan's bit really...
+
+The website is designed to demo the system, though it could be expanded to allow for paying customers if Twork were to be made into a full product.
+The website allows computations to be introduced into the system and results are returned in real time using WebSockets.
+
+
+\subsection{Twork app}
 
 \section{Successes}
 
