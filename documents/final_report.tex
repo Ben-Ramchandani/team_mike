@@ -119,11 +119,35 @@ The website allows computations to be introduced into the system and results are
 
 \section{Difficulties}
 
+\subsection{Server}
+
+The main challenge was leaning to use a completely new framework and persistence model, both of which have limited documentation.
+We had some technical issues with the framework.\\
+
+Ebean only partially loads classes from the database as an efficiency measure, leaving some fields as \texttt{null}.
+Using getters and setters instead of direct access, using boxed instead of primitive types (\texttt{int} vs. \texttt{Integer}) and using different variable names
+can all change what is loaded when. The on-line documentation mentions the partial loading, but does not explain it or how full loading can be forced in general.
+We have fixed the problems, but they were hard to debug.\\
+
+Play! also has some unexpected behaviour regarding (HTTP) request bodies, again with little documentation, getting the
+request body as raw bytes may return \texttt{null} depending on the \texttt{content-type} and length.
+We're using a solution we found on someone's personal blog who had the same problem.\\
+
+Setting up the server, for example configuring the database and the EC2 instance took a long time
+as neither of us had much experience.
+
+\subsection{App interface}
+
+\subsection{App service}
 %Eg. class loading in Android
 % problems with Play! docs
 % problems with deploying on amazon web services
 % security issues
 
+
+
+%These sections can be removed if we don't want to write them
+\section{Improvements}
 \section{Acceptance criteria}
 
 %Did we follow the spec?
