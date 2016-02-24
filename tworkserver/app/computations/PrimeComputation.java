@@ -87,7 +87,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 		long prime;
 		Computation c = Ebean.find(Computation.class, computationID);
 		if(c == null) {
-			return "Error: computation not found";
+			throw new RuntimeException("PrimeComputation.getResult: Computation not found.");
 		}
 
 		//Recover the prime from the original input
