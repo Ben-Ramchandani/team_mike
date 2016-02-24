@@ -116,6 +116,20 @@ The website allows computations to be introduced into the system and results are
 
 %It worksish
 %It is very modular so we can easily extend it: we have the map file computation which can basically do anything given we have %the function, which is pretty cool
+The project in general has been a success, however there are a few things we think went particularly well.
+
+\subsection{Extensibility}
+
+The system is very general in terms of the types of computation it can handle.
+The code for computations interacts using Input and Output streams, the rest of the code are not affected by what they contain.
+The strength of the abstractions used is demonstrated by the fact that image manipulation and prime testing are both managed by the same code.
+The code for managing the image code on the server is implemented in terms of converting a set of files, any Java code that converts one file to another can be passed as a parameter.
+
+%\subsection{Website}
+% Since we weren't sure we'd have time to do this at all
+
+
+%Need more things here
 
 \section{Difficulties}
 
