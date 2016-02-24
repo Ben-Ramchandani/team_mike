@@ -54,6 +54,7 @@ public class Computation extends Model {
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy="parentComputation")
 	public List<Job> jobs;
 	
+	@Column(length=1024)
 	public String input;
 	
 	/*
