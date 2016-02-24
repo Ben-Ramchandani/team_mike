@@ -26,4 +26,3 @@ libraryDependencies ++= Seq(
 routesGenerator := InjectedRoutesGenerator
 
 fork in run := false
-
