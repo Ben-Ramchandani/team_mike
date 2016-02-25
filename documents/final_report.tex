@@ -107,16 +107,16 @@ Information about devices using the system is also kept persistently, including 
 
 
 The website is designed to demo the system, though it could be expanded to allow for paying customers if Twork were to be made into a full product.
-The website allows computations to be introduced into the system and results are returned in real time using WebSockets. It allows uploading a number of files and applying a function on them, being in tune with the server. New features can be added easily as soon as they become available. Some ideas for this are relevant statistics on computation completion, new types of functions supported etc.
+The website allows computations to be introduced into the system and results are returned in real time using WebSockets. It allows uploading a number of files and applying a function on them, being in tune with the server. New features could be added as they become available. Some ideas for this are relevant statistics on computation completion, new types of functions supported etc.
 
 
 \subsection{Twork app}
 The other end of the platform is the Android application used by the users to perform computations. The app was built using the standard Android SDK with Java for the code and XML for the resource files. The application provides an easy to use interface for viewing, selecting and managing computations, which run as a background service which does not interfere with the rest of the phone functionality. Communication with the service happens via message passing and a local database that stores information about the current computations and the completed jobs. The data is then used to present statistics to the user, whose hard work is rewarded by shareable achievements. 
 
+
+
 \section{Successes}
 
-%It worksish
-%It is very modular so we can easily extend it: we have the map file computation which can basically do anything given we have %the function, which is pretty cool
 The project in general has been a success, however there are a few things we think went particularly well.
 
 \subsection{Extensibility}
@@ -126,8 +126,10 @@ The code for computations interacts using Input and Output streams, the rest of 
 The strength of the abstractions used is demonstrated by the fact that image manipulation and prime testing are both managed by the same code.
 The code for managing the image code on the server is implemented in terms of converting a set of files, any Java code that converts one file to another can be passed as a parameter.
 
-%\subsection{Website}
-% Since we weren't sure we'd have time to do this at all
+\subsection{Website}
+
+When writing the specification we were not sure if we would have time to build a website at all, having it will be a big bonus for the demo.
+
 
 
 %Need more things here
@@ -168,21 +170,48 @@ Issues with Gradle synchronisation, XML formatting, compilation, Git integration
 
 %These sections can be removed if we don't want to write them
 \section{Improvements}
+
+\subsection{Security}
+
+Given the limited time the security of the system has not been a high priority.
+Implementing a login system for customers and using HTTPS for server-device interaction would be a big improvement.
+
+\subsection{More computations}
+
+Moving forward more types of computation could be made available, possibly even allowing customers to submit their own code.
+
+
+% App improvements, maybe FB login/similar?
+
+
+
 \section{Acceptance criteria}
 
 %Did we follow the spec?
 
 \section{Summary of the work undertaken}
+%Who did what
 
 \subsection{Server}
-%ben
+
 
 %razvan
 
 Razvan began by researching the various options for building the server, and he suggested that we should use the Play! Framework, as well as various other dependencies, such as the Ebean persistancy. Razvan then created the main data types for the original prototype, as well as the controllers for HTTP requests. 
-Razvan then created a front end for our server, where people can add their own computations (currently supporting only simple image processing), as well as testing our framework with a simple  prime number checker. Results come back in real time.
-%Who did what
+Razvan then created a front end for our server, where people can add their own computations (currently supporting only simple image processing), as well as testing our framework with a simple  prime number checker. Results come back in real time.\\
+
+%ben
+Ben focussed on the back end of the server that manages the jobs and computations as they are distributed across devices.
+He built the prime example computation and much of the test suite for the server, making extensive use of the framework.
+He and Razvan worked closely together as there is a lot of interaction between their code.
+
 
 \subsection{Twork app}
-The initial mockup was created by Dima with Laura's help, and later he was responsible for the visual design of the final application. He then implemented the background service and created a set-up process that connects the phone to the database and the service. Dima also included the Facebook login option which can later be extended to other social features. He also helped in connecting the UI elements to the database and communicating with the service.
+%Dima
+The initial mockup was created by Dima with Laura's help, and later he was responsible for the visual design of the final application. He then implemented the background service and created a set-up process that connects the phone to the database and the service. Dima also included the Facebook login option which can later be extended to other social features. He also helped in connecting the UI elements to the database and communicating with the service.\\
+
+%Laura
+Laura worked on Twork Android Application UI with Dima. She created the in-app reward system in the form of achievements, accessible from a separate menu.
+Laura also used the MPAndroidChart library in order to create a simple chart to show the user's progress in real-time.
+She was also involved in other parts of the app including the creation of the local database for storing information about each computation and job.
 \end{document}
