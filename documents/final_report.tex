@@ -92,7 +92,7 @@ All the parts are built to allow any form of computation, we have built examples
 
 \subsection{Server}
 
-The server is written almost entirely in Java using the Play! framework and the the Ebeans persistence plug-in.
+The server is written almost entirely in Java using the Play! framework and the the Ebean persistence plug-in.
 
 \subsubsection{Job management}
 %this is a bit brief and not that well written
@@ -114,6 +114,18 @@ The website allows computations to be introduced into the system and results are
 The other end of the platform is the Android application used by the users to perform computations. The app was built using the standard Android SDK with Java for the code and XML for the resource files. The application provides an easy to use interface for viewing, selecting and managing computations, which run as a background service which does not interfere with the rest of the phone functionality. Communication with the service happens via message passing and a local database that stores information about the current computations and the completed jobs. The data is then used to present statistics to the user, whose hard work is rewarded by shareable achievements. 
 
 
+\section{Tools used}
+
+\begin{itemize}
+\item Play! Framework, used to create the server.
+\item org.JSON Java library, used for parsing JSON on both the server and the app.
+\item Apache commons IO, another Java library. It contains helper fuctions which are very useful for converting between
+files, streams and strings in Java.
+\item OpenJDK 8 for the server.
+\item Eclipse IDE for the server.
+\item The Android SDK and Android studio for the app.
+\end{itemize}
+
 
 \section{Successes}
 
@@ -130,9 +142,16 @@ The code for managing the image code on the server is implemented in terms of co
 
 When writing the specification we were not sure if we would have time to build a website at all, having it will be a big bonus for the demo.
 
+\subsection{Resilience}
 
+While this has not been thoroughly tested the server is designed to be able to recover from crashes using the database,
+making it more reliable.
+The testing was limited by the small amount of disk space we have on the EC2 instance.
 
-%Need more things here
+\subsection{App interface-service coupling}
+
+The app interface functions separately from the service, they communicate via the database and a small number of
+messages, meaning the service can run independently from the rest of the app.
 
 \section{Difficulties}
 
@@ -184,11 +203,14 @@ Moving forward more types of computation could be made available, possibly even 
 
 % App improvements, maybe FB login/similar?
 
+% Limited server bandwidth
 
+\subsection{Login}
 
-\section{Acceptance criteria}
+It would be good to have a login system so that customers can view only their own computations,
+as well as a login for users of the app.
+While the system was built with support for this in mind we have not have not had to implement it.
 
-%Did we follow the spec?
 
 \section{Summary of the work undertaken}
 %Who did what
@@ -217,11 +239,13 @@ Laura also used the MPAndroidChart library in order to create a simple chart to 
 She was also involved in other parts of the app including the creation of the local database for storing information about each computation and job.
 
 \subsection{Service}
-
-To start with, Jack and James prototyped parts of the service process that would be required, focussing on communication with the server and the interface, respectively. Ben ended up writing some code to communicate with the server, and this became the basis of the actual implementation.
+%James
+To start with James prototyped parts of the service process that would be required, focussing on communication with the server and the interface, respectively.
+Some of the code to communicate with the server comes from a test class within the server, and this became the starting point of the actual implementation.
 
 After this, there was significant effort put into making the code more fault-tolerant and general. James wrote some code to handle loading of classes at runtime, including security provisions, but it was decided that this wouldn't be ready on the server side and tested in time for the demonstration.
 
+Jack has said that he has started working on Facebook integration for the app.
 %TODO: maybe a little more here. I'll do some later.
 
 \end{document}
