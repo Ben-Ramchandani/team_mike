@@ -78,32 +78,140 @@
 \newpage
 \section{Summary}
 
-%What it does
+We have built a platform for performing distributed computation on idle mobile devices.
+
+On top of this we have built examples for the purpose of the demo.
+Via the web interface users may submit computations in the form of either prime number checking or one of several image manipulation tasks.
+These tasks are then split up into jobs which are sent out to run on multiple devices.
+Once the results have been collated, or even as they are coming in, they are returned in real time to the website.
+
+The system is split conceptually into three parts: the server that manages the jobs and hosts the website, the service running on the device that does the computation
+and the interface for the app that allows the end user to view information about and control the service.
+All the parts are built to allow any form of computation, we have built examples intended for the demo.
+
+
+\subsection{Server}
+
+The server is written almost entirely in Java using the Play! framework and the the Ebeans persistence plug-in.
+
+\subsubsection{Job management}
+%this is a bit brief and not that well written
+The server accepts new computations, splits them up into jobs each with their own bit of data, it manages handing out the jobs to the devices along with
+the data and code needed to complete them, it receives the results of completed jobs, handles jobs and hence computations failing, as well
+as data being returned when jobs or computations complete.
+Information about jobs and computations is stored in the database and can be recovered
+in case of a crash or restart.
+Information about devices using the system is also kept persistently, including the number of jobs they have completed and failed.
+
+\subsubsection{Website}
+
+
+The website is designed to demo the system, though it could be expanded to allow for paying customers if Twork were to be made into a full product.
+The website allows computations to be introduced into the system and results are returned in real time using WebSockets. It allows uploading a number of files and applying a function on them, being in tune with the server. New features could be added as they become available. Some ideas for this are relevant statistics on computation completion, new types of functions supported etc.
+
+
+\subsection{Twork app}
+The other end of the platform is the Android application used by the users to perform computations. The app was built using the standard Android SDK with Java for the code and XML for the resource files. The application provides an easy to use interface for viewing, selecting and managing computations, which run as a background service which does not interfere with the rest of the phone functionality. Communication with the service happens via message passing and a local database that stores information about the current computations and the completed jobs. The data is then used to present statistics to the user, whose hard work is rewarded by shareable achievements. 
+
+
 
 \section{Successes}
 
-%It worksish
-%It is very modular so we can easily extend it: we have the map file computation which can basically do anything given we have %the function, which is pretty cool
+The project in general has been a success, however there are a few things we think went particularly well.
+
+\subsection{Extensibility}
+
+The system is very general in terms of the types of computation it can handle.
+The code for computations interacts using Input and Output streams, the rest of the code are not affected by what they contain.
+The strength of the abstractions used is demonstrated by the fact that image manipulation and prime testing are both managed by the same code.
+The code for managing the image code on the server is implemented in terms of converting a set of files, any Java code that converts one file to another can be passed as a parameter.
+
+\subsection{Website}
+
+When writing the specification we were not sure if we would have time to build a website at all, having it will be a big bonus for the demo.
+
+
+
+%Need more things here
 
 \section{Difficulties}
 
+\subsection{Server}
+
+The main challenge was leaning to use a completely new framework and persistence model, both of which have limited documentation.
+We had some technical issues with the framework.\\
+
+Ebean only partially loads classes from the database as an efficiency measure, leaving some fields as \texttt{null}.
+Using getters and setters instead of direct access, using boxed instead of primitive types (\texttt{int} vs. \texttt{Integer}) and using different variable names
+can all change what is loaded when. The on-line documentation mentions the partial loading, but does not explain it or how full loading can be forced in general.
+We have fixed the problems, but they were hard to debug.\\
+
+Play! also has some unexpected behaviour regarding (HTTP) request bodies, again with little documentation, getting the
+request body as raw bytes may return \texttt{null} depending on the \texttt{content-type} and length.
+We're using a solution we found on someone's personal blog who had the same problem.\\
+
+Setting up the server, for example configuring the database and the EC2 instance took a long time
+as neither of us had much experience.
+
+\subsection{App interface}
+Although Android development is quite well-established, there are still common debates about some areas (like the use of Fragments versus the use of Activities), and we often had to change strategies because we were initially misled. The existing code had to be refactored quite often, and it usually took quite a lot of time to get the app to the same functional state that it was before the refactoring. \\
+
+The Android SDK is substantial and contains a lot of ready-made components that can be used by setting a few flags or choosing a constant. However, sometimes we needed more than the pre-built code provided, and we had to decide if we wanted to invest the time into creating the custom components.\\
+
+Issues with Gradle synchronisation, XML formatting, compilation, Git integration and debugging were common as well, they were usually overcome by trial-and-error or reverting to a previous version of the code.
+
+\subsection{App service}
 %Eg. class loading in Android
 % problems with Play! docs
 % problems with deploying on amazon web services
 % security issues
+
+
+
+%These sections can be removed if we don't want to write them
+\section{Improvements}
+
+\subsection{Security}
+
+Given the limited time the security of the system has not been a high priority.
+Implementing a login system for customers and using HTTPS for server-device interaction would be a big improvement.
+
+\subsection{More computations}
+
+Moving forward more types of computation could be made available, possibly even allowing customers to submit their own code.
+
+
+% App improvements, maybe FB login/similar?
+
+
 
 \section{Acceptance criteria}
 
 %Did we follow the spec?
 
 \section{Summary of the work undertaken}
+%Who did what
 
 \subsection{Server}
-%ben
+
 
 %razvan
 
 Razvan began by researching the various options for building the server, and he suggested that we should use the Play! Framework, as well as various other dependencies, such as the Ebean persistancy. Razvan then created the main data types for the original prototype, as well as the controllers for HTTP requests. 
-Razvan then created a front end for our server, where people can add their own computations (currently supporting only simple image processing), as well as testing our framework with a simple  prime number checker. Results come back in real time.
-%Who did what
+Razvan then created a front end for our server, where people can add their own computations (currently supporting only simple image processing), as well as testing our framework with a simple  prime number checker. Results come back in real time.\\
+
+%ben
+Ben focussed on the back end of the server that manages the jobs and computations as they are distributed across devices.
+He built the prime example computation and much of the test suite for the server, making extensive use of the framework.
+He and Razvan worked closely together as there is a lot of interaction between their code.
+
+
+\subsection{Twork app}
+%Dima
+The initial mockup was created by Dima with Laura's help, and later he was responsible for the visual design of the final application. He then implemented the background service and created a set-up process that connects the phone to the database and the service. Dima also included the Facebook login option which can later be extended to other social features. He also helped in connecting the UI elements to the database and communicating with the service.\\
+
+%Laura
+Laura worked on Twork Android Application UI with Dima. She created the in-app reward system in the form of achievements, accessible from a separate menu.
+Laura also used the MPAndroidChart library in order to create a simple chart to show the user's progress in real-time.
+She was also involved in other parts of the app including the creation of the local database for storing information about each computation and job.
 \end{document}

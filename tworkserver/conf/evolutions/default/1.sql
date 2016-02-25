@@ -12,7 +12,7 @@ create table all_computation (
   completed                 boolean,
   customer_computation_id   varchar(40),
   jobs_left                 integer,
-  input                     varchar(255),
+  input                     varchar(1024),
   logo_image_id             bigint,
   constraint pk_all_computation primary key (computation_id))
 ;
@@ -21,21 +21,25 @@ create table all_completed_computation (
   customer_computation_id   varchar(40) not null,
   function_name             varchar(255),
   computation_name          varchar(255),
-  computation_description   varchar(255),
+  computation_description   varchar(1024),
   status                    integer,
   computation_id            varchar(40),
   customer_name             varchar(255),
   time_stamp                bigint,
   total_jobs                integer,
   input                     varchar(1024),
-  output                    varchar(255),
+  output                    varchar(1024),
   constraint pk_all_completed_computation primary key (customer_computation_id))
 ;
 
 create table all_data (
   data_id                   varchar(40) not null,
   is_file                   boolean,
+<<<<<<< HEAD
   data                      bytea,
+=======
+  data                      varbinary(512),
+>>>>>>> e2f8818d263f3a1cd6f5d09731f2df84f39fa465
   constraint pk_all_data primary key (data_id))
 ;
 
