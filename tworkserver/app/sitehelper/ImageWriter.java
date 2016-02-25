@@ -39,7 +39,7 @@ public class ImageWriter implements Runnable {
 			MyLogger.warn("Data output is missing.");
 			return;
 		}
-		out.write("http://localhost:9000/page/retrieve/" + dataID);
+		out.write("page/retrieve/" + dataID);
 	}
 
 }
