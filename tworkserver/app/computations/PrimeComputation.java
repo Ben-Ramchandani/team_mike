@@ -53,7 +53,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 			//Make about 20 jobs
 			long numPerJob = prime > 20 ? prime/20 : 1;
 			long currentEnd = currentStart + numPerJob;
-			long stopAt = prime - 1;
+			long stopAt = prime;
 
 			while((currentEnd) <= stopAt) {
 				//Jobs have input "<prime> <start> <stop>" (all longs, space separated).
