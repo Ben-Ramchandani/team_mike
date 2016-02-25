@@ -111,6 +111,7 @@ The website allows computations to be introduced into the system and results are
 
 
 \subsection{Twork app}
+The other end of the platform is the Android application used by the users to perform computations. The app was built using the standard Android SDK with Java for the code and XML for the resource files. The application provides an easy to use interface for viewing, selecting and managing computations, which run as a background service which does not interfere with the rest of the phone functionality. Communication with the service happens via message passing and a local database that stores information about the current computations and the completed jobs. The data is then used to present statistics to the user, whose hard work is rewarded by shareable achievements. 
 
 \section{Successes}
 
@@ -151,6 +152,11 @@ Setting up the server, for example configuring the database and the EC2 instance
 as neither of us had much experience.
 
 \subsection{App interface}
+Although Android development is quite well-established, there are still common debates about some areas (like the use of Fragments versus the use of Activities), and we often had to change strategies because we were initially misled. The existing code had to be refactored quite often, and it usually took quite a lot of time to get the app to the same functional state that it was before the refactoring. \\
+
+The Android SDK is substantial and contains a lot of ready-made components that can be used by setting a few flags or choosing a constant. However, sometimes we needed more than the pre-built code provided, and we had to decide if we wanted to invest the time into creating the custom components.\\
+
+Issues with Gradle synchronisation, XML formatting, compilation, Git integration and debugging were common as well, they were usually overcome by trial-and-error or reverting to a previous version of the code.
 
 \subsection{App service}
 %Eg. class loading in Android
@@ -176,4 +182,7 @@ as neither of us had much experience.
 Razvan began by researching the various options for building the server, and he suggested that we should use the Play! Framework, as well as various other dependencies, such as the Ebean persistancy. Razvan then created the main data types for the original prototype, as well as the controllers for HTTP requests. 
 Razvan then created a front end for our server, where people can add their own computations (currently supporting only simple image processing), as well as testing our framework with a simple  prime number checker. Results come back in real time.
 %Who did what
+
+\subsection{Twork app}
+The initial mockup was created by Dima with Laura's help, and later he was responsible for the visual design of the final application. He then implemented the background service and created a set-up process that connects the phone to the database and the service. Dima also included the Facebook login option which can later be extended to other social features. He also helped in connecting the UI elements to the database and communicating with the service.
 \end{document}
