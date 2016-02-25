@@ -49,6 +49,9 @@ public class PrimeComputation implements BasicComputationGenerator {
 			//Generate jobs
 			String primeString = Long.toString(prime);
 			long currentStart = 2L;
+			if(prime < 0) {
+				prime = 0;
+			}
 			prime  = (long)Math.sqrt(prime) + 1;
 			//Make about 20 jobs
 			long numPerJob = prime > 20 ? prime/20 : 1;
