@@ -104,7 +104,7 @@ public class JobScheduler {
 		//Notify the webclient.
 		try {
 			Job job = Ebean.find(Job.class, j.jobID);
-			ImageFactory.notify(job.computationID.toString(), result);
+			ImageFactory.notify(job.computationID.toString(), job.outputDataID);
 		} catch(Exception e) {
 			System.out.println("JobScheduler: Error calling notify code. Will continue.");
 			e.printStackTrace();

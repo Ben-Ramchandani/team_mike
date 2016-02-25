@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import models.Data;
 import play.mvc.WebSocket;
+import twork.MyLogger;
 
 public class ImageWriter implements Runnable {
 
@@ -30,20 +31,15 @@ public class ImageWriter implements Runnable {
 		}
 	}
 
-	public void notify(byte[] s) {
+	public void notify(UUID dataID) {
 		//Need to create a file here
 		//this.notify();
-		Data d = null; 
-		//try {
-			//TODO bring computation id here.
-			//d = Data.store(s, UUID.randomUUID(), UUID.randomUUID());
-			//System.out.println(s.length());
-		//} catch (IOException e) {
-			//System.out.println("Failed");
-			//e.printStackTrace();
-		//}
-		//d.update();
-		//out.write("http://localhost:9000/page/retrieve/" + d.data);
+		
+		if (dataID == null) {
+			MyLogger.warn("Data output is missing.");
+			return;
+		}
+		out.write("http://localhost:9000/page/retrieve/" + dataID);
 	}
 
 }

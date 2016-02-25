@@ -3,6 +3,7 @@ package models;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -27,6 +28,7 @@ public class CustomerComputation extends Model implements Comparable<CustomerCom
 	public String functionName;
 	//Purely descriptive names
 	public String computationName;
+	@Column(length=1024)
 	public String computationDescription;
 	//id of the running counterpart if it exists
 	//0 - waiting to run; 1 - running; 2 - complete; 3 - failed
@@ -58,8 +60,10 @@ public class CustomerComputation extends Model implements Comparable<CustomerCom
 
 	public int totalJobs;
 
+	@Column(length=1024)
 	public String input;
 	
+	@Column(length=1024)
 	public String output;
 	
 

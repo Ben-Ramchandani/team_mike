@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 import twork.ComputationManager;
@@ -37,21 +38,21 @@ public class Application extends Controller {
 		 */
 
 
-		long phoneID;
+		String phoneID;
 		String body = request().body().asText();
 		//Attempt to parse the phone ID from the body
 		if(body == null) {
 			MyLogger.warn("No body found in /available request");
 			if (session("sessionID") == null) {
 				MyLogger.warn("No phoneID found, will generate one at random.");
-				phoneID = UUID.randomUUID().getLeastSignificantBits();
+				phoneID = UUID.randomUUID().toString();
 			} else {
-				phoneID = Long.parseLong(session("sessionID"));
+				phoneID = session("sessionID");
 			}
 		} else {
 			try {
 				JSONObject json = new JSONObject(body);
-				phoneID = Long.parseLong(json.getString("phone-id"));
+				phoneID = json.getString("phone-id");
 			} catch (Exception e) {
 				MyLogger.log("Failed to parse JSON from /available request.");
 				e.printStackTrace();
@@ -61,12 +62,12 @@ public class Application extends Controller {
 
 		if(session("sessionID") != null) {
 			//Check session and parsed ID agree
-			if( !( Long.toString(phoneID).equals(session("sessionID")) ) ) {
+			if( !( phoneID.equals(session("sessionID")) ) ) {
 				MyLogger.critical("Session ID disagrees with claimed phone ID.");
 				return badRequest("Session ID disagrees with phone ID (400 - Bad Request).");
 			}
 		} else {
-			session("sessionID", Long.toString(phoneID));
+			session("sessionID", phoneID);
 			MyLogger.log("Creating new session with ID: " + session("sessionID"));
 		}
 
@@ -81,7 +82,6 @@ public class Application extends Controller {
 
 		try {
 			JsonNode jn = body.asJson();
-			d.deviceID = jn.get("phone-id").asText("");
 			d.batteryLife = jn.get("battery-life").asInt(0);
 			d.onCharge = jn.get("on-charge").asBoolean(true);
 			d.onWiFi = jn.get("on-wifi").asBoolean(true);
@@ -173,6 +173,7 @@ public class Application extends Controller {
 	/*
 	 * submit result (POST)
 	 */
+	@BodyParser.Of(value=BodyParser.Raw.class, maxLength=100*1024*1024)
 	public Result result(Long jobID) {
 
 		if (session("sessionID") == null) 
@@ -184,11 +185,15 @@ public class Application extends Controller {
 			return forbidden("Submission for incorrect job");
 
 		byte[] r;
+		
+		MyLogger.log("Received result. Length: " + request().getHeader(CONTENT_LENGTH) + ", type: " + request().getHeader(CONTENT_TYPE));
 		String result = request().body().asText();
 
 		if(result == null) {
-			r = request().body().asRaw().asBytes();
+
+			r = request().body().asRaw().asBytes(100*1024*1024);
 			if(r == null) {
+				MyLogger.alwaysLog("No data in result request.");
 				return badRequest("No data found in result request");//TODO: this should fail the job.
 			}
 		} else {
@@ -199,6 +204,7 @@ public class Application extends Controller {
 		MyLogger.log("Recieved completed job, ID: " + d.currentJob);
 
 		//Just pass the data straight to the Job scheduler.
+		
 		JobScheduler.getInstance().submitJob(d, r);
 
 		//Notify device

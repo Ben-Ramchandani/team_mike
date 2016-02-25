@@ -10,7 +10,7 @@ import com.avaje.ebean.Ebean;
 
 public class MapComputation implements BasicComputationGenerator {
 
-	private String functionName = "EdgeDetect";
+	private String functionName;
 
 	public MapComputation(String name) {
 		functionName = name;
@@ -56,24 +56,10 @@ public class MapComputation implements BasicComputationGenerator {
 	}
 
 	@Override
-	//TODO
 	public String getResult(UUID computationID) {
 		/*
-		Computation c = Ebean.find(Computation.class, computationID);
-
-		for(Job j : c.jobs) {
-			UUID dataID = j.outputDataID;
-
-			if(!dataID.equals(Device.NULL_UUID)) {
-				//TODO: dependent on the data class.
-				Data d = Ebean.find(Data.class, dataID);
-
-				if(d != null) {
-					
-				}
-			}
-		}
-		*/
+		 * Nothing to do - result is returned on a per-job basis.
+		 */
 		return "MapComputation completed";
 	}
 

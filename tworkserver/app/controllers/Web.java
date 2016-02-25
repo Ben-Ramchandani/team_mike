@@ -31,7 +31,7 @@ import play.mvc.WebSocket;
 public class Web extends Controller{
 
 	public Result index() {
-		List<String> l = (List) Arrays.asList("Prime Computation","Image Processing");
+		List<String> l = (List<String>) Arrays.asList("Prime Computation","Image Processing");
 		return ok(views.html.main.render("test", l, new play.twirl.api.Html("something")));
 	}
 
@@ -41,7 +41,7 @@ public class Web extends Controller{
 
 		play.mvc.Http.MultipartFormData fileBody = body.asMultipartFormData();
 
-		String function = "EdgeDetect";
+		String function;
 		
 		
 		//Handling the radio button on the form
@@ -59,14 +59,19 @@ public class Web extends Controller{
 			break;
 		}
 
-		UUID computationID = Device.NULL_UUID;
 
 		List<FilePart> files = fileBody.getFiles();
 
 		StringBuilder sb = new StringBuilder();
 
 		UUID dataID = null;
+		int i = 0;
 		for (FilePart filePart : files) {
+			i += 1;
+			if(i > 20) {
+				MyLogger.warn("Web.mapFile: Too many input files, cutting off at 20.");
+				continue;
+			}
 
 			if (filePart != null) {
 				String filename = filePart.getFilename();
@@ -87,7 +92,7 @@ public class Web extends Controller{
 			return badRequest();
 		}
 
-		CustomerComputation computation = new CustomerComputation(request().remoteAddress(),"Image Processing Test","test",function,dataID.toString());
+		CustomerComputation computation = new CustomerComputation(request().remoteAddress(),"Image Processing Test","test",function,sb.toString());
 
 		ComputationManager.getInstance().runCustomerComputation(computation);
 
@@ -106,13 +111,19 @@ public class Web extends Controller{
 	}
 
 	public Result retrieve(String dataID) {
-
+		//Get data from server
+		
+		
+		if (dataID.endsWith(".png"))
+			//So the browser displays it as image
+			dataID = dataID.replace(".png","");
+		
 		Data d = Ebean.find(Data.class,UUID.fromString(dataID));
 
 		if (d == null) {
 			return badRequest();
 		}
-
+		
 		return ok(d.getContent());
 	}
 

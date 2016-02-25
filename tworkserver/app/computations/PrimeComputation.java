@@ -18,6 +18,11 @@ public class PrimeComputation implements BasicComputationGenerator {
 	private final String functionName = "PrimeComputationCode";
 
 
+	/*
+	 * Expect input of the form
+	 * "<prime>"
+	 * Where <prime> is a long.
+	 */
 	@Override
 	public UUID generateComputation(String input) {
 		long prime;
@@ -32,7 +37,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 			throw new RuntimeException("PrimeComputation: generation input invalid, expected \"long\"");
 		}
 
-		
+
 		Computation c = new Computation(functionName, "Prime computation");
 
 
@@ -44,14 +49,16 @@ public class PrimeComputation implements BasicComputationGenerator {
 			//Generate jobs
 			String primeString = Long.toString(prime);
 			long currentStart = 2L;
-			//Make about 10 jobs
-			long numPerJob = prime > 10 ? prime/10 : 1;
+			prime  = (long)Math.sqrt(prime) + 1;
+			//Make about 20 jobs
+			long numPerJob = prime > 20 ? prime/20 : 1;
 			long currentEnd = currentStart + numPerJob;
-			long stopAt = prime - 1;
+			long stopAt = prime;
 
 			while((currentEnd) <= stopAt) {
+				//Jobs have input "<prime> <start> <stop>" (all longs, space separated).
 				String jobInput = primeString + " " + Long.toString(currentStart) + " " + Long.toString(currentEnd);
-				
+
 				UUID dataID = Data.storeString(jobInput);
 
 				Job j = new Job(c, "Prime job", dataID, functionName);
@@ -61,6 +68,7 @@ public class PrimeComputation implements BasicComputationGenerator {
 				currentStart = currentEnd;
 				currentEnd += numPerJob;
 			}
+
 
 
 			c.setJobsLeft(c.jobs.size());
@@ -81,9 +89,10 @@ public class PrimeComputation implements BasicComputationGenerator {
 		long prime;
 		Computation c = Ebean.find(Computation.class, computationID);
 		if(c == null) {
-			return "Error: computation not found";
+			throw new RuntimeException("PrimeComputation.getResult: Computation not found.");
 		}
 
+		//Recover the prime from the original input
 		try {
 			Scanner s = new Scanner(c.getInput());
 			prime = s.nextLong();
@@ -94,19 +103,20 @@ public class PrimeComputation implements BasicComputationGenerator {
 		}
 
 
-
+		//Check through all the jobs to see if any of them have a factor
 		long factor;
 		for(Job j : c.jobs) {
 			UUID dataID = j.outputDataID;
-			
+
 			if(!dataID.equals(Device.NULL_UUID)) {
 				Data d = Ebean.find(Data.class, dataID);
-				
+
 				if(!(d == null)) {
 					Scanner scan = new Scanner(d.getContentAsString());
-					
+
 					try {
 						factor = scan.nextLong();
+						//0 means no factor was found
 						if(factor != 0) {
 							return "Found factor for " + Long.toString(prime) + ": " + Long.toString(factor) + ".";
 						}

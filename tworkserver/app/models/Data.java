@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -40,6 +41,7 @@ public class Data extends Model{
 	//We just use byte[]. Strings are UTF-8 encoded.
 	//Files have their name UTF-8 encoded here.
 	@Constraints.Required
+	@Column(length=512)
 	public byte[] data;
 
 
@@ -76,7 +78,7 @@ public class Data extends Model{
 			d.isFile = false;
 		} else {
 			try {
-				MyLogger.log("New file Location (due to immediate overflow): " + new String(d.data, StandardCharsets.UTF_8));
+				MyLogger.log("New file Location (due to immediate overflow)");
 				Path dest = Paths.get("data/" + d.dataID.toString());
 				Files.createDirectories(dest.getParent());
 				Files.write(dest, data);

@@ -21,6 +21,8 @@ public class FunctionManager {
 		computationCodeNames = new ArrayList<String>();
 		computationCodeNames.add("PrimeComputationCode");
 		computationCodeNames.add("EdgeDetect");
+		computationCodeNames.add("GrayscaleConvertCode");
+		computationCodeNames.add("SepiaConvertCode");
 		computationCodeNames.add("ComputationCode");
 		//TODO:remove
 		computationCodeNames.add("tworkservertest");
@@ -39,12 +41,8 @@ public class FunctionManager {
 	public byte[] getCodeClassDefinition(String name) {
 		//Remove ".class" from the name if it is there
 		String filePrefix = name;
-		if(name.length() > 6) {
-			String end = name.substring(name.length() - 6, name.length());
-			if(end.equals(".class")) {
-				filePrefix = name.substring(0, name.length() - 6);
-			}
-		}
+		if (name.endsWith(".class"))
+			filePrefix = name.substring(0, name.length() - 6);
 
 		if(!computationCodeNames.contains(filePrefix)) {
 			MyLogger.log("FunctionManager.getCodeClassDefinition: Computation requested does not exist: " + name + ".");

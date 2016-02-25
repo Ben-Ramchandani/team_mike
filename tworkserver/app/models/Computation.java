@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -54,6 +55,7 @@ public class Computation extends Model {
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy="parentComputation")
 	public List<Job> jobs;
 	
+	@Column(length=1024)
 	public String input;
 	
 	/*
