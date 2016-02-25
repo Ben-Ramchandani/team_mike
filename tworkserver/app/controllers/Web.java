@@ -41,7 +41,7 @@ public class Web extends Controller{
 
 		play.mvc.Http.MultipartFormData fileBody = body.asMultipartFormData();
 
-		String function = "EdgeDetect";
+		String function;
 		
 		
 		//Handling the radio button on the form
@@ -111,8 +111,11 @@ public class Web extends Controller{
 	}
 
 	public Result retrieve(String dataID) {
-
+		//Get data from server
+		
+		
 		if (dataID.endsWith(".png"))
+			//So the browser displays it as image
 			dataID = dataID.replace(".png","");
 		
 		Data d = Ebean.find(Data.class,UUID.fromString(dataID));
