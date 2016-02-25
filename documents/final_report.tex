@@ -166,7 +166,7 @@ Issues with Gradle synchronisation, XML formatting, compilation, Git integration
 % problems with deploying on amazon web services
 % security issues
 
-
+Android does not support Java's usual class loading mechanism. Its own class loading mechanism is somewhat more complicated, so we decided to avoid it in favour of specific hard-coded computation code. This also meant that we didn't need to worry as much about security around submitted code.
 
 %These sections can be removed if we don't want to write them
 \section{Improvements}
@@ -175,6 +175,7 @@ Issues with Gradle synchronisation, XML formatting, compilation, Git integration
 
 Given the limited time the security of the system has not been a high priority.
 Implementing a login system for customers and using HTTPS for server-device interaction would be a big improvement.
+There was also no implementation of result checking, which could be done using a vote system or some server-side checks (implemented on a computation-by-computation basis).
 
 \subsection{More computations}
 
@@ -214,4 +215,13 @@ The initial mockup was created by Dima with Laura's help, and later he was respo
 Laura worked on Twork Android Application UI with Dima. She created the in-app reward system in the form of achievements, accessible from a separate menu.
 Laura also used the MPAndroidChart library in order to create a simple chart to show the user's progress in real-time.
 She was also involved in other parts of the app including the creation of the local database for storing information about each computation and job.
+
+\subsection{Service}
+
+To start with, Jack and James prototyped parts of the service process that would be required, focussing on communication with the server and the interface, respectively. Ben ended up writing some code to communicate with the server, and this became the basis of the actual implementation.
+
+After this, there was significant effort put into making the code more fault-tolerant and general. James wrote some code to handle loading of classes at runtime, including security provisions, but it was decided that this wouldn't be ready on the server side and tested in time for the demonstration.
+
+%TODO: maybe a little more here. I'll do some later.
+
 \end{document}
