@@ -26,6 +26,7 @@ create table all_completed_computation (
   computation_id            varchar(40),
   customer_name             varchar(255),
   time_stamp                bigint,
+  start_time_stamp          bigint,
   total_jobs                integer,
   input                     varchar(1024),
   output                    varchar(1024),

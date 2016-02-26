@@ -2,6 +2,7 @@ package twork;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -319,6 +320,7 @@ public class ComputationManager {
 			ComputationNotifier.finished(cc.customerComputationID);
 			
 			MyLogger.log("Computation completed.");
+			MyLogger.log("Time taken: " + ((new Date()).getTime() - cc.startTimeStamp));
 			MyLogger.log(cc.toString());
 		}
 	}

@@ -36,7 +36,7 @@ public class CustomerComputation extends Model implements Comparable<CustomerCom
 	public UUID computationID;
 	public String customerName;
 	public long timeStamp;
-	
+	public long startTimeStamp;
 	public int compareTo(CustomerComputation cc) {
 		if(this.timeStamp < cc.timeStamp) {
 			return -1;
@@ -86,7 +86,7 @@ public class CustomerComputation extends Model implements Comparable<CustomerCom
 	
 	
 	public String toString() {
-		return "Customer Computation:\nCustomer Name: \"" + customerName + "\", input: \"" + input + "\", output: \"" + output + "\".";
+		return "Customer Computation:\nCustomer Name: \"" + customerName + "\", input: \"" + input + "\", output: \"" + output + "\"." ;
 	}
 	
 	/*
@@ -99,6 +99,7 @@ public class CustomerComputation extends Model implements Comparable<CustomerCom
 		computationID = c.computationID;
 		totalJobs = c.jobs.size();
 		status = RUNNING;
+		startTimeStamp = (new Date()).getTime();
 		c.customerComputationID = this.customerComputationID;
 		c.update();
 		this.update();		

@@ -89,6 +89,7 @@ public class Web extends Controller{
 		}
 
 		if(dataID == null) {
+			System.out.println("Failing on data = null");
 			return badRequest();
 		}
 
