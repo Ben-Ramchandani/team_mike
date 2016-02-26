@@ -5,7 +5,7 @@ This repository is the server for the TWork system.
 It's written in Java using the [Play! Framework](https://www.playframework.com/).
 
 
-Installation instrucions
+Installation instructions
 ------------------------
 
 Requirements:
@@ -34,12 +34,12 @@ All paths are given from the `tworkserver` directory.
 
 ### Routes:
 
-`conf/routes` contatins the routes for the server, that is, what URLs map to what Java code. For example it contains the line
+`conf/routes` contains the routes for the server, that is, what URLs map to what Java code. For example it contains the line
 `GET /job controllers.Application.job()`, which Play! uses to map the request a device makes to get a job to complete. This file is well commented and acts as the API specification for communicating devices. It is worth reading if you want to become familiar with the code.
 
 ### Website:
 
-The HTML (with embeded Scala code, Java cannot be used here) is contained in `app/views`.
+The HTML (with embedded Scala code, Java cannot be used here) is contained in `app/views`.
 The images, JavaScript and CSS used by the site is in the `public` directory.
 The supporting code for the main page of the website, including file upload, is contained in `app/controllers/Web.java`. The real time image result page is handled by `app/controllers/Display.java` with helper functions in `app/sitehelper`.
 
@@ -49,7 +49,7 @@ The code for the job server is all contained in packages in the `app/` directory
 
 #### Global.java
 
-This file contatins code that runs every time the server is started.
+This file contains code that runs every time the server is started.
 
 #### controllers
 
@@ -66,5 +66,4 @@ This package contains both the code that is sent to devices to be run, which all
 
 Tests
 -----
-
 
