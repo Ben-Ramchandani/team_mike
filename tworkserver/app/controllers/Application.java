@@ -244,15 +244,26 @@ public class Application extends Controller {
 			p.put("name", "Prime checking");
 			p.put("description", "Work out if a given number is prime.");
 
-			//TODO: change this to be correct
 			JSONObject i = new JSONObject();
 			i.put("id", "EdgeDetect");
 			i.put("name", "Image manipulation");
-			i.put("description", "Do something to images.");
+			i.put("description", "Gives you the same image back");
+			
+			JSONObject j = new JSONObject();
+			j.put("id", "GrayscaleConvertCode");
+			j.put("name", "Grayscale");
+			j.put("description", "Converts colour images to grayscale.");
+			
+			JSONObject k = new JSONObject();
+			k.put("id", "SepiaConvertCode");
+			k.put("name", "Sepia");
+			k.put("description", "Applies a Sepia filter to images.");
 
 			JSONArray a = new JSONArray();
 			a.put(p);
-			a.put(i);
+			//a.put(i);
+			a.put(j);
+			a.put(k);
 			result.put("computations", a);
 
 		} catch (JSONException e) {
