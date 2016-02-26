@@ -40,7 +40,7 @@ public class JobScheduler {
 
 	//Number of times a Job may fail (not come back/fail verification)
 	//before it (and its computation) are discarded.
-	private static final long maxFailCount = 3;
+	private static final long maxFailCount = 5;
 
 	
 
@@ -399,7 +399,7 @@ public class JobScheduler {
 		} else if(j.needsPhone()) {
 			waitingJobs.add(j);
 		} else {
-			activeJobs.add(j);
+		    activeJobs.add(j);
 		}
 	}
 

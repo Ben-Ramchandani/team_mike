@@ -749,6 +749,13 @@ public class ApplicationTest {
 				//Check the job failure mechanic
 				js.timeoutJob(jID);
 				k = js.getJob(d);
+				
+				js.timeoutJob(jID);
+				k = js.getJob(d);
+				
+				js.timeoutJob(jID);
+				k = js.getJob(d);
+				
 				assertNull("JS fails jobs that repeatedly time out", k);
 
 
