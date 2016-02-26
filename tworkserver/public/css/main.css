@@ -53,5 +53,6 @@ input[type=radio]:checked + label{
   margin: 10px;
 }
 .instantimage:hover{
-  width: 50%;
+  margin: 5px;
+  width: 30%;
 }

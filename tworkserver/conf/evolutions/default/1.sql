@@ -26,6 +26,7 @@ create table all_completed_computation (
   computation_id            varchar(40),
   customer_name             varchar(255),
   time_stamp                bigint,
+  start_time_stamp          bigint,
   total_jobs                integer,
   input                     varchar(1024),
   output                    varchar(1024),
@@ -35,7 +36,7 @@ create table all_completed_computation (
 create table all_data (
   data_id                   varchar(40) not null,
   is_file                   boolean,
-  data                      bytea,
+  data                      varbinary(512),
   constraint pk_all_data primary key (data_id))
 ;
 
@@ -58,20 +59,28 @@ create table all_jobs (
   constraint pk_all_jobs primary key (job_id))
 ;
 
-alter table all_jobs add constraint fk_all_jobs_parentComputation_1 foreign key (parent_computation_computation_id) references all_computation (computation_id);
+create sequence all_device_seq;
+
+alter table all_jobs add constraint fk_all_jobs_parentComputation_1 foreign key (parent_computation_computation_id) references all_computation (computation_id) on delete restrict on update restrict;
 create index ix_all_jobs_parentComputation_1 on all_jobs (parent_computation_computation_id);
 
 
 
 # --- !Downs
 
-drop table if exists all_computation cascade;
+SET REFERENTIAL_INTEGRITY FALSE;
 
-drop table if exists all_completed_computation cascade;
+drop table if exists all_computation;
 
-drop table if exists all_data cascade;
+drop table if exists all_completed_computation;
 
-drop table if exists all_device cascade;
+drop table if exists all_data;
 
-drop table if exists all_jobs cascade;
+drop table if exists all_device;
+
+drop table if exists all_jobs;
+
+SET REFERENTIAL_INTEGRITY TRUE;
+
+drop sequence if exists all_device_seq;
 
