@@ -40,7 +40,7 @@ public class JobScheduler {
 
 	//Number of times a Job may fail (not come back/fail verification)
 	//before it (and its computation) are discarded.
-	private static final long maxFailCount = 3;
+	private static final long maxFailCount = 5;
 
 	
 
@@ -90,11 +90,11 @@ public class JobScheduler {
 
 		ScheduleJob j = jobMap.get(d.currentJob);
 		if(j == null) {
-			System.out.println("Submitted job is not in scheduler, ignoring.");
+			MyLogger.warn("Submitted job is not in scheduler, ignoring.");
 			return;
 		}
 		if(!activeJobs.contains(j)) {
-			System.out.println("Submitted job is not in scheduler, ignoring.");
+			MyLogger.warn("Submitted job is not in scheduler, ignoring.");
 			return;
 		}
 
@@ -106,7 +106,7 @@ public class JobScheduler {
 			Job job = Ebean.find(Job.class, j.jobID);
 			ImageFactory.notify(job.computationID.toString(), job.outputDataID);
 		} catch(Exception e) {
-			System.out.println("JobScheduler: Error calling notify code. Will continue.");
+			MyLogger.warn("JobScheduler: Error calling notify code. Will continue.");
 			e.printStackTrace();
 		}
 
@@ -273,7 +273,7 @@ public class JobScheduler {
 		public void save() {
 			Job j = Ebean.find(Job.class, jobID);
 			if(j == null) {
-				System.out.println("Job save failed: unable to locate job.");
+				MyLogger.warn("Job save failed: unable to locate job.");
 				failed = true;
 				throw new RuntimeException();
 			}		
@@ -399,7 +399,7 @@ public class JobScheduler {
 		} else if(j.needsPhone()) {
 			waitingJobs.add(j);
 		} else {
-			activeJobs.add(j);
+		    activeJobs.add(j);
 		}
 	}
 

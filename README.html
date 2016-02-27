@@ -1,0 +1,80 @@
+<h1>TWork - Server</h1>
+
+<p>This repository is the server for the TWork system.
+It's written in Java using the <a href="https://www.playframework.com/">Play! Framework</a>.</p>
+
+<h2>Installation instructions</h2>
+
+<p>Requirements:</p>
+
+<ul>
+<li>JDK 1.8 or later.</li>
+<li><a href="https://www.lightbend.com/activator/download">Typesafe Activator</a>.</li>
+<li>PostgreSQL database.</li>
+</ul>
+
+<p>Procedure:</p>
+
+<ul>
+<li>Start PostgreSQL on port 5432 with username <code>twork</code>, password <code>test</code> and a database named <code>tworkdata</code>.</li>
+<li>Clone the repository.</li>
+<li>Unpack Typesafe Activator into the <code>tworkserver</code> directory.</li>
+<li>Move into the <code>tworkserver</code> directory and type <code>./activator</code> to enter Play!'s shell.</li>
+<li>Run <code>start</code> to start the server.</li>
+</ul>
+
+<h2>Code structure</h2>
+
+<p>All paths are given from the <code>tworkserver</code> directory.</p>
+
+<h3>Configuration and dependencies:</h3>
+
+<ul>
+<li><code>build.sbt</code> contains the dependencies for the project.</li>
+<li><code>conf/application.conf</code> contains database configuration.</li>
+</ul>
+
+<h3>Routes:</h3>
+
+<p><code>conf/routes</code> contains the routes for the server, that is, what URLs map to what Java code. For example it contains the line
+<code>GET /job controllers.Application.job()</code>, which Play! uses to map the request a device makes to get a job to complete. This file is well commented and acts as the API specification for communicating devices. It is worth reading if you want to become familiar with the code.</p>
+
+<h3>Website:</h3>
+
+<p>The HTML (with embedded Scala code, Java cannot be used here) is contained in <code>app/views</code>.
+The images, JavaScript and CSS used by the site is in the <code>public</code> directory.
+The supporting code for the main page of the website, including file upload, is contained in <code>app/controllers/Web.java</code>. The real time image result page is handled by <code>app/controllers/Display.java</code> with helper functions in <code>app/sitehelper</code>.</p>
+
+<h3>Job server:</h3>
+
+<p>The code for the job server is all contained in packages in the <code>app/</code> directory, any directories not mentioned so far do not contain code written by us.</p>
+
+<h4>Global.java</h4>
+
+<p>This file contains code that runs every time the server is started.</p>
+
+<h4>controllers</h4>
+
+<p><code>Application.java</code> is the entry point for requests from devices, the details of what each method should do is explained by the corresponding entry in <code>conf/routes</code>.</p>
+
+<h4>computations</h4>
+
+<p>This package contains both the code that is sent to devices to be run, which all implement <code>ComputationCode</code> and the code to generate computations, which all implement <code>BasicComputationGenerator</code>. Reading the relatively short <code>PrimeComputation</code> and <code>PrimeComputationCode</code> should be informative about the abstractions used in the server.</p>
+
+<h4>models</h4>
+
+<p>These classes can be stored persistently in the database. Ebean uses the field definitions and Java Persistence Annotations to generate SQL statements. UUID generation is handled automatically by Ebean when <code>save()</code> is first called.</p>
+
+<h4>twork</h4>
+
+<p>This package contains the bulk of the back end code that manages the computations and jobs as they move around the system.</p>
+
+<h2>Tests</h2>
+
+<p>The <code>tworkserver/test/</code> directory contains a large test suite with tests covering much of the server's functionality. The tests use JUnit along with Play!'s helper functions. Along with unit tests there is a large test covering the lifetime of a PrimeComputation which runs against a test server and interacting via HTTP requests.</p>
+
+<p>The tests may be run with <code>./activator test</code> (from <code>tworkserver/</code>).</p>
+
+<p>&nbsp;</p>
+
+<p>&copy; 2016 Razvan Kusztos (razvankusz), Ben Ramchandani (Ben-Ramchandani), Dmitrij Szamozvancev (DimaSamoz)</p>

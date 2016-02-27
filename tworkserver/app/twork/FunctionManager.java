@@ -12,20 +12,17 @@ import computations.PrimeComputation;
 public class FunctionManager {
 
 	private static FunctionManager instance;
-	//This needs to be changed
+	
 	public static final String computationCodePath = "computations/";
 	private static List<String> computationCodeNames; 
 
 	private FunctionManager() {
-		//TODO: dynamically load these
 		computationCodeNames = new ArrayList<String>();
 		computationCodeNames.add("PrimeComputationCode");
 		computationCodeNames.add("EdgeDetect");
 		computationCodeNames.add("GrayscaleConvertCode");
 		computationCodeNames.add("SepiaConvertCode");
 		computationCodeNames.add("ComputationCode");
-		//TODO:remove
-		computationCodeNames.add("tworkservertest");
 	}
 
 	public static FunctionManager getInstance() {
@@ -86,7 +83,7 @@ public class FunctionManager {
 		}
 	}
 
-	//Placeholder
+	
 	public BasicComputationGenerator getBasicComputationGenerator(String name) {
 		if (name.equals("EdgeDetect") || name.equals("GrayscaleConvertCode") || name.equals("SepiaConvertCode")) {
 			return new MapComputation(name);

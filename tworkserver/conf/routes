@@ -1,24 +1,34 @@
 # Routes
-# This file defines all application routes (Higher priority routes first)
+# This file defines all application routes (Ordered by priority)
 # ~~~~
 
+
+### Website ###
+
+
 # Home page
-GET     /                          controllers.Web.index()
-POST	/page/upload	               controllers.Web.mapFile()
-GET    /prime/:number              controllers.Web.primeTest(number: Long)
+GET     /                          			controllers.Web.index()
+POST	/page/upload	               		controllers.Web.mapFile()
+GET    /prime/:number              			controllers.Web.primeTest(number: Long)
+
 
 # Real-Time response page;
-
-GET     /rt/:computationID           controllers.Display.index(computationID: String)
-GET     /rt/socket/:computationID    controllers.Display.socket(computationID: String)
-GET		/assets/js/display.js    	controllers.Display.script()
+GET     /rt/:computationID           		controllers.Display.index(computationID: String)
+GET     /rt/socket/:computationID   		controllers.Display.socket(computationID: String)
+GET		/assets/js/display.js    			controllers.Display.script()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file             controllers.Assets.versioned(path="/public", file: Asset)
+GET     /assets/*file             			controllers.Assets.versioned(path="/public", file: Asset)
 
 # Request files 
+GET		/page/retrieve/:dataID				controllers.Web.retrieve(dataID: String)
 
-GET		/page/retrieve/:dataID		controllers.Web.retrieve(dataID: String)
+
+
+
+
+
+### Device API ###
 
 
 # Availability request
@@ -27,59 +37,65 @@ GET		/page/retrieve/:dataID		controllers.Web.retrieve(dataID: String)
 #	battery-life   : 0 - 100
 #	on-charge      : 0 / 1
 #	on-WiFi		   : 0 / 1
-# set cookie in the header; all the other requests should have that cookie set.
-# also initialise session -> send ok().
-GET    /available                  controllers.Application.available()
-POST   /available                  controllers.Application.available()
+# Server will set cookie in the response header; all the other requests should have that cookie set.
+#Any devices wishing to receive jobs must send an /available request first.
+GET    /available                  			controllers.Application.available()
+POST   /available                  			controllers.Application.available()
+
+
 
 # Job request
-# just include the cookie
+# Must include the cookie in the request header
+# May not request a job until the current one is complete (or has timed out).
 #
-#	This will return a json object:
+# This will return a JSON object:
 #	job-id 			: long
 #	function-class 	: string    -You call the URLCLassLoader.
 # 	computation-id	: long
 #	job-description : string
-#	return a non 200 code if there is no job.
-#
-GET     /job                        controllers.Application.job()
+#	
+# Returns 204 - No Content if no jobs are available.
+# Returns 401 - Unauthorised if a valid session cookie is not present.
+GET     /job                        		controllers.Application.job()
+
 
 # Data request
-#  This will return a raw file and a 200 code.
-GET		/data/:jobID				controllers.Application.data(jobID: Long)
+# Returns the data expected by that job.
+# Requires the cookie and for the device to have been allocated that job.
+# otherwise expect 403 - Forbidden.
+#
+GET		/data/:jobID						controllers.Application.data(jobID: Long)
 
 
 #Code request
-#Returns .dex file as raw bytes
+#Returns an Android .dex file implementing ComputationCode as raw bytes.
 GET		/code/:functionName					controllers.Application.getDexCode(functionName: String)
 
 
+# Result of job
+# Send the raw file.
+# Text Mime-types will be decoded to UTF-8 strings, raw types will be left as bytes.
+POST    /result/:jobID             		 	controllers.Application.result(jobID: Long)
+
+
+
+#Get a (JSON encoded) list of available functions.
+#The app will request this on startup.
+GET /computations							controllers.Application.getFunctions()
+
+### Testing targets ###
+
+
+
+# Returns the .class code file for use by a normal JVM
 GET		/test/code/:functionName			controllers.Application.getClassCode(functionName: String)
 
-
-# Send result
-# Send the raw file -> empty is failed
-POST    /result/:jobID              controllers.Application.result(jobID: Long)
-
-#TODO: Customer login properly
-#Add example computation
+#Add an example prime computation
 POST /test/add/:custName/:prime		controllers.Application.addComputation(custName: String, prime: Long)
 
-#Clear database
+#Clear database (from localhost only)
 GET /test/clear_db					controllers.Application.clear_db()
 
-
-#Get a list of available functions
-GET /computations					controllers.Application.getFunctions()
-
-
-# These are for later
-
+#Not implemented
 # Computation subscription
 GET     /computation/:funId            controllers.Application.subscribe(funId: String)
-
-
-
-
-# Serialized vs URL
-GET		/function/:functionID		controllers.Application.function(functionID: String)

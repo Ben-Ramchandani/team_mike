@@ -373,11 +373,11 @@ There will be no ongoing connections, which should reduce load on the server, an
 \subsubsection{Computation interface}
 
 We will extend this interface to create computation templates that the customer provides input for.
-\lstinputlisting[language=Java]{../server/Computation.java}
+\lstinputlisting[language=Java]{code/Computation.java}
 \newpage
-\lstinputlisting[language=Java]{../server/ComputationCode.java}
+\lstinputlisting[language=Java]{code/ComputationCode.java}
 
-\lstinputlisting[language=Java]{../server/Job.java}
+\lstinputlisting[language=Java]{code/Job.java}
 
 \subsubsection{User interface}
 The graphical interface of the user application will enable the user to control various aspects of the computation process, as well as set preferences and constraints. A master toggle can be used to enable or disable the computation service: turning it on will initialise a background service and connect the application to the server. This gives the user a simple way to start and end computations, and also prevents unnecessary processing if the user launches the app accidentally. The user can log in via their Google or Facebook account to access the social features of the application, but this is not necessary. \\

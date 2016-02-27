@@ -18,6 +18,7 @@ import play.api.libs.concurrent.Promise;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Http.RequestBody;
+import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Results;
 import twork.ComputationManager;
@@ -28,20 +29,21 @@ import akka.actor.*;
 import play.libs.F.*;
 import play.mvc.WebSocket;
 
-public class Web extends Controller{
+public class Web extends Controller {
 
 	public Result index() {
 		List<String> l = (List<String>) Arrays.asList("Prime Computation","Image Processing");
 		return ok(views.html.main.render("test", l, new play.twirl.api.Html("something")));
 	}
 
-
+	
+	@BodyParser.Of(value=BodyParser.AnyContent.class, maxLength=10*1024*1024)
 	public Result mapFile() {
 		RequestBody body = request().body();
 
 		play.mvc.Http.MultipartFormData fileBody = body.asMultipartFormData();
 
-		String function = "EdgeDetect";
+		String function;
 		
 		
 		//Handling the radio button on the form
@@ -74,8 +76,6 @@ public class Web extends Controller{
 			}
 
 			if (filePart != null) {
-				String filename = filePart.getFilename();
-				String contentType = filePart.getContentType();
 				File file = filePart.getFile();
 
 				dataID = Data.store(file);
@@ -89,6 +89,7 @@ public class Web extends Controller{
 		}
 
 		if(dataID == null) {
+			MyLogger.warn("Web: Failing on data = null");
 			return badRequest();
 		}
 
@@ -111,8 +112,11 @@ public class Web extends Controller{
 	}
 
 	public Result retrieve(String dataID) {
-
+		//Get data from server
+		
+		
 		if (dataID.endsWith(".png"))
+			//So the browser displays it as image
 			dataID = dataID.replace(".png","");
 		
 		Data d = Ebean.find(Data.class,UUID.fromString(dataID));

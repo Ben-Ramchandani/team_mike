@@ -10,12 +10,12 @@ import java.net.URL;
 import org.apache.commons.io.IOUtils;
 
 
-public class TerribleURLClassLoader extends ClassLoader {
+public class BasicURLClassLoader extends ClassLoader {
 
 	
 	private URL url;
 
-	public TerribleURLClassLoader(URL u) {
+	public BasicURLClassLoader(URL u) {
 		url = u;
 	}
 
