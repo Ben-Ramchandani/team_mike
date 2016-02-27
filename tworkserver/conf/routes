@@ -7,6 +7,19 @@
 
 
 # Home page
+<<<<<<< HEAD
+GET     /                          controllers.Web.index()
+POST	/page/upload	               controllers.Web.mapFile()
+GET    /prime/:number              controllers.Web.primeTest(number: Long)
+GET		/page/activedev            controllers.Web.numberDevices()
+
+
+
+# Real-Time response page;
+GET     /rt/:computationID           controllers.Display.index(computationID: String)
+GET     /rt/socket/:computationID    controllers.Display.socket(computationID: String)
+GET		/assets/js/display.js    	controllers.Display.script()
+=======
 GET     /                          			controllers.Web.index()
 POST	/page/upload	               		controllers.Web.mapFile()
 GET    /prime/:number              			controllers.Web.primeTest(number: Long)
@@ -16,11 +29,15 @@ GET    /prime/:number              			controllers.Web.primeTest(number: Long)
 GET     /rt/:computationID           		controllers.Display.index(computationID: String)
 GET     /rt/socket/:computationID   		controllers.Display.socket(computationID: String)
 GET		/assets/js/display.js    			controllers.Display.script()
+>>>>>>> 13bfb2cb84b792910526d994bca67a55b83a99a8
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file             			controllers.Assets.versioned(path="/public", file: Asset)
 
 # Request files 
+<<<<<<< HEAD
+GET		/page/retrieve/:dataID		controllers.Web.retrieve(dataID: String)
+=======
 GET		/page/retrieve/:dataID				controllers.Web.retrieve(dataID: String)
 
 
@@ -29,6 +46,7 @@ GET		/page/retrieve/:dataID				controllers.Web.retrieve(dataID: String)
 
 
 ### Device API ###
+>>>>>>> 13bfb2cb84b792910526d994bca67a55b83a99a8
 
 
 # Availability request
