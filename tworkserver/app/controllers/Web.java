@@ -18,6 +18,7 @@ import play.api.libs.concurrent.Promise;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Http.RequestBody;
+import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Results;
 import twork.ComputationManager;
@@ -35,7 +36,8 @@ public class Web extends Controller {
 		return ok(views.html.main.render("test", l, new play.twirl.api.Html("something")));
 	}
 
-
+	
+	@BodyParser.Of(value=BodyParser.AnyContent.class, maxLength=10*1024*1024)
 	public Result mapFile() {
 		RequestBody body = request().body();
 
