@@ -18,6 +18,7 @@ import play.api.libs.concurrent.Promise;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Http.RequestBody;
+import play.mvc.BodyParser;
 import play.mvc.Result;
 import play.mvc.Results;
 import twork.ComputationManager;
@@ -30,14 +31,15 @@ import play.libs.F.*;
 import play.mvc.WebSocket;
 import sitehelper.Metadata;
 
-public class Web extends Controller{
+public class Web extends Controller {
 
 	public Result index() {
 		List<String> l = (List<String>) Arrays.asList("Prime Computation","Image Processing");
 		return ok(views.html.main.render("test", l, new play.twirl.api.Html("something")));
 	}
 
-
+	
+	@BodyParser.Of(value=BodyParser.AnyContent.class, maxLength=10*1024*1024)
 	public Result mapFile() {
 		RequestBody body = request().body();
 
@@ -76,8 +78,6 @@ public class Web extends Controller{
 			}
 
 			if (filePart != null) {
-				String filename = filePart.getFilename();
-				String contentType = filePart.getContentType();
 				File file = filePart.getFile();
 
 				dataID = Data.store(file);
@@ -91,7 +91,7 @@ public class Web extends Controller{
 		}
 
 		if(dataID == null) {
-			System.out.println("Failing on data = null");
+			MyLogger.warn("Web: Failing on data = null");
 			return badRequest();
 		}
 

@@ -2,6 +2,8 @@ import java.io.File;
 
 import models.Computation;
 import models.CustomerComputation;
+import models.Data;
+import models.Device;
 import models.Job;
 import play.Application;
 import play.GlobalSettings;
@@ -36,6 +38,8 @@ public class Global extends GlobalSettings {
 			Ebean.delete(Ebean.find(Computation.class).findList());
 			Ebean.delete(Ebean.find(CustomerComputation.class).findList());
 			Ebean.delete(Ebean.find(Job.class).findList());
+			Ebean.delete(Ebean.find(Data.class).findList());
+			Ebean.delete(Ebean.find(Device.class).findList());
 			MyLogger.log("Deleting data files");
 			
 			deleteFolder(new File("data/"));
