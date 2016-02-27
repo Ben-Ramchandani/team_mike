@@ -18,8 +18,8 @@ public class EdgeDetect implements ComputationCode {
 			image = ImageIO.read(input);
 			input.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return;
 		}
 		
 		//processing on image
@@ -27,7 +27,6 @@ public class EdgeDetect implements ComputationCode {
 		try {
 			ImageIO.write(image, "gif", output);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

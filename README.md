@@ -61,9 +61,19 @@ This package contains both the code that is sent to devices to be run, which all
 
 #### models
 
+These classes can be stored persistently in the database. Ebean uses the field definitions and Java Persistence Annotations to generate SQL statements. UUID generation is handled automatically by Ebean when `save()` is first called.
+
 #### twork
 
+This package contains the bulk of the back end code that manages the computations and jobs as they move around the system.
 
 Tests
 -----
 
+The `tworkserver/test/` directory contains a large test suite with tests covering much of the server's functionality. The tests use JUnit along with Play!'s helper functions. Along with unit tests there is a large test covering the lifetime of a PrimeComputation which runs against a test server and interacting via HTTP requests.
+
+The tests may be run with `./activator test` (from `tworkserver/`).
+
+&nbsp;
+
+&copy; 2016 Razvan Kusztos (razvankusz), Ben Ramchandani (Ben-Ramchandani), Dmitrij Szamozvancev (DimaSamoz)

@@ -18,5 +18,5 @@ $(document).on('change', '#fileinput', function() {
     var message = (numFiles == 1) ? input.get(0).files[0].name : numFiles.toString().concat(" files");
         //label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
     //input.trigger('fileselect', [numFiles, label]);
-    $("#fileinputresponse").text(message.concat(" uploaded."));
+    $("#fileinputresponse").text(message.concat(" selected."));
 });
