@@ -28,7 +28,7 @@ import akka.actor.*;
 import play.libs.F.*;
 import play.mvc.WebSocket;
 
-public class Web extends Controller{
+public class Web extends Controller {
 
 	public Result index() {
 		List<String> l = (List<String>) Arrays.asList("Prime Computation","Image Processing");
@@ -87,7 +87,7 @@ public class Web extends Controller{
 		}
 
 		if(dataID == null) {
-			System.out.println("Failing on data = null");
+			MyLogger.warn("Web: Failing on data = null");
 			return badRequest();
 		}
 

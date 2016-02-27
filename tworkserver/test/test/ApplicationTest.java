@@ -76,7 +76,7 @@ public class ApplicationTest {
 					//Check the response
 					assertEquals("Website gives 200 response code", 200, con.getResponseCode());
 				} catch (Exception e) {
-					System.out.println("Exceptio caught in web_test.");
+					System.out.println("Exception caught in web_test.");
 					e.printStackTrace();
 					throw new RuntimeException();
 				}
