@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
+import sitehelper.Metadata;
 import twork.ComputationManager;
 import twork.Devices;
 import twork.FunctionManager;
@@ -75,6 +76,7 @@ public class Application extends Controller {
 
 
 		d = Devices.getInstance().getDevice(session("sessionID"));
+		Metadata.increaseNumberDevices();
 		//We'll worry about this later - nothing on the server depends on this.
 		/*
 		RequestBody body = request().body();
@@ -121,6 +123,7 @@ public class Application extends Controller {
 		d.registerJob(j.jobID);
 		String s = j.export();
 		MyLogger.log("Handing out job with ID: " + j.jobID);
+		Metadata.decreaseNumberDevices();
 		return ok(s);
 	}
 
@@ -209,7 +212,8 @@ public class Application extends Controller {
 
 		//Notify device
 		d.jobComplete();
-
+		Metadata.increaseNumberDevices();
+		
 		return ok();
 
 	}
@@ -313,6 +317,7 @@ public class Application extends Controller {
 		return ok();
 	}
 
+	
 	public Result clear_db() {
 		//Check request is from localHost
 		if(!(request().remoteAddress().equals("127.0.0.1") || request().remoteAddress().equals("0:0:0:0:0:0:0:1"))) {
@@ -327,4 +332,6 @@ public class Application extends Controller {
 		JobScheduler.getInstance().rebuild_TEST();
 		return ok();
 	}
+	
+
 }

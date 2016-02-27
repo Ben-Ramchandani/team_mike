@@ -22,11 +22,13 @@ import play.mvc.Result;
 import play.mvc.Results;
 import twork.ComputationManager;
 import twork.ComputationNotifier;
+import twork.Devices;
 import twork.MyLogger;
 
 import akka.actor.*;
 import play.libs.F.*;
 import play.mvc.WebSocket;
+import sitehelper.Metadata;
 
 public class Web extends Controller{
 
@@ -126,6 +128,10 @@ public class Web extends Controller{
 		}
 		
 		return ok(d.getContent());
+	}
+	
+	public Result numberDevices(){
+		return ok(String.valueOf(Metadata.getNumberDevices()));
 	}
 
 }
