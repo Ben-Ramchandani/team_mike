@@ -243,25 +243,29 @@ public class Application extends Controller {
 			p.put("id", "PrimeComputationCode");
 			p.put("name", "Prime checking");
 			p.put("description", "Work out if a given number is prime.");
+			p.put("topics", "Examples, Cryptography");
 
 			JSONObject i = new JSONObject();
 			i.put("id", "EdgeDetect");
 			i.put("name", "Image manipulation");
 			i.put("description", "Gives you the same image back");
+			i.put("topics", "Image processing, Examples");
 			
 			JSONObject j = new JSONObject();
 			j.put("id", "GrayscaleConvertCode");
 			j.put("name", "Grayscale");
 			j.put("description", "Converts colour images to grayscale.");
+			j.put("topics", "Image processing, Examples");
 			
 			JSONObject k = new JSONObject();
 			k.put("id", "SepiaConvertCode");
 			k.put("name", "Sepia");
 			k.put("description", "Applies a Sepia filter to images.");
+			k.put("topics", "Image processing, Examples");
 
 			JSONArray a = new JSONArray();
 			a.put(p);
-			//a.put(i);
+			a.put(i);
 			a.put(j);
 			a.put(k);
 			result.put("computations", a);
