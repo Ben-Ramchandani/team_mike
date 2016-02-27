@@ -28,7 +28,7 @@ public class Application extends Controller {
 
 
 	/*
-	 * Available POST/GET
+	 * Available (POST/GET)
 	 */
 	public Result available() {
 
@@ -194,7 +194,8 @@ public class Application extends Controller {
 			r = request().body().asRaw().asBytes(100*1024*1024);
 			if(r == null) {
 				MyLogger.alwaysLog("No data in result request.");
-				return badRequest("No data found in result request");//TODO: this should fail the job.
+				//This could be used to instead fail the job
+				return badRequest("No data found in result request");
 			}
 		} else {
 			r = result.getBytes(StandardCharsets.UTF_8);

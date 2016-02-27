@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import javax.imageio.ImageIO;
 
+
 public class GrayscaleConvertCode implements ComputationCode {
 
 	@Override
@@ -16,8 +17,8 @@ public class GrayscaleConvertCode implements ComputationCode {
 			image = ImageIO.read(input);
 			input.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return;
 		}
 		
 		int width = image.getWidth();
@@ -36,9 +37,8 @@ public class GrayscaleConvertCode implements ComputationCode {
 		}
 		
 		try {
-			ImageIO.write(image, "gif", output);
+			ImageIO.write(image, "png", output);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

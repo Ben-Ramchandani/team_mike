@@ -74,8 +74,6 @@ public class Web extends Controller{
 			}
 
 			if (filePart != null) {
-				String filename = filePart.getFilename();
-				String contentType = filePart.getContentType();
 				File file = filePart.getFile();
 
 				dataID = Data.store(file);

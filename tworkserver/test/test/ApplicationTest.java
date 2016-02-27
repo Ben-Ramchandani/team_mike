@@ -124,7 +124,6 @@ public class ApplicationTest {
 
 					//Run it
 					ComputationCode cc = new EdgeDetect();
-					//TODO: Data dependence
 					Data inData = Ebean.find(Data.class, imageJob.inputDataID);
 					assertNotNull("Image job has associated data", inData);
 
@@ -404,7 +403,7 @@ public class ApplicationTest {
 
 
 
-					TerribleURLClassLoader loader = new TerribleURLClassLoader(new URL(urlString + "test/code/"));
+					BasicURLClassLoader loader = new BasicURLClassLoader(new URL(urlString + "test/code/"));
 					Class<?> codeClass = loader.loadClass(functionName);
 					Object o = codeClass.newInstance();
 					Method codeToRun = codeClass.getDeclaredMethod("run", new Class<?>[] {InputStream.class, OutputStream.class});
@@ -590,7 +589,6 @@ public class ApplicationTest {
 		Job primeJob;
 		while((primeJob = js.getJob(d)) != null) {
 			ComputationCode cc = new PrimeComputationCodeInternal();
-			//TODO: Data dependence
 			Data inData = Ebean.find(Data.class, primeJob.inputDataID);
 			String jobInput = inData.getContentAsString();
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -664,7 +662,6 @@ public class ApplicationTest {
 
 				//Run it
 				ComputationCode cc = new PrimeComputationCodeInternal();
-				//TODO: Data dependence
 				Data inData = Ebean.find(Data.class, primeJob.inputDataID);
 				assertNotNull("Prime job has associated data", inData);
 

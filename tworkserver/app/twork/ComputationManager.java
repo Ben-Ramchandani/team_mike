@@ -51,11 +51,6 @@ public class ComputationManager {
 	public int getNumberOfComputations() {
 		return jobsRemaining.size();
 	}
-	
-	@Deprecated
-	public List<UUID> getComputationIDs() {
-		return new ArrayList<UUID>(jobsRemaining.keySet());
-	}
 
 
 	
@@ -123,8 +118,7 @@ public class ComputationManager {
 	}
 
 	public synchronized void runCustomerComputation(UUID customerComputationID) {
-		//TODO: This shouldn't be synchronized in the manager
-		//TODO: should all be in try/catch
+		//This needn't all be synchronized.
 		
 		CustomerComputation cc = getCustomerComputation(customerComputationID);
 		
@@ -140,7 +134,6 @@ public class ComputationManager {
 			return;
 		}
 
-		//TODO: Move transaction round whole thing
 		MyLogger.log("New computation added.");
 		UUID id = g.generateComputation(cc.input);
 
@@ -218,8 +211,6 @@ public class ComputationManager {
 		while(it.hasNext()) {
 			CustomerComputation current = it.next();
 			newCustomerComputations.put(current.customerComputationID, current);
-			
-			//TODO: build map from customer name to computation list
 		}
 		
 		synchronized(this) {
@@ -243,7 +234,6 @@ public class ComputationManager {
 			c.jobsLeft = 0;
 			Iterator<Job> jobs = c.jobs.iterator();
 
-			//TODO: interaction with Data()
 			while(jobs.hasNext()) {
 				Job j = jobs.next();
 				if(j.outputDataID.equals(Device.NULL_UUID)) {
@@ -265,7 +255,6 @@ public class ComputationManager {
 	//Used only for testing
 	@Deprecated
 	public synchronized void addBasicComputation(BasicComputationGenerator g, String input) {
-		//TODO: This shouldn't be synchronized in the manager
 		UUID id = g.generateComputation(input);
 
 		//Do some checks and add to the job count map
@@ -308,7 +297,7 @@ public class ComputationManager {
 			BasicComputationGenerator gen = FunctionManager.getInstance().getBasicComputationGenerator(comp.functionName);
 			
 			
-			//TODO: This should all be in a different thread really.
+			//This could run in a different thread
 			String result = gen.getResult(computationID);
 			
 			CustomerComputation cc = getCustomerComputation(comp);
