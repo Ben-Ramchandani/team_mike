@@ -291,9 +291,6 @@ public class Application extends Controller {
 		return ok();
 	}
 
-	public Result function(String functionID) {
-		return notFound();
-	}
 
 
 	/*
