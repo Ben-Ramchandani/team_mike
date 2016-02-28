@@ -32,7 +32,7 @@ public class Global extends GlobalSettings {
 	
 	@Override
 	public void onStart(Application app) {
-		if(!Play.isTest()) {
+		if(Play.isDev()) {
 			MyLogger.log("Start up code running");
 			MyLogger.log("Clearing database");
 			Ebean.delete(Ebean.find(Computation.class).findList());
