@@ -7,13 +7,6 @@
 
 
 # Home page
-<<<<<<< HEAD
-GET     /                          controllers.Web.index()
-POST	/page/upload	               controllers.Web.mapFile()
-GET    /prime/:number              controllers.Web.primeTest(number: Long)
-GET		/page/activedev            controllers.Web.numberDevices()
-=======
->>>>>>> cc0fc3ce2c8e1fceea0bb35215b8fa9e700ae983
 
 GET     /                          		controllers.Web.index()
 POST	/page/upload	               	controllers.Web.mapFile()
@@ -21,17 +14,6 @@ GET     /prime/:number              	controllers.Web.primeTest(number: Long)
 GET		/page/activedev            		controllers.Web.numberDevices()
 
 
-<<<<<<< HEAD
-# Real-Time response page;
-GET     /rt/:computationID           controllers.Display.index(computationID: String)
-GET     /rt/socket/:computationID    controllers.Display.socket(computationID: String)
-GET		/assets/js/display.js    	controllers.Display.script()
-GET     /                          			controllers.Web.index()
-POST	/page/upload	               		controllers.Web.mapFile()
-GET    /prime/:number              			controllers.Web.primeTest(number: Long)
-
-=======
->>>>>>> cc0fc3ce2c8e1fceea0bb35215b8fa9e700ae983
 
 # Real-Time response page;
 GET     /rt/:computationID           		controllers.Display.index(computationID: String)
