@@ -8,10 +8,10 @@
 
 # Home page
 
-GET     /                          		controllers.Web.index()
-POST	/page/upload	               	controllers.Web.mapFile()
-GET     /prime/:number              	controllers.Web.primeTest(number: Long)
-GET		/page/activedev            		controllers.Web.numberDevices()
+GET     /                          			controllers.Web.index()
+POST	/page/upload	               		controllers.Web.mapFile()
+GET     /prime/:number              		controllers.Web.primeTest(number: Long)
+GET		/page/activedev            			controllers.Web.numberDevices()
 
 
 

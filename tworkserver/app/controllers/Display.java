@@ -23,7 +23,7 @@ public class Display extends Controller{
 		return ok(views.js.display.render(computationID));
 	}
 
-	public WebSocket<String> socket(String computationID) {
+	public WebSocket<String> socket(final String computationID) {
 		return new WebSocket<String>(){
 
 		
