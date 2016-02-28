@@ -13,8 +13,10 @@ public abstract class ComputationNotifier {
 	public static Map<UUID, Boolean> pollingFlags = Collections.synchronizedMap(new HashMap<UUID, Boolean>());
 	
 	public static String track(CustomerComputation c) {
+		
 		if (c.status == CustomerComputation.COMPLETE) 
 			return c.output;
+		
 		
 		computations.put(c.customerComputationID,c);
 		pollingFlags.put(c.customerComputationID,true);
