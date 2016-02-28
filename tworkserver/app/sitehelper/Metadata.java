@@ -11,7 +11,7 @@ public abstract class Metadata {
 	}
 	
 	public static synchronized void decreaseNumberDevices() {
-		numberDevices--;
+		if (numberDevices > 0) numberDevices--;
 	}
 	
 }

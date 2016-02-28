@@ -56,3 +56,14 @@ input[type=radio]:checked + label{
   margin: 5px;
   width: 30%;
 }
+
+@media screen and (max-width: 512px) {
+.instantimage{
+  width: 100%;
+  max-width: 100%;
+}
+.instantimage:hover{
+  margin: 10px;
+  width: 100%;
+}
+}

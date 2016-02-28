@@ -32,8 +32,41 @@
 </head>
 
 
-<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top" onload="pageScroll()" onclick="stopScroll()">
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top" onclick="stopScroll()" onmousewheel="stopScroll()">
 
+  <!-- Navigation -->
+  <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+          <i class="fa fa-bars"></i>
+        </button>
+        <a class="navbar-brand page-scroll" href="http://ec2-52-36-182-104.us-west-2.compute.amazonaws.com:9000/">
+          <i class="fa fa-play-circle"></i>  <span class="light">Twork</span>
+        </a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+        <ul class="nav navbar-nav">
+          <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+          <li class="hidden">
+            <a href="#page-top"></a>
+          </li>
+
+          <li>
+
+            <a class="page-scroll" href="#header">Top</a>
+          </li>
+          <li>
+            <a class="page-scroll" href="#data">RealTime Data</a>
+          </li>
+        </ul>
+      </div>
+      <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+  </nav>
   <!-- Download Section -->
   <section id="header" class="content-section text-center">
       <div class="download-section">
@@ -41,12 +74,15 @@
               <div class="col-lg-8 col-lg-offset-2">
                   <h2>Twork in action!</h2>
                   <p>Check your results coming back in real-time!</p>
+                  <a href="#data" class="btn btn-circle page-scroll" id="datastart" onclick="startScroll()">
+                    <i class="fa fa-angle-double-down animated"></i>
+                  </a>
               </div>
           </div>
       </div>
   </section>
 
-<section id="about" class="container content-section">
+<section id="data" class="container content-section">
   <div id="files">
   </div>
 </section>
@@ -55,13 +91,14 @@
   <div id="footer-control" class="row">
        <div class="col-lg-8 col-lg-offset-2">
       <p class="btn btn-default btn-lg" style="vertical-align: center"> <a href="#header">Jump to top</a> </p>
-      <p class="btn btn-default btn-lg" style="vertical-align: center"> <a href="http://localhost:9000/">Back to Home</a> </p>
+      <p class="btn btn-default btn-lg" style="vertical-align: center"> <a href="http://ec2-52-36-182-104.us-west-2.compute.amazonaws.com:9000/">Back to Home</a> </p>
       </div>
   </div>
 </body>
 
+<!-- jQuery -->
 <script src=@routes.Assets.versioned("js/jquery.js")></script>
-<script type="text/javascript" charset="utf-8" src="@routes.Assets.versioned("js/display.js")"></script>
+
 <!-- Bootstrap Core JavaScript -->
 <script src=@routes.Assets.versioned("js/bootstrap.min.js")></script>
 
@@ -70,4 +107,7 @@
 
 <!-- Custom Theme JavaScript -->
 <script src=@routes.Assets.versioned("js/grayscale.js")></script>
+
+<!-- My scripts -->
 <script src=@routes.Assets.versioned("js/smoothscroll.js")></script>
+<script type="text/javascript" charset="utf-8" src="@routes.Assets.versioned("js/display.js")"></script>
