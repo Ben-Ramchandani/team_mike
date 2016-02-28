@@ -8,5 +8,4 @@
 *.toc
 *.swp
 tworkserver/data/
-tworkserver/conf/evolutions/1.sql
 templates/

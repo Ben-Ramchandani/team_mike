@@ -6,6 +6,7 @@ target
 /.project
 /.settings
 /RUNNING_PID
+conf/evolutions/*
 *.swp
 LICENSE.html
 README.html

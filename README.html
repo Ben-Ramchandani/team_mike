@@ -9,7 +9,7 @@ It's written in Java using the <a href="https://www.playframework.com/">Play! Fr
 
 <ul>
 <li>JDK 1.8 or later.</li>
-<li><a href="https://www.lightbend.com/activator/download">Typesafe Activator</a>.</li>
+<li><a href="https://www.lightbend.com/activator/download">Typesafe Activator</a> 1.3.7.</li>
 <li>PostgreSQL database.</li>
 </ul>
 
@@ -19,8 +19,7 @@ It's written in Java using the <a href="https://www.playframework.com/">Play! Fr
 <li>Start PostgreSQL on port 5432 with username <code>twork</code>, password <code>test</code> and a database named <code>tworkdata</code>.</li>
 <li>Clone the repository.</li>
 <li>Unpack Typesafe Activator into the <code>tworkserver</code> directory.</li>
-<li>Move into the <code>tworkserver</code> directory and type <code>./activator</code> to enter Play!'s shell.</li>
-<li>Run <code>start</code> to start the server.</li>
+<li>Move into the <code>tworkserver</code> directory and type <code>./activator run</code> to start the server in development mode.</li>
 </ul>
 
 <h2>Code structure</h2>
@@ -71,7 +70,7 @@ The supporting code for the main page of the website, including file upload, is 
 
 <h2>Tests</h2>
 
-<p>The <code>tworkserver/test/</code> directory contains a large test suite with tests covering much of the server's functionality. The tests use JUnit along with Play!'s helper functions. Along with unit tests there is a large test covering the lifetime of a PrimeComputation which runs against a test server and interacting via HTTP requests.</p>
+<p>The <code>tworkserver/test/</code> directory contains a large test suite with tests covering much of the server's functionality. The tests use JUnit along with Play!'s helper functions. Along with unit tests there is a large test covering the lifetime of a PrimeComputation which runs against a test server, interacting via HTTP requests.</p>
 
 <p>The tests may be run with <code>./activator test</code> (from <code>tworkserver/</code>).</p>
 
