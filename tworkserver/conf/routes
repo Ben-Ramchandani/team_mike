@@ -8,10 +8,10 @@
 
 # Home page
 
-GET     /                          		controllers.Web.index()
-POST	/page/upload	               	controllers.Web.mapFile()
-GET     /prime/:number              	controllers.Web.primeTest(number: Long)
-GET		/page/activedev            		controllers.Web.numberDevices()
+GET     /                          			controllers.Web.index()
+POST	/page/upload	               		controllers.Web.mapFile()
+GET     /prime/:number              		controllers.Web.primeTest(number: Long)
+GET		/page/activedev            			controllers.Web.numberDevices()
 
 
 
@@ -95,11 +95,11 @@ GET /computations							controllers.Application.getFunctions()
 GET		/test/code/:functionName			controllers.Application.getClassCode(functionName: String)
 
 #Add an example prime computation
-POST /test/add/:custName/:prime		controllers.Application.addComputation(custName: String, prime: Long)
+POST /test/add/:custName/:prime				controllers.Application.addComputation(custName: String, prime: Long)
 
 #Clear database (from localhost only)
-GET /test/clear_db					controllers.Application.clear_db()
+GET /test/clear_db							controllers.Application.clear_db()
 
 #Not implemented
 # Computation subscription
-GET     /computation/:funId            controllers.Application.subscribe(funId: String)
+GET     /computation/:funId            		controllers.Application.subscribe(funId: String)
