@@ -76,4 +76,4 @@ The tests may be run with `./activator test` (from `tworkserver/`).
 
 &nbsp;
 
-&copy; 2016 Razvan Kusztos (razvankusz), Ben Ramchandani (Ben-Ramchandani), Dmitrij Szamozvancev (DimaSamoz)
+&copy; 2016 Razvan Kusztos (razvankusz), Ben Ramchandani (Ben-Ramchandani), Dmitrij Szamozvancev (DimaSamoz), James Wood (laMudri), Laura Nechita (redls)
