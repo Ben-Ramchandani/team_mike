@@ -288,10 +288,6 @@ public class Application extends Controller {
 	 * Not implemented
 	 */
 	public Result subscribe(String funId) { 
-		/*
-		 * feature to be added
-		 * need to implement log-in features for dima's app
-		 */
 		return ok();
 	}
 

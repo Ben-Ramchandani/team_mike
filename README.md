@@ -11,7 +11,7 @@ Installation instructions
 Requirements:
 
 * JDK 1.8 or later.
-* [Typesafe Activator](https://www.lightbend.com/activator/download).
+* [Typesafe Activator](https://www.lightbend.com/activator/download) 1.3.7.
 * PostgreSQL database.
 
 Procedure:
@@ -19,8 +19,7 @@ Procedure:
 * Start PostgreSQL on port 5432 with username `twork`, password `test` and a database named `tworkdata`.
 * Clone the repository.
 * Unpack Typesafe Activator into the `tworkserver` directory.
-* Move into the `tworkserver` directory and type `./activator` to enter Play!'s shell.
-* Run `start` to start the server.
+* Move into the `tworkserver` directory and type `./activator run` to start the server in development mode.
 
 Code structure
 --------------
@@ -70,9 +69,10 @@ This package contains the bulk of the back end code that manages the computation
 Tests
 -----
 
-The `tworkserver/test/` directory contains a large test suite with tests covering much of the server's functionality. The tests use JUnit along with Play!'s helper functions. Along with unit tests there is a large test covering the lifetime of a PrimeComputation which runs against a test server and interacting via HTTP requests.
+The `tworkserver/test/` directory contains a large test suite with tests covering much of the server's functionality. The tests use JUnit along with Play!'s helper functions. Along with unit tests there is a large test covering the lifetime of a PrimeComputation which runs against a test server, interacting via HTTP requests.
 
 The tests may be run with `./activator test` (from `tworkserver/`).
+
 
 &nbsp;
 
