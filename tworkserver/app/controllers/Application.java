@@ -248,11 +248,11 @@ public class Application extends Controller {
 			p.put("id", "PrimeComputationCode");
 			p.put("name", "Prime checking");
 			p.put("description", "Work out if a given number is prime.");
-			p.put("topics", "Examples, Cryptography");
+			p.put("topics", "Cryptography, Examples");
 
 			JSONObject i = new JSONObject();
 			i.put("id", "EdgeDetect");
-			i.put("name", "Image manipulation");
+			i.put("name", "Does nothing");
 			i.put("description", "Gives you the same image back");
 			i.put("topics", "Image processing, Examples");
 			
