@@ -54,4 +54,8 @@ public class Devices {
 
 		return d;
 	}
+	
+	public static void reset() {
+		instance = new Devices();
+	}
 }

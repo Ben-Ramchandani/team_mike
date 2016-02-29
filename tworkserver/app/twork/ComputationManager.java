@@ -363,4 +363,11 @@ public class ComputationManager {
 			JobScheduler.getInstance().update();
 		}
 	}
+	
+	public synchronized void reset() {
+		JobScheduler.getInstance().reset();
+	}
+	public static void newInstance() {
+		instance = new ComputationManager();
+	}
 }

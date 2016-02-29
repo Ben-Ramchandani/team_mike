@@ -97,8 +97,8 @@ GET		/test/code/:functionName			controllers.Application.getClassCode(functionNam
 #Add an example prime computation
 POST /test/add/:custName/:prime				controllers.Application.addComputation(custName: String, prime: Long)
 
-#Clear database (from localhost only)
-GET /test/clear_db							controllers.Application.clear_db()
+#Server reset
+GET /test/reset/:key						controllers.Application.reset(key: String)
 
 #Not implemented
 # Computation subscription

@@ -31,5 +31,8 @@ public abstract class ImageFactory {
 		instances.remove(computationID);
 		
 	}
-
+	
+	public static void reset() {
+		instances = new HashMap<String,ImageWriter>();
+	}
 }

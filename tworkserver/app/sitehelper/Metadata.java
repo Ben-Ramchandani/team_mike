@@ -14,4 +14,7 @@ public abstract class Metadata {
 		if (numberDevices > 0) numberDevices--;
 	}
 	
+	public static synchronized void reset() {
+		numberDevices = 0;
+	}
 }

@@ -1,15 +1,11 @@
 package sitehelper;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
-import models.Data;
 import play.mvc.WebSocket;
 import twork.MyLogger;
 
-public class ImageWriter implements Runnable {
+public class ImageWriter {
 
 	WebSocket.Out<String> out;
 
@@ -18,18 +14,6 @@ public class ImageWriter implements Runnable {
 		this.out = out;
 	}
 
-	@Override
-	public void run() {
-		for (int i = 0; i < 100; i++) {
-			out.write("http://www.metastatic.org/images/gnu-crypto/gnu-crypto-2-small.png");
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
 
 	public void notify(UUID dataID) {
 		//Need to create a file here

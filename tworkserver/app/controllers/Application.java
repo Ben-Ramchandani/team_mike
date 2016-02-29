@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import play.Play;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -315,21 +316,15 @@ public class Application extends Controller {
 		return ok();
 	}
 
-	
-	public Result clear_db() {
-		//Check request is from localHost
-		if(!(request().remoteAddress().equals("127.0.0.1") || request().remoteAddress().equals("0:0:0:0:0:0:0:1"))) {
-			return forbidden("Your address is " + request().remoteAddress());
+	public Result reset(String key) {
+		if(!key.equals("x")) {
+			return forbidden();
 		}
-
-		MyLogger.log("Clearing database");
-		Ebean.delete(Ebean.find(Computation.class).findList());
-		Ebean.delete(Ebean.find(CustomerComputation.class).findList());
-		Ebean.delete(Ebean.find(Job.class).findList());
-		ComputationManager.getInstance().rebuild_TEST();
-		JobScheduler.getInstance().rebuild_TEST();
+		MyLogger.log("System reset started");
+		ComputationManager.getInstance().reset();
+		System.gc();
+		MyLogger.log("System reset complete");
 		return ok();
 	}
-	
 
 }
