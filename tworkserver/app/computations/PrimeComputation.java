@@ -52,15 +52,14 @@ public class PrimeComputation implements BasicComputationGenerator {
 			if(prime < 0) {
 				prime = 0;
 			}
-			prime  = (long)Math.sqrt(prime) + 1;
 			//Make about 20 jobs
 			long numPerJob = prime > 20 ? prime/20 : 1;
 			long currentEnd = currentStart + numPerJob;
-			long stopAt = prime;
+			long stopAt = (long)Math.sqrt(prime) + 1;
 
-			while((currentEnd) <= stopAt) {
+			while(currentStart < stopAt) {
 				//Jobs have input "<prime> <start> <stop>" (all longs, space separated).
-				String jobInput = primeString + " " + Long.toString(currentStart) + " " + Long.toString(currentEnd);
+				String jobInput = primeString + " " + Long.toString(currentStart) + " " + Long.toString(currentEnd > stopAt ? stopAt : currentEnd);
 
 				UUID dataID = Data.storeString(jobInput);
 

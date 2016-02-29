@@ -609,9 +609,30 @@ public class ApplicationTest {
 				MyLogger.enable = false;
 				MyLogger.log("Prime_CorrectnessTest");
 				Ebean.delete(Ebean.find(CustomerComputation.class).findList());
+				
+				//0 is prime for our use
+				String output = genericPrimeTest(0, "0");
+				assertEquals("Prime computation run on 0", output, "No factor found for 0.");
+				
+				//1 is prime for our use
+				output = genericPrimeTest(1, "1");
+				assertEquals("Prime computation run on 1", output, "No factor found for 1.");
+				
+				//2 is prime
+				output = genericPrimeTest(2, "2");
+				assertEquals("Prime computation run on 2", output, "No factor found for 2.");
+				
+				//3 is prime
+				output = genericPrimeTest(3, "3");
+				assertEquals("Prime computation run on 3", output, "No factor found for 3.");
+				
 				//5 is prime
-				String output = genericPrimeTest(5, "Ben");
+				output = genericPrimeTest(5, "5");
 				assertEquals("Prime computation run on 5", output, "No factor found for 5.");
+				
+				//9 is not prime
+				output = genericPrimeTest(9, "9");
+				assertEquals("Prime computation run on 9", output, "Found factor for 9: 3.");
 
 				//21 = 7 * 3
 				output = genericPrimeTest(21, "Razvan");
@@ -628,8 +649,12 @@ public class ApplicationTest {
 				//373987259 = 3571 * 104729
 				output = genericPrimeTest(373987259, "Laura");
 				assertTrue("Prime computation run on 373987259", output.equals("Found factor for 373987259: 3571.") || output.equals("Found factor for 373987259: 104729."));
+				
+				//1689243484681 = 1299709^2
+				output = genericPrimeTest(1689243484681L, "1689243484681");
+				assertEquals("Prime computation run on 1689243484681", output, "Found factor for 1689243484681: 1299709.");
 
-				assertEquals(Ebean.find(CustomerComputation.class).findList().size(), 5);
+				assertEquals(Ebean.find(CustomerComputation.class).findList().size(), 11);
 			}
 		});
 	}
