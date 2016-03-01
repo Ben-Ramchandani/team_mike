@@ -79,7 +79,9 @@ public class Data extends Model{
 		} else {
 			try {
 				MyLogger.log("New file Location (due to immediate overflow)");
-				Path dest = Paths.get("data/" + d.dataID.toString());
+				String currentUsersHomeDir = System.getProperty("user.home");
+				String dataFolder = currentUsersHomeDir + File.separator + "data" + File.separator;
+				Path dest = Paths.get(dataFolder + d.dataID.toString());
 				Files.createDirectories(dest.getParent());
 				Files.write(dest, data);
 
@@ -102,8 +104,9 @@ public class Data extends Model{
 		d.save();
 
 		//Move the file to a new location
-		Path dest = Paths.get("data/" + d.dataID.toString());
-
+		String currentUsersHomeDir = System.getProperty("user.home");
+		String dataFolder = currentUsersHomeDir + File.separator + "data" + File.separator;
+		Path dest = Paths.get(dataFolder + d.dataID.toString());
 		try {
 			Files.createDirectories(dest.getParent());
 			Files.move(file.toPath(), dest, StandardCopyOption.REPLACE_EXISTING);
