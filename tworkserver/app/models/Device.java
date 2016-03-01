@@ -20,9 +20,9 @@ public class Device extends Model {
 
 	@Transient
 	public static final UUID NULL_UUID = new UUID( 0L , 0L );
-	//45 seconds (in milliseconds).
+	//70 seconds (in milliseconds).
 	@Transient
-	public static final int WAITING_TIME = 45000;
+	public static final int WAITING_TIME = 70000;
 	
 	@Id
 	public String deviceID;
