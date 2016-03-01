@@ -100,6 +100,9 @@ POST /test/add/:custName/:prime				controllers.Application.addComputation(custNa
 #Server reset
 GET /test/reset/:key						controllers.Application.reset(key: String)
 
+#Admin info
+GET /test/info								controllers.Application.adminInfo()
+
 #Not implemented
 # Computation subscription
 GET     /computation/:funId            		controllers.Application.subscribe(funId: String)

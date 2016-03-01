@@ -1,6 +1,7 @@
 package controllers;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Formatter;
 import java.util.UUID;
 
 import models.Computation;
@@ -307,6 +308,30 @@ public class Application extends Controller {
 
 		MyLogger.log("Sending .class code file with name: " + functionName);
 		return ok(b);
+	}
+	
+	public Result adminInfo() {
+		int numComputations = Ebean.find(Computation.class).findRowCount();
+		int totalComputations = Ebean.find(CustomerComputation.class).findRowCount();
+		int numJobs = Ebean.find(Job.class).findRowCount();
+		int numDevices = Devices.getInstance().getNumberOfActiveDevices();
+		long memory = Runtime.getRuntime().totalMemory();
+		
+		StringBuilder sb = new StringBuilder();
+    	Formatter formatter = new Formatter(sb);
+    	
+    	formatter.format("<html><head><title>Twork - Server information</title><meta http-equiv=\"refresh\" content=\"10\"></head><body><ul>" +
+    			"<h1>Twork server information</h1>" +
+    			"<li>Total number of computations: %d</li>" +
+    			"<li>Number of running computations: %d</li>" +
+    			"<li>Number of jobs: %d</li>" +
+    			"<li>Number of connected devices: %d</li>" +
+    			"<li>Memory usage: %d KB</li>" +
+    			"</ul></body></html>", totalComputations, numComputations, numJobs, numDevices, memory/1024);
+    	
+    	String result = formatter.out().toString();
+    	formatter.close();
+		return ok(result).as("text/html");
 	}
 
 	public Result addComputation(String custName, long prime) {
