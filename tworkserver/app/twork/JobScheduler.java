@@ -9,9 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import play.Application;
-import play.Play;
-
 import models.Computation;
 import models.CustomerComputation;
 import models.Data;
@@ -417,9 +414,11 @@ public class JobScheduler {
 		Ebean.delete(Ebean.find(Job.class).findList());
 		Ebean.delete(Ebean.find(Data.class).findList());
 		Ebean.delete(Ebean.find(Device.class).findList());
-		MyLogger.log("Deleting data files");
 		
-		deleteFolder(new File("data/"));
+		MyLogger.log("Deleting data files");
+		String currentUsersHomeDir = System.getProperty("user.home");
+		String dataFolder = currentUsersHomeDir + File.separator + "data" + File.separator;
+		deleteFolder(new File(dataFolder));
 
 		MyLogger.log("Initializing Managers and Scheduler");
 		ComputationManager.newInstance();
