@@ -253,8 +253,8 @@ public class Application extends Controller {
 
 			JSONObject i = new JSONObject();
 			i.put("id", "EdgeDetect");
-			i.put("name", "Does nothing");
-			i.put("description", "Gives you the same image back");
+			i.put("name", "Emboss effect");
+			i.put("description", "Emphasises areas of different colour.");
 			i.put("topics", "Image processing, Examples");
 			
 			JSONObject j = new JSONObject();
