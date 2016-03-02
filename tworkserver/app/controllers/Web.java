@@ -121,6 +121,10 @@ public class Web extends Controller {
 			//So the browser displays it as image
 			dataID = dataID.replace(".png","");
 		
+		if(dataID.endsWith(".jpg")) {
+			dataID = dataID.replace(".jpg", "");
+		}
+		
 		Data d = Ebean.find(Data.class,UUID.fromString(dataID));
 
 		if (d == null) {
