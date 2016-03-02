@@ -9,7 +9,7 @@ $(function() {
    var postImage = function(name) {
 
      var el = $('<img class="instantimage">');
-     $(el).attr("src",name.data.concat(".png"));
+     $(el).attr("src",name.data.concat(".jpg"));
      $("#files").append(el);
    }
 
