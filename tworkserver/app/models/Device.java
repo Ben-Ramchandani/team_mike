@@ -77,6 +77,7 @@ public class Device extends Model {
 		} else {
 			MyLogger.warn("Device.registerJob: Already have job, register anyway. The timer will be terminated without running.");
 			cancelTimer();
+			JobScheduler.getInstance().timeoutJob(currentJob);
 			currentJob = jobID;
 			startTimer();
 		}
