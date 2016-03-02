@@ -131,7 +131,7 @@ public class Web extends Controller {
 	}
 	
 	public Result numberDevices(){
-		return ok(String.valueOf(Metadata.getNumberDevices()));
+		return ok(String.valueOf(Devices.getInstance().getNumberOfActiveDevices()));
 	}
 
 }
