@@ -1,7 +1,10 @@
+2016 - University of Cambridge IB Group Project - Team Mike  
+Razvan Kusztos (razvankusz), Ben Ramchandani (Ben-Ramchandani), Dmitrij Szamozvancev (DimaSamoz), James Wood (laMudri), Laura Nechita (redls)
+
 TWork - Server
 ==============
 
-This repository is the server for the TWork system.
+This repository is the server for the Twork system.
 It's written in Java using the [Play! Framework](https://www.playframework.com/).
 
 
